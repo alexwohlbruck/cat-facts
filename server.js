@@ -9,6 +9,10 @@ var express = require('express');
 var router = express();
 var server = http.createServer(router);
 
+router.get('/', function(req, res) {
+  return res.json({message: "Use POST /fact to get a cat fact"});
+})
+
 router.post('/fact', function(req, res) {
     var options = {
       host: 'catfacts-api.appspot.com',
