@@ -1,11 +1,22 @@
 var http = require('http');
 var express = require('express');
 var app = express();
+var mongoose = require('mongoose');
+    mongoose.Promise = global.Promise;
 var server = http.createServer(app);
 var apiai = require('apiai');
+var morgan = require('morgan');
 var catbot = apiai('64bea369650e4de59e7aee3dbb03efdd');
+var Recipient = require.main.require('./app/models/recipient');
 
-app.configure(function(){
+var code = 'bDsL3w9CxAweA2sX';
+
+mongoose.connect('mongodb://alexwohlbruck:' + code + '@ds157298.mlab.com:57298/cat-facts');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+
+app.configure(function() {
+  app.use(morgan('dev'));
   app.use(express.bodyParser());
   app.use(app.router);
 });
@@ -31,32 +42,65 @@ app.get('/', function(req, res) {
 });
 
 // Request made from tasker when text message is recieved
-app.post('/text', function(req, res) {
-  if (!req.body.query) return res.status(400).json({"message": "No text query provided"});
+app.get('/text', function(req, res) {
+  console.log(req.query);
+  if (!req.query.query) return res.status(400).json({"message": "No text query provided"});
+  if (!req.query.number) return res.status(400).json({"message": "No phone number provided"});
   
-  var request = catbot.textRequest(req.body.query, {
-    sessionId: 'UH2fKhXFIvPAx7Us3i2sGdApIIBCiIkgb7IS'
-  });
-  
-  request.on('response', function(response) {
-    if (!response.result.fulfillment.speech) {
-      getFact(function(message) {
-        return res.status(200).json({
-          response: message
-        });
+  Recipient.findOne({number: req.query.number}).then(function(recipient) {
+    if (recipient) {
+      
+      var request = catbot.textRequest(req.query.query, {
+        sessionId: 'UH2fKhXFIvPAx7Us3i2sGdApIIBCiIkgb7IS'
       });
+      
+      request.on('response', function(response) {
+        if (!response.result.fulfillment.speech) {
+          getFact(function(message) {
+            return res.status(200).json({
+              response: message
+            });
+          });
+        } else {
+          return res.status(200).json({
+            response: response.result.fulfillment.speech
+          });
+        }
+      });
+      
+      request.on('error', function(err) {
+        return res.status(400).json(err);
+      });
+      
+      request.end();
+      
     } else {
-      return res.status(200).json({
-        response: response.result.fulfillment.speech
+      var newRecipient = new Recipient({
+        name: req.query.name,
+        number: req.query.number.replace(/\D/g,'').replace(/^1+/, '')
+      });
+      
+      newRecipient.save().then(function() {
+        console.log('saved');
+        return res.status(200).json({
+          response: "Thanks for signing up for Cat Facts! You will now recieve fun facts about CATS every day! =^.^="
+        });
+      }, function(err) {
+        console.log(err);
+        return res.status(400).json(err);
       });
     }
-  });
-  
-  request.on('error', function(err) {
+  }, function(err) {
     return res.status(400).json(err);
   });
-  
-  request.end();
+});
+
+app.get('/fact', function(req, res) {
+  getFact(function(message) {
+      return res.json({
+        displayText: message,
+    });
+  });
 });
 
 app.post('/fact', function(req, res) {
@@ -71,7 +115,24 @@ app.post('/fact', function(req, res) {
   });
 });
 
-server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
+app.get('/recipients', function(req, res) {
+  if (req.query && req.query.code == code) {
+    Recipient.find().then(function(recipients) {
+      getFact(function(fact) {
+        return res.status(200).json({
+          fact: fact,
+          recipients: recipients
+        });
+      });
+    }, function(err) {
+      return res.status(400).json(err);
+    });
+  } else {
+    return res.status(400).json({message: "Provide the code to recieve recipients"});
+  }
+});
+
+server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
   var addr = server.address();
-  console.log("Chat server listening at", addr.address + ":" + addr.port);
+  console.log("Server listening at", addr.address + ":" + addr.port);
 });
