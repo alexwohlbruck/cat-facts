@@ -1,0 +1,109 @@
+<div class="layout-center">
+	<div layout="column" layout-align="start center">
+		<strong countdown end-date="{{sendDate}}" units="hours|minutes|seconds" class="md-headline"></strong>
+		<span class="md-subhead">until next fact is sent</span>
+		
+		<br/>
+		
+		<form ng-submit="submitFact()" ng-show="authenticatedUser">
+			<md-input-container>
+				<label>Submit a fact</label>
+				<input ng-model="form.newFact">
+			</md-input-container>
+			<md-button type="submit" class="md-raised md-primary input-button-inline">Submit</md-button>
+		</form>
+		
+		<!-- Advertisement -->
+		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<!-- Cat facts (fact page ad 1) -->
+		<ins class="adsbygoogle"
+		     style="display:block"
+		     data-ad-client="ca-pub-2269091303898266"
+		     data-ad-slot="3780923033"
+		     data-ad-format="auto"></ins>
+		<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
+		
+	</div>
+	
+	<md-tabs md-dynamic-height md-center-tabs>
+		<md-tab label="All Facts">
+		    <md-content>
+	    		<md-card>
+	            	<md-table-container>
+	            		<table md-table ng-model="selected" md-progress="promise">
+	            			<thead md-head>
+	            				<tr md-row md-row-select="false">
+	            					<th md-column><span>Name</span></th>
+	            					<th md-column><span>Fact</span></th>
+	            					<th md-column md-numeric style="padding-right: 90px !important">Points</th>
+	            				</tr>
+	            			</thead>
+	            			<tbody md-body>
+	            				<tr
+	            					md-row md-select="fact"
+	            					md-select-id="name"
+	            					md-auto-select
+	            					ng-repeat="fact in facts | orderBy:'-upvotes.length'"
+	            					ng-animater="'animate'">
+	            					
+	            					<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
+	            					<td md-cell>"{{fact.text}}"</td>
+	            					<td md-cell>
+	            						<span>{{fact.upvotes.length}}</span>
+	            						<md-button
+	            							ng-click="upvoteFact(fact)"
+	            							ng-if="authenticatedUser"
+	            							ng-disabled="fact.user._id == authenticatedUser._id"
+	            							title="Vote up"
+	            							aria-label="Vote up"
+	            							class="md-icon-button md-icon-button-small">
+	            							
+	            							<md-icon
+	            								class="material-icons"
+	            								ng-class="{'blue': fact.upvoted}"
+	            								aria-label="Vote up">
+	            								thumb_up
+	            							<md-icon>
+	            						</md-button>
+	            					</td>
+	            				</tr>
+	            			</tbody>
+	            		</table>
+	            	</md-table-container>
+	            </md-card>
+	        </md-content>
+		</md-tab>
+		
+		<md-tab label="My Facts">
+			<md-content>
+	    		<md-card ng-if="authenticatedUser">
+	            	<md-table-container>
+	            		<table md-table ng-model="selected" md-progress="promise">
+	            			<thead md-head>
+	            				<tr md-row md-row-select="false">
+	            					<th md-column><span>Fact</span></th>
+	            					<th md-column md-numeric style="padding-right: 90px !important">Points</th>
+	            				</tr>
+	            			</thead>
+	            			<tbody md-body>
+	            				<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts | filter: {user: {_id: authenticatedUser._id}} | orderBy: '-upvotes.length'">
+	            					<td md-cell>"{{fact.text}}"</td>
+	            					<td md-cell>
+	            						<span>{{fact.upvotes.length}}</span>
+	            					</td>
+	            				</tr>
+	            			</tbody>
+	            		</table>
+	            	</md-table-container>
+	            </md-card>
+	            
+	            <div ng-if="!authenticatedUser" layout="column" layout-align="start center">
+	            	<p>To view your submitted facts,</p>
+	            	<md-button class="md-raised md-accent" ng-href="/auth/google">Sign in</md-button>
+	            </div>
+	        </md-content>
+		</md-tab>
+	</md-tabs>
+</div>

@@ -1,0 +1,64 @@
+<div class="layout-center">
+	<div layout="column" layout-fill layout-align="start center">
+		<span class="md-display-1">Add a Recipient</span>
+		<br/>
+		
+		<form ng-submit="addRecipient()">
+			<md-input-container>
+				<label>Name</label>
+				<input required ng-model="form.name" aria-label="Recipient name">
+			</md-input-container>
+			<md-input-container>
+				<label>Phone Number</label>
+				<input required ng-model="form.number" ng-pattern="^\d{10}$" aria-label="Recipient phone number">
+			</md-input-container>
+			<input type="submit" value="Add" class="md-button md-raised md-accent input-button-inline" aria-label="Add Recipient">
+		</form>
+	</div>
+	
+	<md-card>
+		<md-toolbar class="md-table-toolbar md-default">
+			<div class="md-toolbar-tools">
+				<span>
+					My Recipients <span class="grey">({{recipients.length}})</span>
+				</span>
+				
+				<span flex></span>
+			
+				<span class="padding-top-15">
+					<md-checkbox
+						ng-model="table.orderBy"
+						aria-label="Sort table by date added"
+						ng-true-value="'-updatedAt'"
+						ng-false-value="'name'">
+					<span class="md-body-2">Sort by date added</span>
+				</span>
+			</div>
+		</md-toolbar>
+	
+		<md-table-container>
+			<table md-table multiple ng-model="selected" md-progress="promise">
+				<thead md-head>
+					<tr md-row>
+						<th md-column><span>Name</span></th>
+						<th md-column ng-show="$mdMedia('gt-xs')">Date Added</th>
+						<th md-column md-numeric><span>Phone Number</span></th>
+						<th md-column md-numeric>Total Facts Sent</th>
+					</tr>
+				</thead>
+				<tbody md-body>
+					<tr md-row
+						ng-repeat="recipient in recipients | orderBy: table.orderBy"
+						ng-click="openConversation($event, recipient)"
+						ng-style="{'cursor': 'pointer'}">
+						
+						<td md-cell>{{recipient.name}}</td>
+						<td md-cell ng-show="$mdMedia('gt-xs')">{{recipient.updatedAt | date:'MMMM d, yyyy'}}</td>
+						<td md-cell>{{recipient.number | tel}}</td>
+						<td md-cell>{{recipient.total}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</md-table-container>
+	</md-card>
+</div>
