@@ -32,7 +32,7 @@ router.get('/text', function(req, res) {
 						FactService.getFact(function(message) {
 							var outgoing = new Message({text: message, number: req.query.number, type: 'outgoing'});
 							
-							outgoing.save(function(message) {
+							outgoing.save().then(function(message) {
     							io.emit('message', message);
     							
 								return res.status(200).json({
