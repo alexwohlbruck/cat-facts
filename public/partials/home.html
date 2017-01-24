@@ -1,0 +1,103 @@
+<style>
+    #main-content, ui-view {
+        padding: 0 !important;
+    }
+    #main-content {
+        max-width: none !important;
+    }
+    
+    #carousel {
+        margin: 0;
+        height: calc(100vh - 64px);
+        background-color: #E3F2FD;
+    }
+    #carousel .bgimage {
+        text-align: right;
+        color: white;
+        background-size: cover;
+        height: 100%;
+        background-position: center center;
+    }
+    #carousel .bgimage:after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: calc(100vh - 64px);
+        background-color: rgba(0,0,0,.4);
+    }
+    
+    #jumbo {
+        width: 100%;
+        position: absolute;
+        z-index: 10;
+    }
+    #jumbo {
+        margin-top: 15vh;
+    }
+    #app-logo {
+        height: 35vh;
+    }
+    #app-slogan {
+        color: #fff;
+        position: relative;
+        top: -5vh;
+    }
+    #imagery {
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+    }
+    #imagery img {
+        position: absolute;
+        bottom: 0;
+        width: 480px;
+        transition: ease-in-out all 300ms;
+    }
+    #imagery img.left {
+        transform: translateY(-30%) rotate(3deg);
+    }
+    #imagery img.right {
+        right: 0;
+        transform: translateY(-30%) rotate(-2deg);
+    }
+    @media (max-width: 960px) {
+        #imagery {
+            padding-top: 150px;
+        }
+        #imagery img {
+            transform: translateY(-55%) rotate(0deg) !important;
+            position: relative !important;
+        }
+    }
+    @media (max-width: 600px) {
+        #imagery img {
+            max-width: 100%;
+        }
+    }
+    #call-to-action {
+        position: relative;
+        top: -3vh;
+    }
+    #call-to-action .md-button {
+        padding: 2px 14px;
+    }
+</style> 
+
+<div id="jumbo" layout="column" layout-align="start center">
+    <img id="app-logo" ng-src="img/logo/app-logo.png"/>
+    <span id="app-slogan" class="md-headline">{{fact}}</span>
+    <div id="call-to-action" layout="row">
+        <md-button ng-href="/auth/google" class="md-button md-raised md-primary">Get Started</md-button>
+    </div>
+</div>
+
+<ul id="carousel" rn-carousel-index="{{carousel.index}}" rn-carousel rn-carousel-auto-slide="5" rn-carousel-controls-allow-loop class="image">
+    <li ng-repeat="image in carousel.catImages">
+        <div ng-style="{'background-image': 'url(' + image.link + ')'}" class="bgimage"></div>
+    </li>
+</ul>
+
+<div id="imagery" layout="column" layout-align-sm="center center">
+    <img src="img/res/home/left.png" class="left"/>
+    <img src="img/res/home/right.png" class="right"/>
+</div>

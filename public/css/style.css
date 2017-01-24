@@ -1,0 +1,43 @@
+#main-content ui-view .layout-center {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+.input-button-inline {
+	transform: translateY(-12px);
+}
+
+.md-icon-button-small {
+	transform: scale(.8);
+}
+
+message .container {
+	max-width: 70%;
+}
+message .message-bubble {
+	background: #dedede;
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0px 8px;
+    max-width: 70%;
+}
+
+.grey { color: #888; }
+.blue { color: #2196f3; }
+
+.padding-10-5 { padding: 10px 5px !important; }
+.padding-11-15 { padding: 11px 15px !important; }
+.padding-top-15 { padding-top: 15px !important; }
+.line-height-10 { line-height: 10px !important; }
+.margin-0 { margin: 0 !important; }
+.margin-top-2 { margin-top: 2px !important; }
+.min-width-350 { min-width: 350px !important; }
+
+.avatar {
+	width: 40px;
+    border-radius: 50%;
+}
+
+.row-reverse {
+	flex-direction: row-reverse !important;
+	-webkit-flex-direction: row-reverse !important;
+}

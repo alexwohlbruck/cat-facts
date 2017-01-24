@@ -1,0 +1,24 @@
+// School routes - /api/school/...
+var express = require('express');
+var router = express.Router();
+var passport = require.main.require('passport');
+
+router.get('/me', function(req, res) {
+	if (req.user) return res.status(200).json(req.user);
+	return res.status(204).send();
+});
+
+router.get('/google', passport.authenticate('google', {
+	scope: [
+	    'https://www.googleapis.com/auth/userinfo.email',
+	    'https://www.googleapis.com/auth/plus.login'
+	]
+}));
+
+router.get('/google/callback', passport.authenticate('google', {
+	failureRedirect: '/login'
+}), function(req, res) {
+	res.redirect('/#/facts');
+});
+
+module.exports = router;
