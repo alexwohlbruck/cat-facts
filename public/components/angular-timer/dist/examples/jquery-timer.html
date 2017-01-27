@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JQuery Timer Example</title>
+    <!-- compiled JavaScript -->
+    <script type="text/javascript" src="../dist/assets/js/angular-timer-bower.js"></script>
+    <script type="text/javascript" src="../dist/assets/js/angular-timer-all.min.js"></script>
+    <script>
+        function startTimer() {
+            $('timer')[0].start();
+        }
+
+        function stopTimer() {
+            $('timer')[0].stop();
+        }
+    </script>
+</head>
+<body>
+<div ng-controller="MyAppController">
+    <h2>JQuery - Timer Example</h2>
+    <h3 ng-app="timer"><timer/></h3>
+    <button onclick="startTimer()">Start Timer</button>
+    <button onclick="stopTimer()">Stop Timer</button>
+</div>
+<br/>
+</body>
+</html>

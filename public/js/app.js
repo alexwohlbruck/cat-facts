@@ -3,7 +3,7 @@ var app = angular.module('catfacts', [
 	'ngMaterial',
 	'ui.router',
 	'md.data.table',
-	'countdownTimer',
+	'timer',
 	'angular-carousel',
 	'btford.socket-io',
 	'luegg.directives'

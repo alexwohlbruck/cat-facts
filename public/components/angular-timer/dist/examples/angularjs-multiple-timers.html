@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AngularJS Example - Multiple Timers Example</title>
+
+    <!-- compiled JavaScript -->
+    <script type="text/javascript" src="../dist/assets/js/angular-timer-bower.js"></script>
+    <script type="text/javascript" src="../dist/assets/js/angular-timer-all.min.js"></script>
+    <script>
+        angular.module('MyApp', ['timer'])
+                .controller('MyAppController', ['$scope', function ($scope) {
+                    $scope.timerRunning = true;
+
+                    $scope.startTimer = function (){
+                        $scope.$broadcast('timer-start');
+                        $scope.timerRunning = true;
+                    };
+
+                    $scope.stopTimer = function (){
+                        $scope.$broadcast('timer-stop');
+                        $scope.timerRunning = false;
+                    };
+
+                    $scope.$on('timer-stopped', function (event, args) {
+                        console.log('timer-stopped args = ', args);
+                    });
+                }]);
+    </script>
+</head>
+<body ng-app="MyApp">
+    <div ng-controller="MyAppController">
+        <h2>AngularJS - Multiple Timers Example</h2>
+        <h3>Timer 1: <timer/></h3>
+        <h3>Timer 2: <timer interval="2000"/></h3>
+        <h3>Timer 3: <timer>{{minutes}} minutes, {{seconds}} seconds.</timer></h3>
+        <button ng-click="startTimer()" ng-disabled="timerRunning">Start Timers</button>
+        <button ng-click="stopTimer()" ng-disabled="!timerRunning">Stop Timers</button>
+    </div>
+</body>
+</html>

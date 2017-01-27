@@ -1,6 +1,9 @@
 <div class="layout-center">
 	<div layout="column" layout-align="start center">
-		<strong countdown end-date="{{sendDate}}" units="hours|minutes|seconds" class="md-headline"></strong>
+		<timer class="md-headline bold" countdown="seconds" finish-callback="countdownFinished()" max-time-unit="'hour'" interval="1000">
+			{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
+		</timer>
+		
 		<span class="md-subhead">until next fact is sent</span>
 		
 		<br/>

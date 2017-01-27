@@ -149,10 +149,10 @@ router.post('/submitted', function(req, res) {
         
         fact.save()
         .then(function(fact) {
-        	io.emit('fact', fact);
         	return User.populate(fact, {path: 'user', select: 'name'});
         })
         .then(function(fact) {
+        	io.emit('fact', fact);
             return res.status(200).json(fact);
         })
         .catch(function(err) {
@@ -169,7 +169,6 @@ router.post('/submitted/:factID/upvote', function(req, res) {
         if (!req.params.factID) return res.status(400).json({message: "Provide a fact ID"});
         
         Fact.findById(req.params.factID)
-			
 		.then(function(fact) {
         	if (!fact) return res.status(404).json({message: "That fact doesn't exist"});
         	if (fact.user.equals(req.user._id)) return  res.status(400).json({message: "You can't upvote your own fact"});

@@ -5,6 +5,7 @@
             <h5 class="md-caption margin-0 line-height-10">{{data.recipient.number | tel}}</h5>
         </div>
     </md-toolbar>
+    
     <md-dialog-content class="padding-10-5" scroll-glue>
         <div flex layout="column" layout-align="end stretch" class="padding-10-5 overflow-scroll overflow-x-hidden">
             <message ng-repeat="message in messages" message="message"></message>

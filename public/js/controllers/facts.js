@@ -1,48 +1,43 @@
 /* global angular */
 var app = angular.module('catfacts');
-var date, time = {
-    // Define time for next cat fact
-    hours: 16, // Military time (add 12 hours for pm)
-    minutes: 20
-};
+
 
 app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
 	function($scope, $rootScope, FactService, socket) {
     
     getFacts();
     setTimer();
+    
+    var endTime = {
+	    // Define time for next cat fact to be sent
+	    hours: 13,
+	    minutes: 55
+	};
 	
 	$scope.submitFact = function() {
 	    var fact = $scope.form.newFact;
 	    
 	    if (fact && fact.trim().length != 0) {
-	        FactService.submitFact({text: fact}).then(function(response) {
-	        	response.data.upvotes = [];
-	            $scope.facts.unshift(response.data);
-	        });
+	        FactService.submitFact({text: fact});
     	    $scope.form.newFact = '';
 	    } else {
 	        $scope.showToast("Type in a fact");
 	    }
 	};
 	
+	$scope.countdownFinished = function() {
+		setTimer();
+	};
+	
 	// http://stackoverflow.com/questions/30861304/angular-ng-repeat-filter-passing-wrong-index
 	$scope.upvoteFact = function(fact) {
 		var index = getIndexOfFact(fact);
 		if (userUpvoted(fact)) {
-			FactService.unvoteFact(fact._id).then(function() {
-				$scope.facts[index].upvotes.splice(
-					$scope.facts[index].upvotes.indexOf($rootScope.authenticatedUser._id), 1
-				);
-				$scope.facts[index].upvoted = false;
-			}, function(err) {
+			FactService.unvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
 			});
 		} else {
-			FactService.upvoteFact(fact._id).then(function() {
-				$scope.facts[index].upvotes.push({user: $rootScope.authenticatedUser._id});
-				$scope.facts[index].upvoted = true;
-			}, function(err) {
+			FactService.upvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
 			});
 		}
@@ -61,22 +56,22 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
 		return !!fact.upvotes.find(o => o.user == $rootScope.authenticatedUser._id);
 	}
 	
-	function getIndexOfFact(fact) {
-		return $scope.facts.indexOf(fact);
+	function getIndexOfFact(factID) {
+		return $scope.facts.map(o => o._id).indexOf(factID);
 	}
 	
 	function setTimer() {
-        // Generate timestamp
-        date = new Date();
-    
-        if ((date.getHours() == time.hours && date.getMinutes() > time.minutes) || date.getHours() > time.hours) {
-            // After given time is passed, fact is sent the next day
-            date.setDate(date.getDate() + 1);
-        }
-        
-        date.setHours(time.hours);
-        date.setMinutes(time.minutes);
-        $scope.sendDate = date.toString();
+        var now = new Date(),
+        	endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 20, 0, 0);
+		    
+		if (endTime.getTime() - now.getTime() < 0) {
+			endTime.setDate(endTime.getDate() + 1);
+		}
+    	
+    	var seconds = (endTime.getTime() - now.getTime()) / 1000;
+		$scope.seconds = seconds;
+	    $scope.$broadcast('timer-set-countdown-seconds', seconds);
+	    $scope.$broadcast('timer-start');
     }
     
     function getIndexOfUpvote(upvotes, user) {
@@ -84,17 +79,20 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
     }
     
     socket.on('fact', function(data) {
+	    data.upvotes = [];
     	$scope.facts.push(data);
     });
     
     socket.on('fact:upvote', function(data) {
-    	alert($scope.facts[getIndexOfFact(data.fact)]);
-    	$scope.facts[getIndexOfFact(data.fact._id)].upvotes.push({user: data.user._id});
+    	var factIndex = getIndexOfFact(data.fact._id);
+    	$scope.facts[factIndex].upvotes.push({user: data.user._id});
+		$scope.facts[factIndex].upvoted = true;
     });
     
     socket.on('fact:unvote', function(data) {
-    	var fact = $scope.facts[getIndexOfFact(data.fact._id)];
-    	fact.upvotes.splice(fact.upvotes.indexOf({user: data.user._id}), 1);
+    	var factIndex = getIndexOfFact(data.fact._id);
+    	$scope.facts[factIndex].upvotes.splice($scope.facts[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
+    	$scope.facts[factIndex].upvoted = false;
     });
     
 }]);
