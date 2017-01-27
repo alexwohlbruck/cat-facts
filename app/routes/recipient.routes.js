@@ -35,7 +35,6 @@ router.get('/me', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-	console.log(req.body);
 	if (req.user) {
 		var newRecipient = new Recipient({
 			name: req.body.name,

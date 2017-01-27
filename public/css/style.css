@@ -14,11 +14,15 @@ message .container {
 	max-width: 70%;
 }
 message .message-bubble {
-	background: #dedede;
+	background-color: #dedede;
     border-radius: 12px;
     padding: 10px;
     margin: 0px 8px;
     max-width: 70%;
+}
+message .row-reverse .message-bubble {
+	background-color: #2196f3 !important;
+	color: #fff;
 }
 
 .grey { color: #888; }
@@ -40,4 +44,8 @@ message .message-bubble {
 .row-reverse {
 	flex-direction: row-reverse !important;
 	-webkit-flex-direction: row-reverse !important;
+}
+
+.bold {
+	font-weight: 500 !important;
 }

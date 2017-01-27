@@ -1,0 +1,21 @@
+{
+  "name": "cat-facts",
+  "description": "A chat example to showcase how to use `socket.io` with a static `express` server with `async` for control flow.",
+  "main": "server.js",
+  "authors": [
+    "Mostafa Eweda <mo.eweda@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "directory" : "public/components/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-timer": "^1.3.4"
+  }
+}
