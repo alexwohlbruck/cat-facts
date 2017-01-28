@@ -12,6 +12,4 @@ Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularj
 - Add your own cat facts, and upvote others. The highest upvoted fact gets send out that day!
 - Quick copy-and-paste-able cat facts with the "Get Fact" button
 
-### Special thanks to
-
 Visit the site [here](https://cat-fact.herokuapp.com) and start sending messing with your friends!
