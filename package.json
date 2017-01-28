@@ -15,6 +15,7 @@
     "method-override": "^2.3.7",
     "mongoose": "^4.7.6",
     "morgan": "^1.7.0",
+    "node-ifttt-maker": "^0.1.2",
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "path": "^0.12.7",

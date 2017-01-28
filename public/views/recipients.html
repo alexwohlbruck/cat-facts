@@ -10,7 +10,7 @@
 			</md-input-container>
 			<md-input-container>
 				<label>Phone Number</label>
-				<input required ng-model="form.number" ng-pattern="^\d{10}$" aria-label="Recipient phone number">
+				<input required ng-model="form.number" ng-pattern="/^\d{10}$/" aria-label="Recipient phone number">
 			</md-input-container>
 			<input type="submit" value="Add" class="md-button md-raised md-accent input-button-inline" aria-label="Add Recipient">
 		</form>

@@ -7,7 +7,7 @@
   ],
   "license": "MIT",
   "homepage": "",
-  "directory" : "public/components/",
+  "directory": "public/components/",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular-timer": "^1.3.4"
+    "angular-timer": "^1.3.4",
+    "ngclipboard": "^1.1.1"
   }
 }

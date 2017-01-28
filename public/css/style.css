@@ -6,10 +6,17 @@
 	transform: translateY(-12px);
 }
 
+md-toolbar md-nav-bar .md-button.md-accent {
+	color: #fff;
+}
+
 .md-icon-button-small {
 	transform: scale(.8);
 }
 
+message {
+	margin: 4px 0px;
+}
 message .container {
 	max-width: 70%;
 }
@@ -31,10 +38,14 @@ message .row-reverse .message-bubble {
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
 .padding-top-15 { padding-top: 15px !important; }
+.padding-20 { padding: 20px !important; }
+.padding-30 { padding: 30px !important; }
 .line-height-10 { line-height: 10px !important; }
 .margin-0 { margin: 0 !important; }
+.margin-10 { margin: 10px !important; }
 .margin-top-2 { margin-top: 2px !important; }
 .min-width-350 { min-width: 350px !important; }
+.width-40 { width: 40px; }
 
 .avatar {
 	width: 40px;
@@ -46,6 +57,6 @@ message .row-reverse .message-bubble {
 	-webkit-flex-direction: row-reverse !important;
 }
 
-.bold {
-	font-weight: 500 !important;
-}
+.bold { font-weight: 500 !important; }
+.center-text { 	text-align: center; }
+.pointer { cursor: pointer; }

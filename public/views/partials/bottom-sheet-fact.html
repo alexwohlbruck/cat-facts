@@ -1,0 +1,21 @@
+<md-bottom-sheet>
+    <div class="padding-30" layout="row" flex>
+        <h5 class="md-headline" flex="75">
+            {{fact}}
+        </h5>
+        
+        <span flex></span>
+        
+        <md-button
+            class="md-icon-button"
+            aria-label="Copy to clipboard"
+            ngclipboard
+            data-clipboard-text="{{fact}}"
+            ng-click="alertCopied()">
+            
+            <md-icon class="material-icons">content_copy</md-icon>
+            
+            <md-tooltip md-direction="left">Copy to clipboard</md-tooltip>
+        </md-button>
+    </div>
+</md-bottom-sheet>

@@ -33,7 +33,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', '$
     $scope.openConversation = function(event, recipient) {
         $mdDialog.show({
             controller: 'ConversationCtrl',
-            templateUrl: '/partials/conversation.html',
+            templateUrl: '/views/conversation.html',
             parent: angular.element(document.body),
             targetEvent: event,
             clickOutsideToClose: true,

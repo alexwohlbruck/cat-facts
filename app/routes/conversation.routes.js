@@ -18,7 +18,7 @@ router.get('/:number', function(req, res) {
             }
         });
     } else {
-        return res.status(401).json({message: "Sign in first"});
+        return res.status(401).json({message: strings.unauthenticated});
     }
 });
 

@@ -9,6 +9,7 @@ var Message = require.main.require('./app/models/message');
 var FactService = require.main.require('./app/services/fact.service');
 var apiai = require('apiai');
 var catbot = apiai('64bea369650e4de59e7aee3dbb03efdd');
+var strings = require.main.require('./app/config/strings.js');
 
 // Request made from tasker when text message is recieved
 router.get('/text', function(req, res) {
@@ -71,7 +72,7 @@ router.get('/text', function(req, res) {
 			
 			newRecipient.save().then(function() {
 				return res.status(200).json({
-					response: "Thanks for signing up for Cat Facts! You will now receive fun facts about CATS every day! =^.^="
+					response: strings.welcomeMessage
 				});
 			}, function(err) {
 				return res.status(400).json(err);
@@ -159,7 +160,7 @@ router.post('/submitted', function(req, res) {
             return res.status(400).json(err);
         });
     } else {
-        return res.status(401).json({message: "Sign in first"});
+        return res.status(401).json({message: strings.unauthenticated});
     }
 });
 
@@ -191,7 +192,7 @@ router.post('/submitted/:factID/upvote', function(req, res) {
             return res.status(400).json(err);
         });
     } else {
-    	return res.status(401).json({message: "Sign in first"});
+    	return res.status(401).json({message: strings.unauthenticated});
     }
 });
 
@@ -210,7 +211,7 @@ router.delete('/submitted/:factID/upvote', function(req, res) {
         	return res.stauts(400).json(err);
         });
 	} else {
-    	return res.status(401).json({message: "Sign in first"});
+    	return res.status(401).json({message: strings.unauthenticated});
     }
 });
 
