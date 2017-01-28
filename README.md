@@ -14,4 +14,4 @@ Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularj
 
 ### Special thanks to
 
-Visit the site [here](https://cat-fact-herokuapp.com) and start sending messing with your friends!
+Visit the site [here](https://cat-fact.herokuapp.com) and start sending messing with your friends!
