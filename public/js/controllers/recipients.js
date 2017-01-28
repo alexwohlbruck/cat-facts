@@ -37,7 +37,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', '$
             parent: angular.element(document.body),
             targetEvent: event,
             clickOutsideToClose: true,
-            fullScreen: $mdMedia('xs'),
+            fullscreen: $mdMedia('xs'),
             locals: {data: {recipient: recipient}}
         });
     };

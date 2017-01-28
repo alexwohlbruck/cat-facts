@@ -111,6 +111,7 @@ router.post('/', function(req, res) {
 // Get submitted facts
 router.get('/submitted', function(req, res) {
 	Fact.aggregate([
+		{$match: {used: false}},
 		{$lookup: {
 			from: 'users',
 			localField: 'user',
@@ -130,7 +131,7 @@ router.get('/submitted', function(req, res) {
 		{$project: {
 			text: 1,
 			user: { _id: 1, name: 1 },
-			upvotes: { user: 1 }
+			upvotes: { user: 1 },
 		}}
 	]).then(function(data) {
 		return res.status(200).json(data);

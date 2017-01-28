@@ -32,9 +32,10 @@ message .row-reverse .message-bubble {
 	color: #fff;
 }
 
-.grey { color: #888; }
+.grey { color: rgba(0,0,0,0.54) !important; }
 .blue { color: #2196f3; }
 
+.padding-0 { padding: 0px !important; }
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
 .padding-top-15 { padding-top: 15px !important; }
@@ -44,6 +45,10 @@ message .row-reverse .message-bubble {
 .margin-0 { margin: 0 !important; }
 .margin-10 { margin: 10px !important; }
 .margin-top-2 { margin-top: 2px !important; }
+.margin-top-5 { margin-top: 5px !important }
+.margin-bottom-0 { margin-bottom: 0px !important; }
+.margin-bottom-30 { margin-bottom: 30px !important }
+.margin-sides-0 { margin-left: 0px; margin-right: 0px; }
 .min-width-350 { min-width: 350px !important; }
 .width-40 { width: 40px; }
 
@@ -60,3 +65,15 @@ message .row-reverse .message-bubble {
 .bold { font-weight: 500 !important; }
 .center-text { 	text-align: center; }
 .pointer { cursor: pointer; }
+
+.accent-links a {
+	text-decoration: none;
+	color: rgb(33,150,243);
+}
+
+md-input-container.no-space {
+	margin: 10px 0px;
+}
+md-input-container.no-space .md-errors-spacer {
+	display: none;
+}

@@ -15,9 +15,9 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
     $rootScope.showToast = function(message) {
         return $mdToast.show(
             $mdToast.simple()
-            .textContent(message)
-            .position('bottom right')
-            .hideDelay(5000)
+                .textContent(message)
+                .position('bottom right')
+                .hideDelay(5000)
         );
     };
     
@@ -54,6 +54,16 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
     		    }]
     		});
     	});
+    };
+    
+    $scope.openAbout = function(event) {
+        $mdDialog.show({
+            templateUrl: '/views/partials/about.html',
+            parent: angular.element(document.body),
+            targetEvent: event,
+            clickOutsideToClose: true,
+            fullscreen: false
+        });
     };
 
 }]);

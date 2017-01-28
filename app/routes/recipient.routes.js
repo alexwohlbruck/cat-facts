@@ -3,21 +3,53 @@ var express = require('express');
 var router = express.Router();
 var keys = require.main.require('./app/config/keys');
 var Recipient = require.main.require('./app/models/recipient');
+var Message = require.main.require('./app/models/message');
+var Fact = require.main.require('./app/models/fact');
+var Upvote = require.main.require('./app/models/upvote');
 var FactService = require.main.require('./app/services/fact.service');
 var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 var strings = require.main.require('./app/config/strings.js');
 
 router.get('/', function(req, res) {
 	if (req.query && req.query.code == keys.dbPassword) {
-		Recipient.find().then(function(recipients) {
-			FactService.getFact(function(fact) {
+		FactService.getFact(function(fact) {
+			var recipients, fact;
+			
+			Recipient.find().then(function(recipients) {
+				recipients = recipients;
+				var messages = recipients.map(function(o) { return new Message({text: fact, number: o.number, type: 'outgoing'}) });
+				return Message.create(messages);
+			})
+			.then(function() {
+				return Upvote.aggregate([
+					{$group: {_id: '$fact', upvotes: {$sum: 1}}},
+					{$sort: {upvotes: -1}},
+					{$limit: 1}
+				]);
+			})
+			.then(function(customFacts) {
+				if (customFacts.length == 0 || fact.upvotes <= 0) {
+					return res.status(200).json({
+						fact: fact,
+						recipients: recipients
+					});
+				} else {
+					fact = customFacts[0];
+					return Fact.update({_id: fact._id}, {used: true});
+				}
+			})
+			.then(function() {
+				return Fact.populate(fact, {path: '_id'});
+			})
+			.then(function() {
 				return res.status(200).json({
-					fact: fact,
+					fact: fact._id.text,
 					recipients: recipients
 				});
+			}, function(err) {
+				console.log(err);
+				return res.status(400).json(err);
 			});
-		}, function(err) {
-			return res.status(400).json(err);
 		});
 	} else {
 		return res.status(400).json({message: "Provide the code to recieve recipients"});

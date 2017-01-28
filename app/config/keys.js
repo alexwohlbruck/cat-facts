@@ -1,10 +1,13 @@
 module.exports = {
     oauth: {
-        GOOGLE_CLIENT_ID: '11528929989-1c5m1aslf27i9093o2m8hvrk9gukjo8n.apps.googleusercontent.com',
-        GOOGLE_CLIENT_SECRET: 'ggeDVsKcjGUvdvAgjdsBjwSC'
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
     },
     session: {
-        secret: '4jXEgTlB4L0fa5sxMOqSmX6sqDWD7mhduJmhSW6J'
+        secret: process.env.SESSION_SECRET
     },
-    dbPassword: 'bDsL3w9CxAweA2sX'
+    ifttt: {
+        apiKey: process.env.IFTTT_API_KEY
+    },
+    dbPassword: process.env.DB_PASSWORD
 };

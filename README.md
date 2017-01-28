@@ -1,22 +1,17 @@
+![Cat Facts logo](http://i.imgur.com/9RGJ5Ea.png)
+---
+Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularjs.org/), and [Tasker](https://tasker.dinglisch.net/), this app will combine APIs and Services from the web to do just one thing.. send cat facts.
 
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+---
+### Feature list
+- Add and view your personal list of fact recipients
+- Send a cat fact via text message every day
+- Countdown clock until next fact is sent
+- Catbot that auto-replies when recipients text back
+- View the catversation between Catbot and your recipients
+- Add your own cat facts, and upvote others. The highest upvoted fact gets send out that day!
+- Quick copy-and-paste-able cat facts with the "Get Fact" button
 
+### Special thanks to
 
-Welcome to your Node.js project on Cloud9 IDE!
-
-This chat example showcases how to use `socket.io` with a static `express` server.
-
-## Running the server
-
-1) Open `server.js` and start the app by clicking on the "Run" button in the top menu.
-
-2) Alternatively you can launch the app from the Terminal:
-
-    $ node server.js
-
-Once the server is running, open the project in the shape of 'https://projectname-username.c9users.io/'. As you enter your name, watch the Users list (on the left) update. Once you press Enter or Send, the message is shared with all connected clients.
+Visit the site [here](https://cat-fact-herokuapp.com) and start sending messing with your friends!

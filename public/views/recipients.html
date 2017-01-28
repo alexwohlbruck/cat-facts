@@ -1,25 +1,27 @@
-<div class="layout-center">
+<div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
 	<div layout="column" layout-fill layout-align="start center">
-		<span class="md-display-1">Add a Recipient</span>
+		<span class="md-headline bold">Add a Recipient</span>
 		<br/>
 		
-		<form ng-submit="addRecipient()">
-			<md-input-container>
+		<form ng-submit="addRecipient()" layout-xs="column" layout-gt-xs="row">
+			<md-input-container class="no-space">
 				<label>Name</label>
-				<input required ng-model="form.name" aria-label="Recipient name">
+				<input ng-model="form.name" aria-label="Recipient name">
 			</md-input-container>
-			<md-input-container>
+			
+			<md-input-container class="no-space">
 				<label>Phone Number</label>
-				<input required ng-model="form.number" ng-pattern="/^\d{10}$/" aria-label="Recipient phone number">
+				<input ng-model="form.number" ng-pattern="/^\d{10}$/" aria-label="Recipient phone number">
 			</md-input-container>
-			<input type="submit" value="Add" class="md-button md-raised md-accent input-button-inline" aria-label="Add Recipient">
+			
+			<input type="submit" value="Add" class="md-button md-raised md-accent margin-top-5" ng-class="{'margin-bottom-30': $mdMedia('xs')}" aria-label="Add Recipient">
 		</form>
 	</div>
 	
-	<md-card>
+	<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
 		<md-toolbar class="md-table-toolbar md-default">
 			<div class="md-toolbar-tools">
-				<span>
+				<span class="md-subhead bold">
 					My Recipients <span class="grey">({{recipients.length}})</span>
 				</span>
 				
@@ -43,7 +45,6 @@
 						<th md-column><span>Name</span></th>
 						<th md-column ng-show="$mdMedia('gt-xs')">Date Added</th>
 						<th md-column md-numeric><span>Phone Number</span></th>
-						<th md-column md-numeric>Total Facts Sent</th>
 					</tr>
 				</thead>
 				<tbody md-body>
@@ -55,7 +56,6 @@
 						<td md-cell>{{recipient.name}}</td>
 						<td md-cell ng-show="$mdMedia('gt-xs')">{{recipient.updatedAt | date:'MMMM d, yyyy'}}</td>
 						<td md-cell>{{recipient.number | tel}}</td>
-						<td md-cell>{{recipient.total}}</td>
 					</tr>
 				</tbody>
 			</table>

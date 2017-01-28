@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var Message = require.main.require('./app/models/message');
 var Recipient = require.main.require('./app/models/recipient');
+var strings = require.main.require('./app/config/strings.js');
 
 router.get('/:number', function(req, res) {
     if (req.user) {
