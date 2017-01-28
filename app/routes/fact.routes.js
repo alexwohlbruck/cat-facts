@@ -37,7 +37,7 @@ router.get('/text', function(req, res) {
     							io.emit('message', message);
     							
 								return res.status(200).json({
-									response: message
+									response: {text: message}
 								});
 							});
 						});
