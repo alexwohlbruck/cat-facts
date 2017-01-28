@@ -19,6 +19,7 @@ router.get('/text', function(req, res) {
 	var io = req.app.get('socketio');
 	
 	Recipient.findOne({number: req.query.number}).then(function(recipient) {
+
 		if (recipient) {
 			var incoming = new Message({text: req.query.query, number: req.query.number, type: 'incoming'});
 			incoming.save().then(function(message) {
@@ -37,7 +38,7 @@ router.get('/text', function(req, res) {
     							io.emit('message', message);
     							
 								return res.status(200).json({
-									response: {text: message}
+									response: message
 								});
 							});
 						});
@@ -72,7 +73,9 @@ router.get('/text', function(req, res) {
 			
 			newRecipient.save().then(function() {
 				return res.status(200).json({
-					response: strings.welcomeMessage
+					response: {
+						text: strings.welcomeMessage
+					}
 				});
 			}, function(err) {
 				return res.status(400).json(err);
