@@ -1,4 +1,4 @@
-<div class="layout-center">
+<div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
 	<div layout="column" layout-align="start center">
 		<timer class="md-headline bold center-text" countdown="seconds" finish-callback="countdownFinished()" max-time-unit="'hour'" interval="1000">
 			{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
@@ -33,7 +33,7 @@
 	<md-tabs md-dynamic-height md-center-tabs>
 		<md-tab label="All Facts">
 		    <md-content>
-	    		<md-card>
+	    		<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
 	            	<md-table-container>
 	            		<table md-table ng-model="selected" md-progress="promise">
 	            			<thead md-head>
@@ -81,7 +81,7 @@
 		
 		<md-tab label="My Facts">
 			<md-content>
-	    		<md-card ng-if="authenticatedUser">
+	    		<md-card ng-if="authenticatedUser" ng-class="{'margin-sides-0': $mdMedia('xs')}">
 	            	<md-table-container>
 	            		<table md-table ng-model="selected" md-progress="promise">
 	            			<thead md-head>

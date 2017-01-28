@@ -1,5 +1,6 @@
+var keys = require.main.require('./app/config/keys');
 var IFTTT = require('node-ifttt-maker');
-var ifttt = new IFTTT('nUqHZO09Tu4HJviLOAsXS8z5Hc2E6fErBRjHtK6tNOQ');
+var ifttt = new IFTTT(keys.ifttt.apiKey);
 
 module.exports = {
     sendSingleMessage: function(data) {
