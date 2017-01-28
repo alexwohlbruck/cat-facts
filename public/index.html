@@ -19,7 +19,7 @@
 	<link rel="stylesheet" href="css/style.css">
 
 	<!-- Angular Material CSS -->
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.css"/>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.css"/>
 
 	<!-- Angular Material Dependencies -->
 	<!--<link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css"/>-->
@@ -30,46 +30,43 @@
 	<!-- Material Icons -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
 </head>
+
 <body ng-controller="MainCtrl" layout="column" ng-cloak>
 	<md-toolbar md-scroll-shrink class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
-			<!--<md-icon src-->
-			<md-button ng-click="sideNav.left.toggle()" class="md-icon-button" aria-label="Menu">
-				<md-icon class="material-icons">menu</md-icon>
-			</md-button>
+			<img src="img/logo/app-icon-android.png" ui-sref="home" class="width-40 margin-10 pointer">
+			
 			<h3>
 				<span>Cat Facts</span>
 			</h3>
 		</div>
+		
+		<md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation">
+			<md-nav-item
+				ng-repeat="state in $state.get()"
+				md-nav-sref="{{state.name}}"
+				name="{{state.name}}"
+				ng-if="state.data.showInNavigation">
+				
+				{{state.name}}
+			</md-nav-item>
+		</md-nav-bar>
 	</md-toolbar>
 
-	<section layout="row" flex>
-		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
-		    <!--<md-content layout-padding>
-				<p hide-md show-gt-md>
-					Navigation
-				</p>
-			</md-content>-->
-			<md-content>
-				<md-list>
-					<md-list-item ng-href="/#/recipients" ng-click="sideNav.left.toggle()">
-						<md-icon class="material-icons">contacts</md-icon>
-						<p>Recipients</p>
-					</md-list-item>
-					<md-list-item ng-href="/#/facts" ng-click="sideNav.left.toggle()">
-						<md-icon class="material-icons">message</md-icon>
-						<p>Facts</p>
-					</md-list-item>
-				</md-list>
-			</md-content>
-		</md-sidenav>
-		
-		<md-content flex id="main-content">
-			<ui-view layout-padding></ui-view>
-		</md-content>
-	</section>
+	<md-content flex id="main-content">
+		<ui-view layout-padding></ui-view>
+	</md-content>
 
-	<!-- <a ui-sref="home">State 1</a> -->
+	<md-button
+        class="md-fab md-accent md-fab-bottom-right"
+        ng-click="showCatFact()"
+        aria-label="Get a fact fact"
+        ng-show="$state.current.data.showInNavigation">
+        
+        <md-icon class="material-icons">message</md-icon>
+        
+        <md-tooltip md-direction="left">Get a cat fact</md-tooltip>
+    </md-button>
 
 	<!-- AngularJS -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
@@ -79,15 +76,17 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-aria.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-messages.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.js"></script>
-	<!--<script src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>-->
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.js"></script>
+	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-socket-io/0.7.0/socket.js"></script>
+	
 	<script src="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.js"></script>
-	<!--<script src="bower_components/angular-touch/angular-touch.js"></script>-->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-touch.js"></script>
 	<script src="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.js"></script>
 	<script src="https://cdn.rawgit.com/Luegg/angularjs-scroll-glue/master/src/scrollglue.js"></script>
+	<script src="https://cdn.rawgit.com/zenorocha/clipboard.js/master/dist/clipboard.min.js"></script>
+	<script src="/components/ngclipboard/dist/ngclipboard.min.js"></script>
 
 	<!-- Main App -->
 	<script src="js/app.js"></script>

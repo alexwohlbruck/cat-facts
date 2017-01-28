@@ -4,6 +4,8 @@ var router = express.Router();
 var keys = require.main.require('./app/config/keys');
 var Recipient = require.main.require('./app/models/recipient');
 var FactService = require.main.require('./app/services/fact.service');
+var IFTTTService = require.main.require('./app/services/ifttt.service.js');
+var strings = require.main.require('./app/config/strings.js');
 
 router.get('/', function(req, res) {
 	if (req.query && req.query.code == keys.dbPassword) {
@@ -30,7 +32,7 @@ router.get('/me', function(req, res) {
 			return res.status(400).json(err);
 		});
 	} else {
-		return res.status(401).json({message: "Sign in first"});
+		return res.status(401).json({message: strings.unauthenticated});
 	}
 });
 
@@ -43,12 +45,14 @@ router.post('/', function(req, res) {
 		});
 		
 		newRecipient.save().then(function(recipient) {
+			IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
+			
 			return res.status(200).json(recipient);
 		}, function(err) {
 			return res.status(400).json(err);
 		});
 	} else {
-		return res.status(401).json({message: "Sign in first"});
+		return res.status(401).json({message: strings.unauthenticated});
 	}
 });
 

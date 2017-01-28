@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var RecipientSchema = new Schema({
     name: String,
     number: {type: String, required: true, validate: validateNumber, unique: true},
-    addedBy: {type: Schema.Types.ObjectId, ref: 'User', required: true}
+    addedBy: {type: Schema.Types.ObjectId, ref: 'User'}
 }, {
     timestamps: true
 });

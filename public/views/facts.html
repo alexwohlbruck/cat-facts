@@ -1,6 +1,6 @@
 <div class="layout-center">
 	<div layout="column" layout-align="start center">
-		<timer class="md-headline bold" countdown="seconds" finish-callback="countdownFinished()" max-time-unit="'hour'" interval="1000">
+		<timer class="md-headline bold center-text" countdown="seconds" finish-callback="countdownFinished()" max-time-unit="'hour'" interval="1000">
 			{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
 		</timer>
 		
@@ -52,7 +52,7 @@
 	            					ng-animater="'animate'">
 	            					
 	            					<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
-	            					<td md-cell>"{{fact.text}}"</td>
+	            					<td md-cell class="padding-20">"{{fact.text}}"</td>
 	            					<td md-cell>
 	            						<span>{{fact.upvotes.length}}</span>
 	            						<md-button

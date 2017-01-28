@@ -6,7 +6,8 @@ var app = angular.module('catfacts', [
 	'timer',
 	'angular-carousel',
 	'btford.socket-io',
-	'luegg.directives'
+	'luegg.directives',
+	'ngclipboard'
 ]);
 
 app.config(['$stateProvider', '$urlRouterProvider', 
@@ -15,21 +16,32 @@ app.config(['$stateProvider', '$urlRouterProvider',
 	$stateProvider
 		.state('home', {
 			url: '/',
-			templateUrl: '/partials/home.html',
-			controller: 'HomeCtrl'
+			templateUrl: '/views/home.html',
+			controller: 'HomeCtrl',
+			data: {
+				restricted: false,
+				showInNavigation: false
+			}
 		})
 
 		.state('recipients', {
 			url: '/recipients',
-			templateUrl: '/partials/recipients.html',
+			templateUrl: '/views/recipients.html',
 			controller: 'RecipientsCtrl',
-			restricted: true
+			data: {
+				restricted: true,
+				showInNavigation: true
+			}
 		})
 
 		.state('facts', {
 			url: '/facts',
-			templateUrl: '/partials/facts.html',
-			controller: 'FactsCtrl'
+			templateUrl: '/views/facts.html',
+			controller: 'FactsCtrl',
+			data: {
+				restricted: false,
+				showInNavigation: true
+			}
 		})
 	;
 
@@ -50,22 +62,36 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 		});
 }]);
 
-app.run(['$rootScope', '$state', '$mdToast', 'AuthService', '$mdMedia',
-	function($rootScope, $state, $mdToast, AuthService, $mdMedia) {
+app.run(['$rootScope', '$state', '$window', '$mdToast', 'AuthService', '$mdMedia',
+	function($rootScope, $state, $window, $mdToast, AuthService, $mdMedia) {
 	
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
+	$rootScope.$state = $state;
 	
-	AuthService.getAuthenticatedUser().then(function(response) {
-		$rootScope.authenticatedUser = response.data;
-		
-		$rootScope.$on('$routeChangeStart', function(event, next) {
-			if (!$rootScope.authenticatedUser && !next.restricted) {
-				$rootScope.toast({message: "Sign in first"});
-				$state.go('home');
-			}
-		});
+	$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+		if ($rootScope.authenticatedUser === null) {
+			
+			AuthService.getAuthenticatedUser()
+				.then(function(response) {
+					$rootScope.authenticatedUser = response.data;
+				}).catch(function(response) {
+					$rootScope.authenticatedUser = false;
+				
+					if (toState.data.restricted) {
+						window.location.href = '/auth/google';
+					}
+				});
+		} else if (!$rootScope.authenticatedUser && toState.data.restricted) {
+			setTimeout(function() {
+				window.location.href = '/auth/google';
+			}, 100);
+		}
 	});
+	
+	$rootScope.$watch('$state.current.name', function(newValue, oldValue) {
+		$rootScope.startingState = newValue;
+    });
 	
 	$rootScope.toast = function(options) {
 		$mdToast.show(

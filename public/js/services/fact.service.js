@@ -17,4 +17,8 @@ app.service('FactService', function($http) {
     this.unvoteFact = function(factID) {
         return $http.delete('/facts/submitted/' + factID + '/upvote');
     };
+    
+    this.getFact = function() {
+        return $http.get('/facts');
+    };
 });
