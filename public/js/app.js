@@ -62,14 +62,16 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 		});
 }]);
 
-app.run(['$rootScope', '$state', '$window', '$mdToast', 'AuthService', '$mdMedia',
-	function($rootScope, $state, $window, $mdToast, AuthService, $mdMedia) {
+app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthService', '$mdMedia',
+	function($rootScope, $state, $window, $location, $mdToast, AuthService, $mdMedia) {
 	
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
 	$rootScope.$state = $state;
+	$window.ga('create', 'UA-88600627-2', 'auto'); // Start Google Analytics
 	
 	$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+		
 		if ($rootScope.authenticatedUser === null) {
 			
 			AuthService.getAuthenticatedUser()
@@ -87,6 +89,11 @@ app.run(['$rootScope', '$state', '$window', '$mdToast', 'AuthService', '$mdMedia
 				window.location.href = '/auth/google';
 			}, 100);
 		}
+	});
+	
+	$rootScope.on('$stateChangeSuccess', function(event) {
+		// Google Analytics page view
+		$window.ga('send', 'pageview', $location.path());
 	});
 	
 	$rootScope.$watch('$state.current.name', function(newValue, oldValue) {
