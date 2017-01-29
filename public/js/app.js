@@ -91,7 +91,7 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthServic
 		}
 	});
 	
-	$rootScope.on('$stateChangeSuccess', function(event) {
+	$rootScope.$on('$stateChangeSuccess', function(event) {
 		// Google Analytics page view
 		$window.ga('send', 'pageview', $location.path());
 	});
