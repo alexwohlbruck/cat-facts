@@ -18,7 +18,6 @@ router.get('/', function(req, res) {
 			Recipient.find().then(function(dbRecipients) {
 				recipients = dbRecipients;
 				var messages = recipients.map(function(o) { return new Message({text: fact, number: o.number, type: 'outgoing'}) });
-				messages = [];
 				return Message.create(messages);
 			})
 			.then(function() {
