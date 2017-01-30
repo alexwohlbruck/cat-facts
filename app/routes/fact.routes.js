@@ -23,7 +23,8 @@ router.get('/text', function(req, res) {
 		if (recipient) {
 			var incoming = new Message({text: req.query.query, number: req.query.number, type: 'incoming'});
 			incoming.save().then(function(message) {
-    			io.emit('message', message);
+				console.log(message, recipient);
+    			io.emit('message', {message: message, recipient: recipient});
 			
 				var request = catbot.textRequest(req.query.query, {
 					sessionId: 'UH2fKhXFIvPAx7Us3i2sGdApIIBCiIkgb7IS'
@@ -35,7 +36,7 @@ router.get('/text', function(req, res) {
 							var outgoing = new Message({text: message, number: req.query.number, type: 'outgoing'});
 							
 							outgoing.save().then(function(message) {
-    							io.emit('message', message);
+    							io.emit('message', {message: message, recipient: recipient});
     							
 								return res.status(200).json({
 									response: message
@@ -47,7 +48,7 @@ router.get('/text', function(req, res) {
 							outgoing = new Message({text: message, number: req.query.number, type: 'outgoing'});
 						
 						outgoing.save().then(function(message) {
-    						io.emit('message', message);
+    						io.emit('message', {message: message, recipient: recipient});
 							
 							return res.status(200).json({
 								response: message

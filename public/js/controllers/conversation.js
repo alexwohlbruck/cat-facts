@@ -2,15 +2,18 @@
 var app = angular.module('catfacts');
 
 app.controller('ConversationCtrl', ['$scope', 'ConversationService', 'data', 'socket', '$mdDialog',
-    function($scope, ConversationService, data, socket, $mdDialog) {
+    function($scope, ConversationService, ConversationData, socket, $mdDialog) {
         
-    $scope.data = data;
+    $scope.data = ConversationData;
     
     socket.on('message', function(data) {
-        $scope.messages.push(data);
+        console.log(data, ConversationData);
+        if (data.recipient.number == ConversationData.recipient.number) {
+            $scope.messages.push(data.message);
+        }
     });
         
-    ConversationService.getConversation(data.recipient.number).then(function(response) {
+    ConversationService.getConversation(ConversationData.recipient.number).then(function(response) {
         $scope.messages = response.data;
     });
     

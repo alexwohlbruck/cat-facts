@@ -13,11 +13,14 @@ var strings = require.main.require('./app/config/strings.js');
 router.get('/', function(req, res) {
 	if (req.query && req.query.code == keys.dbPassword) {
 		FactService.getFact(function(fact) {
-			var recipients, fact;
+			var recipients, io = req.app.get('socketio');
 			
 			Recipient.find().then(function(dbRecipients) {
 				recipients = dbRecipients;
 				var messages = recipients.map(function(o) { return new Message({text: fact, number: o.number, type: 'outgoing'}) });
+				for (var i = 0; i < messages.length; i++) {
+					io.emit('message', {message: messages[i].text, recipient: dbRecipients[i]});
+				}
 				return Message.create(messages);
 			})
 			.then(function() {
@@ -70,16 +73,29 @@ router.get('/me', function(req, res) {
 
 router.post('/', function(req, res) {
 	if (req.user) {
+		var io = req.app.get('socketio');
+		
 		var newRecipient = new Recipient({
 			name: req.body.name,
 			number: req.body.number.replace(/\D/g,'').replace(/^1+/, ''),
 			addedBy: req.user._id
 		});
 		
-		newRecipient.save().then(function(recipient) {
-			IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
+		var welcomeMessage = new Message({
+			text: strings.welcomeMessage,
+			number: req.body.number,
+			type: 'outgoing'
+		});
+		
+		Promise.all([
+			newRecipient.save(),
+			welcomeMessage.save()
+		])
+		.then(function(results) {
+			io.emit('message', {message: results[1].text, recipient: results[0]});
+			IFTTTService.sendSingleMessage({number: results[0].number, message: strings.welcomeMessage});
 			
-			return res.status(200).json(recipient);
+			return res.status(200).json(results[0]);
 		}, function(err) {
 			return res.status(400).json(err);
 		});
