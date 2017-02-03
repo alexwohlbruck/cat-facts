@@ -19,6 +19,7 @@
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "path": "^0.12.7",
+    "q": "^1.4.1",
     "socket.io": "~1.4.5"
   },
   "devDependencies": {

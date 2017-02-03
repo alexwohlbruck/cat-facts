@@ -9,50 +9,53 @@ var Upvote = require.main.require('./app/models/upvote');
 var FactService = require.main.require('./app/services/fact.service');
 var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 var strings = require.main.require('./app/config/strings.js');
+var Q = require('q');
 
 router.get('/', function(req, res) {
 	if (req.query && req.query.code == keys.dbPassword) {
-		FactService.getFact(function(fact) {
-			var recipients, io = req.app.get('socketio');
-			
-			Recipient.find().then(function(dbRecipients) {
-				recipients = dbRecipients;
-				var messages = recipients.map(function(o) { return new Message({text: fact, number: o.number, type: 'outgoing'}) });
-				for (var i = 0; i < messages.length; i++) {
-					io.emit('message', {message: messages[i].text, recipient: dbRecipients[i]});
-				}
-				return Message.create(messages);
-			})
-			.then(function() {
-				return Upvote.aggregate([
-					{$group: {_id: '$fact', upvotes: {$sum: 1}}},
-					{$sort: {upvotes: -1}},
-					{$limit: 1}
-				]);
-			})
-			.then(function(customFacts) {
-				if (customFacts.length == 0 || fact.upvotes <= 0) {
-					return res.status(200).json({
-						fact: fact,
-						recipients: recipients
-					});
-				} else {
-					fact = customFacts[0];
-					return Fact.update({_id: fact._id}, {used: true});
-				}
-			})
-			.then(function() {
-				return Fact.populate(fact, {path: '_id'});
-			})
-			.then(function() {
-				return res.status(200).json({
-					fact: fact._id.text,
-					recipients: recipients
-				});
-			}, function(err) {
-				console.log(err);
-				return res.status(400).json(err);
+		var io = req.app.get('socketio'), snowball = {};
+		
+		Q.all([
+			FactService.getFact(),
+			Recipient.find(),
+			Upvote.aggregate([
+				{$group: {_id: '$_id', fact: {$first: '$fact'}, upvotes: {$sum: 1}}},
+				{$sort: {upvotes: -1}},
+				{$lookup: {
+	                from: 'facts',
+	                localField: 'fact',
+	                foreignField: '_id',
+	                as: 'fact'
+	            }},
+            	{$unwind: '$fact'},
+				{$match: {'fact.used': false}},
+				{$limit: 1}
+			])
+		])
+		.spread(function(fact, recipients, highestUpvotedFact) {
+			highestUpvotedFact = highestUpvotedFact[0];
+			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
+			snowball.recipients = recipients;
+				
+			var messages = recipients.map(function(o, i) {
+				io.emit('message', {message: fact, recipient: o});
+				return new Message({text: fact, number: o.number, type: 'outgoing'});
 			});
+			
+			return Promise.all([
+				Message.create(messages),
+				Fact.update({_id: highestUpvotedFact.fact._id}, {used: true})
+			]);	
+		})
+		.then(function() {
+			return res.status(200).json({
+				fact: snowball.fact,
+				recipients: snowball.recipients.map(o => o.number)
+			});
+		})
+		.catch(function(err) {
+			console.log(err);
+			return res.status(400).json(err);
 		});
 	} else {
 		return res.status(400).json({message: "Provide the code to recieve recipients"});
