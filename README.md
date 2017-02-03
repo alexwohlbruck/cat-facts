@@ -1,6 +1,6 @@
 ![Cat Facts logo](http://i.imgur.com/9RGJ5Ea.png)
 ---
-Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularjs.org/), and [Tasker](https://tasker.dinglisch.net/), this app will combine APIs and Services from the web to do just one thing.. send cat facts.
+Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularjs.org/), and [Tasker](https://tasker.dinglisch.net/), this app will combine APIs and Services from the web to do just one thing... send cat facts.
 
 ---
 ### Feature list
