@@ -12,6 +12,7 @@ var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 var passport = require('passport');
 var keys = require.main.require('./app/config/keys');
+var env = process.env.NODE_ENV || 'development';
 
 mongoose.connect('mongodb://alexwohlbruck:' + keys.dbPassword + '@ds157298.mlab.com:57298/cat-facts');
 
@@ -33,19 +34,20 @@ app.use(passport.session()); // Persistent login sessions
 // Define routes
 app.use('/', require('./app/routes'));
 
-var https_redirect = function(req, res, next) {
-    if (process.env.NODE_ENV === 'production') {
-        if (req.headers['x-forwarded-proto'] != 'https') {
-            return res.redirect('https://' + req.headers.host + req.url);
+// Redirect to HTTPS
+if (env === 'production') {
+    app.use(function(req, res, next) {
+        if (process.env.NODE_ENV === 'production') {
+            if (req.headers['x-forwarded-proto'] != 'https') {
+                return res.redirect('https://' + req.headers.host + req.url);
+            } else {
+                return next();
+            }
         } else {
             return next();
         }
-    } else {
-        return next();
-    }
-};
-
-app.use(https_redirect);
+    });
+}
 
 require('./app/sockets')(io);
 
