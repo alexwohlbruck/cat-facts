@@ -16,17 +16,17 @@
         "sizes": "96x96"
     },
     {
-        "src": "img/logo/icon-128x128.png",
+        "src": "/img/logo/icon-128x128.png",
         "type": "image/png",
         "sizes": "128x128"
     },
     {
-        "src": "img/logo/ms-touch-icon-144x144-precomposed.png",
+        "src": "/img/logo/ms-touch-icon-144x144-precomposed.png",
         "type": "image/png",
         "sizes": "144x144"
     },
     {
-        "src": "img/logo/apple-touch-icon.png",
+        "src": "/img/logo/apple-touch-icon.png",
         "type": "image/png",
         "sizes": "152x152"
     },

@@ -32,7 +32,7 @@
 <body ng-controller="MainCtrl" layout="column" ng-cloak>
 	<md-toolbar md-scroll-shrink class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
-			<img src="img/logo/app-icon-android.png" ui-sref="home" ng-hide="!$state.current.data.showInNavigation" class="width-40 margin-10 pointer">
+			<img src="img/logo/launcher-icon-1x.png" ui-sref="home" ng-hide="!$state.current.data.showInNavigation" class="width-40 margin-10 pointer">
 			
 			<h3>
 				<span>Cat Facts</span>
@@ -121,6 +121,17 @@
 	<script type="text/javascript" src="components/moment/min/moment.min.js"></script>
 	<script type="text/javascript" src="components/moment/min/locales.min.js"></script>
 	<script type="text/javascript" src="components/humanize-duration/humanize-duration.js"></script>
+	
+	<script>
+		/* global navigator */
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/config/service-worker.js').then(function(registration) {
+				console.log('Service Worker registered');
+			}).catch(function(err) {
+				console.log('Service Worker registration failed: ', err);
+			});
+		}
+	</script>
 	
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
