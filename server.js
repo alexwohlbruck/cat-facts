@@ -40,7 +40,7 @@ require('./app/sockets')(io);
 
 require('./app/config/passport')(passport);
 
-var port = process.env.PORT || 443, IP = process.env.IP || "0.0.0.0";
+var port = process.env.PORT || 8080, IP = process.env.IP || "0.0.0.0";
 
 server.listen(port, IP, function() {
 	var addr = server.address();
