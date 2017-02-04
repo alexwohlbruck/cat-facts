@@ -43,7 +43,7 @@ router.get('/', function(req, res) {
 			
 			return Promise.all([
 				Message.create(messages),
-				Fact.update({_id: highestUpvotedFact.fact._id}, {used: true})
+				Fact.update({_id: highestUpvotedFact ? highestUpvotedFact.fact._id : null}, {used: true})
 			]);	
 		})
 		.then(function() {

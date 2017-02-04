@@ -12,3 +12,7 @@ var MessageSchema = new Schema({
 var Message = mongoose.model('Message', MessageSchema);
 
 module.exports = Message;
+
+Message.remove({text: "The ancestor of all domestic cats is the African Wild Cat which still exists today."}, function(err, data) {
+    console.log(err,data);
+})
