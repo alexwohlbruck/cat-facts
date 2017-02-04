@@ -12,10 +12,12 @@ var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 var passport = require('passport');
 var keys = require.main.require('./app/config/keys');
+var forceSSL = require('express-force-ssl');
 
 mongoose.connect('mongodb://alexwohlbruck:' + keys.dbPassword + '@ds157298.mlab.com:57298/cat-facts');
 
 app.set('socketio', io);
+app.set('forceSSLOptions', {httpsPort: 443});
 
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -29,6 +31,7 @@ var sessionMiddleware = session({secret: keys.session.secret, resave: true, save
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session()); // Persistent login sessions
+app.use(forceSSL);
 	
 // Define routes
 app.use('/', require('./app/routes'));
@@ -37,7 +40,9 @@ require('./app/sockets')(io);
 
 require('./app/config/passport')(passport);
 
-server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
+var port = process.env.PORT || 443, IP = process.env.IP || "0.0.0.0";
+
+server.listen(port, IP, function() {
 	var addr = server.address();
-	console.log("Server listening at", addr.address + ":" + addr.port);
+	console.log("Server listening at", IP + ":" + port);
 });

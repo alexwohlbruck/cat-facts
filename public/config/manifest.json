@@ -1,0 +1,40 @@
+{
+  "short_name": "Cat Facts",
+  "name": "Cat Facts",
+  "background_color": "#2196f3",
+  "theme_color": "#2196f3",
+  "display": "standalone",
+  "icons": [
+    {
+        "src": "/img/logo/launcher-icon-1x.png",
+        "type": "image/png",
+        "sizes": "48x48"
+    },
+    {
+        "src": "/img/logo/launcher-icon-2x.png",
+        "type": "image/png",
+        "sizes": "96x96"
+    },
+    {
+        "src": "img/logo/icon-128x128.png",
+        "type": "image/png",
+        "sizes": "128x128"
+    },
+    {
+        "src": "img/logo/ms-touch-icon-144x144-precomposed.png",
+        "type": "image/png",
+        "sizes": "144x144"
+    },
+    {
+        "src": "img/logo/apple-touch-icon.png",
+        "type": "image/png",
+        "sizes": "152x152"
+    },
+    {
+        "src": "/img/logo/launcher-icon-4x.png",
+        "type": "image/png",
+        "sizes": "192x192"
+    }
+  ],
+  "start_url": "/?utm_source=homescreen"
+}

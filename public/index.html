@@ -9,11 +9,9 @@
 	<meta name="apple-mobile-web-app-capable" content="yes"/>
 	<meta name="theme-color" content="#2196f3"/>
 	
-	<!-- Favicon -->
+	<!-- Manifest -->
+	<link rel="manifest" href="config/manifest.json">
 	<link rel="icon" type="image/png" href="https://cat-facts-alexwohlbruck.c9users.io/img/logo/favicon.ico"/>
-	<link rel="icon" sizes="192x192" href="img/logo/app-icon-android.png"/>
-	<link rel="apple-touch-icon" href="img/logo/app-icon-ios.png"/>
-	<link rel="apple-touch-icon-precomposed" href="img/logo/app-icon-ios.png"/>
 
 	<!-- Main CSS -->
 	<link rel="stylesheet" href="css/style.css">
@@ -34,7 +32,7 @@
 <body ng-controller="MainCtrl" layout="column" ng-cloak>
 	<md-toolbar md-scroll-shrink class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
-			<img src="img/logo/app-icon-android.png" ui-sref="home" class="width-40 margin-10 pointer">
+			<img src="img/logo/app-icon-android.png" ui-sref="home" ng-hide="!$state.current.data.showInNavigation" class="width-40 margin-10 pointer">
 			
 			<h3>
 				<span>Cat Facts</span>
