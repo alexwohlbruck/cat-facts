@@ -1,4 +1,3 @@
-// School routes - /api/school/...
 var express = require('express');
 var router = express.Router();
 var keys = require.main.require('./app/config/keys');

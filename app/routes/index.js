@@ -6,6 +6,7 @@ router.use('/auth', require('./auth.routes'));
 router.use('/recipients', require('./recipient.routes'));
 router.use('/facts', require('./fact.routes'));
 router.use('/conversations', require('./conversation.routes'));
+router.use('/webhook', require('./webhook.routes'));
 
 /*router.get('*', function(req, res) {
     res.sendfile(path.join(__dirname, '/public/index.html')); // load our public/index.html file

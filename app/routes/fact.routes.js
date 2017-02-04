@@ -96,19 +96,6 @@ router.get('/', function(req, res) {
 	});
 });
 
-// Route for api.ai webhook
-router.post('/', function(req, res) {
-	FactService.getFact(function(message) {
-		return res.json({
-			speech: message,
-			displayText: message,
-			data: {},
-			contextOut: [],
-			source: "Cat Facts"
-		});
-	});
-});
-
 // Get submitted facts
 router.get('/submitted', function(req, res) {
 	Fact.aggregate([

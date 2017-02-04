@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var strings = require.main.require('./app/config/strings');
 
 var RecipientSchema = new Schema({
     name: String,
@@ -18,7 +19,7 @@ RecipientSchema.path('number').validate(function(number, done) {
         if (err) return done(err);
         done(!count);
     });
-}, "That person is already being facted");
+}, strings.recipient.exists);
 
 var Recipient = mongoose.model('Recipient', RecipientSchema);
 
