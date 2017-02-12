@@ -27,7 +27,7 @@ router.get('/text', function(req, res) {
     			io.emit('message', {message: message, recipient: recipient});
 			
 				var request = catbot.textRequest(req.query.query, {
-					sessionId: 'UH2fKhXFIvPAx7Us3i2sGdApIIBCiIkgb7IS'
+					sessionId: req.query.number
 				});
 				
 				request.on('response', function(response) {
