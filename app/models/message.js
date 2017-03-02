@@ -9,6 +9,8 @@ var MessageSchema = new Schema({
     timestamps: true
 });
 
+MessageSchema.createIndex({ "createdAt": 1 }, { expireAfterSeconds: (60 * 60 * 24 * 7 * 2) });
+
 var Message = mongoose.model('Message', MessageSchema);
 
 module.exports = Message;
