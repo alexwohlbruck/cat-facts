@@ -1,9 +1,9 @@
 var http = require('http');
-var Q = require('q');
+var bluebird = require('bluebird');
 
 module.exports = {
 	getFact: function(cb) {
-		var deferred = Q.defer(),
+		var deferred = bluebird.defer(),
 				options = {
 				host: 'catfacts-api.appspot.com',
 				path: '/api/facts?number=1'

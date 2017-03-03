@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var Q = require('q');
+var bluebird = require('bluebird');
 var Recipient = require.main.require('./app/models/recipient');
 var strings = require.main.require('./app/config/strings');
 var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 var FactService = require.main.require('./app/services/fact.service');
 
 var processWebhook = function(req) {
-    var deferred = Q.defer();
+    var deferred = bluebird.defer();
     
     if (req.body && req.body.result) {
     	

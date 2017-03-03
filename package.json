@@ -6,8 +6,10 @@
   "repository": "",
   "author": "Mostafa Eweda <mo.eweda@gmail.com>",
   "dependencies": {
-    "apiai": "^3.0.3",
+    "apiai": "^4.0.0",
+    "apiai-promise": "^1.0.0",
     "async": "~0.2.8",
+    "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
@@ -19,7 +21,6 @@
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "path": "^0.12.7",
-    "q": "^1.4.1",
     "socket.io": "~1.4.5"
   },
   "devDependencies": {
