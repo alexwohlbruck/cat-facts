@@ -14,8 +14,6 @@ var bluebird = require('bluebird');
 // Request made from tasker when text message is recieved
 router.get('/text', function(req, res) {
 	
-	var response, typingTimeout;
-	
 	if (!req.query.query) return error({}, "No text query provided");
 	if (!req.query.number) return error({}, "No phone number provided");
 	
@@ -39,7 +37,7 @@ router.get('/text', function(req, res) {
 			promises.message = incoming.save();
 			promises.catFact = FactService.getFact();
 			promises.catbotResponse = catbot.textRequest(req.query.query, {
-					sessionId: req.query.number
+				sessionId: req.query.number
 			});
 		} else {
 			
@@ -56,6 +54,8 @@ router.get('/text', function(req, res) {
 	})
 	
 	.then(function(result) {
+		
+		var response;
 	
 		if (result.message) {
 			if (result.catbotResponse.result && result.catbotResponse.result.fulfillment.speech) {
@@ -82,13 +82,23 @@ router.get('/text', function(req, res) {
 	
 	function success(message) {
 		res.status(200).json({
-			response: message
+			response: message,
+			delay: computeTypingDelay(message)
 		});
 	}
 	
 	function error(error, message) {
 		error.message = message;
 		res.status(400).json(error);
+	}
+	
+	function computeTypingDelay(string) {
+		var delay = 0;
+		for (var i = 0; i < string.length; i++) {
+			delay += .2;
+		}
+		delay += (Math.round(Math.random() * 20)) * (Math.random() < 0.5 ? -1 : 1);
+		return delay;
 	}
 });
 
