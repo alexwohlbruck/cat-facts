@@ -83,7 +83,7 @@ router.get('/text', function(req, res) {
 	function success(message) {
 		res.status(200).json({
 			response: message,
-			delay: computeTypingDelay(message)
+			delay: computeTypingDelay(message.text)
 		});
 	}
 	
@@ -94,11 +94,9 @@ router.get('/text', function(req, res) {
 	
 	function computeTypingDelay(string) {
 		var delay = 0;
-		for (var i = 0; i < string.length; i++) {
-			delay += .2;
-		}
-		delay += (Math.round(Math.random() * 20)) * (Math.random() < 0.5 ? -1 : 1);
-		return delay;
+		delay += (string.length / 2);
+		delay += Math.round(Math.random() * 10) * (Math.random() < 0.05 ? -1 : 1);
+		return Math.abs(delay) + 2;
 	}
 });
 
