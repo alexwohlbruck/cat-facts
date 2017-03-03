@@ -1,90 +1,103 @@
-// School routes - /api/school/...
 var express = require('express');
 var router = express.Router();
-var Recipient = require.main.require('./app/models/recipient');
 var Fact = require.main.require('./app/models/fact');
 var User = require.main.require('./app/models/user');
 var Upvote = require.main.require('./app/models/upvote');
 var Message = require.main.require('./app/models/message');
+var Recipient = require.main.require('./app/models/recipient');
 var FactService = require.main.require('./app/services/fact.service');
-var apiai = require('apiai');
+var apiai = require('apiai-promise');
 var catbot = apiai('64bea369650e4de59e7aee3dbb03efdd');
 var strings = require.main.require('./app/config/strings.js');
+var bluebird = require('bluebird');
 
 // Request made from tasker when text message is recieved
 router.get('/text', function(req, res) {
-	if (!req.query.query) return res.status(400).json({"message": "No text query provided"});
-	if (!req.query.number) return res.status(400).json({"message": "No phone number provided"});
+	
+	if (!req.query.query) return error({}, "No text query provided");
+	if (!req.query.number) return error({}, "No phone number provided");
 	
 	var io = req.app.get('socketio');
 	
-	Recipient.findOne({number: req.query.number}).then(function(recipient) {
-
+	Recipient.findOne({number: req.query.number})
+	
+	.then(function(recipient) {
+		
+		var promises = {};
+		
 		if (recipient) {
-			var incoming = new Message({text: req.query.query, number: req.query.number, type: 'incoming'});
-			incoming.save().then(function(message) {
-				console.log(message, recipient);
-    			io.emit('message', {message: message, recipient: recipient});
 			
-				var request = catbot.textRequest(req.query.query, {
-					sessionId: 'UH2fKhXFIvPAx7Us3i2sGdApIIBCiIkgb7IS'
-				});
-				
-				request.on('response', function(response) {
-					if (!response.result.fulfillment.speech) {
-						FactService.getFact(function(message) {
-							var outgoing = new Message({text: message, number: req.query.number, type: 'outgoing'});
-							
-							outgoing.save().then(function(message) {
-    							io.emit('message', {message: message, recipient: recipient});
-    							
-								return res.status(200).json({
-									response: message
-								});
-							});
-						});
-					} else {
-						var message = response.result.fulfillment.speech,
-							outgoing = new Message({text: message, number: req.query.number, type: 'outgoing'});
-						
-						outgoing.save().then(function(message) {
-    						io.emit('message', {message: message, recipient: recipient});
-							
-							return res.status(200).json({
-								response: message
-							});
-						});
-					}
-				});
-				
-				request.on('error', function(err) {
-					return res.status(400).json(err);
-				});
-				
-				request.end();
-			}, function(err) {
-				console.log(err);
+			var incoming = new Message({
+				text: req.query.query,
+				number: req.query.number,
+				type: 'incoming'
 			});
 			
+			promises.recipient = recipient;
+			promises.message = incoming.save();
+			promises.catFact = FactService.getFact();
+			promises.catbotResponse = catbot.textRequest(req.query.query, {
+				sessionId: req.query.number
+			});
 		} else {
+			
 			var newRecipient = new Recipient({
 				name: req.query.name,
 				number: req.query.number.replace(/\D/g,'').replace(/^1+/, '')
 			});
 			
-			newRecipient.save().then(function() {
-				return res.status(200).json({
-					response: {
-						text: strings.welcomeMessage
-					}
-				});
-			}, function(err) {
-				return res.status(400).json(err);
-			});
+			promises.recipient = newRecipient.save();
+	
 		}
-	}, function(err) {
-		return res.status(400).json(err);
+		
+		return bluebird.props(promises);
+	})
+	
+	.then(function(result) {
+		
+		var response;
+	
+		if (result.message) {
+			if (result.catbotResponse.result && result.catbotResponse.result.fulfillment.speech) {
+				response = result.catbotResponse.result.fulfillment.speech;
+			} else {
+				response = result.catFact;
+			}
+		} else {
+			response = strings.welcomeMessage;
+		}
+		
+		var outgoing = new Message({text: response, number: req.query.number, type: 'outgoing'});
+							
+		outgoing.save().then(function(message) {
+			io.emit('message', {message: message, recipient: result.recipient});
+			
+			return success(message);
+		});
+	})
+	
+	.catch(function(error) {
+		return error(error.message || null);
 	});
+	
+	function success(message) {
+		res.status(200).json({
+			response: message,
+			delay: computeTypingDelay(message.text)
+		});
+	}
+	
+	function error(error, message) {
+		error.message = message;
+		res.status(400).json(error);
+	}
+	
+	function computeTypingDelay(string) {
+		var delay = 0;
+		delay += (string.length / 2);
+		delay += Math.round(Math.random() * 10) * (Math.random() < 0.05 ? -1 : 1);
+		return Math.abs(delay) + 2;
+	}
 });
 
 // Get simple fact fact

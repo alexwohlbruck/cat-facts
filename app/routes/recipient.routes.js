@@ -8,13 +8,13 @@ var Upvote = require.main.require('./app/models/upvote');
 var FactService = require.main.require('./app/services/fact.service');
 var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 var strings = require.main.require('./app/config/strings.js');
-var Q = require('q');
+var bluebird = require('bluebird');
 
 router.get('/', function(req, res) {
 	if (req.query && req.query.code == keys.dbPassword) {
 		var io = req.app.get('socketio'), snowball = {};
 		
-		Q.all([
+		bluebird.all([
 			FactService.getFact(),
 			Recipient.find(),
 			Upvote.aggregate([
