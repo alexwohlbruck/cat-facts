@@ -33,7 +33,7 @@ router.get('/', function(req, res) {
 		])
 		.spread(function(fact, recipients, highestUpvotedFact) {
 			highestUpvotedFact = highestUpvotedFact[0];
-			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
+			(highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
 			snowball.recipients = recipients;
 				
 			var messages = recipients.map(function(o, i) {
@@ -61,6 +61,7 @@ router.get('/', function(req, res) {
 	}
 });
 
+// Get user's recipients
 router.get('/me', function(req, res) {
 	if (req.user) {
 		Recipient.find({addedBy: req.user._id}).sort('name').then(function(recipients) {
@@ -73,6 +74,7 @@ router.get('/me', function(req, res) {
 	}
 });
 
+// Add a new recipient
 router.post('/', function(req, res) {
 	if (req.user) {
 		var io = req.app.get('socketio');
