@@ -33,7 +33,7 @@ router.get('/', function(req, res) {
 		])
 		.spread(function(fact, recipients, highestUpvotedFact) {
 			highestUpvotedFact = highestUpvotedFact[0];
-			(highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
+			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
 			snowball.recipients = recipients;
 				
 			var messages = recipients.map(function(o, i) {
