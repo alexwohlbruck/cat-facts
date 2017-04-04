@@ -85,21 +85,11 @@ router.post('/', function(req, res) {
 			addedBy: req.user._id
 		});
 		
-		var welcomeMessage = new Message({
-			text: strings.welcomeMessage,
-			number: req.body.number,
-			type: 'outgoing'
-		});
-		
-		Promise.all([
-			newRecipient.save(),
-			welcomeMessage.save()
-		])
-		.then(function(results) {
-			io.emit('message', {message: results[1].text, recipient: results[0]});
-			IFTTTService.sendSingleMessage({number: results[0].number, message: strings.welcomeMessage});
+		newRecipient.save().then(function(recipient) {
+			io.emit('message', {message: strings.welcomeMessage, recipient: recipient});
+			IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
 			
-			return res.status(200).json(results[0]);
+			return res.status(200).json(recipient);
 		}, function(err) {
 			return res.status(400).json(err);
 		});
