@@ -11,7 +11,7 @@ var catbot = apiai('64bea369650e4de59e7aee3dbb03efdd');
 var strings = require.main.require('./app/config/strings.js');
 var bluebird = require('bluebird');
 
-// Request made from tasker when text message is recieved
+// (Tasker route) Text was recieved from recipient, process it and respond
 router.get('/text', function(req, res) {
 	
 	if (!req.query.query) return error({}, "No text query provided");

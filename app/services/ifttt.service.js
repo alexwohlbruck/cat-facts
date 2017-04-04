@@ -14,7 +14,7 @@ module.exports = {
                     'value2': data.message
                 }
             }, function(err) {
-                if (err) console.log(err);
+                if (err) return reject(err);
                 
                 var message = new Message({
                     text: data.message,
