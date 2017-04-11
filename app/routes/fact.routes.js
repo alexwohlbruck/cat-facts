@@ -84,7 +84,7 @@ router.get('/text', function(req, res) {
 		res.status(200).json({
 			response: message,
 			delay: computeTypingDelay(message.text),
-			number: req.body.number
+			number: req.query.number
 		});
 	}
 	
