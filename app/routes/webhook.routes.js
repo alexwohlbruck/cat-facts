@@ -24,9 +24,14 @@ var processWebhook = function(req) {
                 if (req.body.result.parameters) {
                     var parameters = req.body.result.parameters,
                         name = parameters['given-name'] + (parameters['last-name'] ? ' ' + parameters['last-name'] : ''),
-                        recipient = new Recipient({
+                        number = parameters['phone-number'].replace(/\D/g,'');
+                        
+                    if (number.length != 10 || number.length != 11)
+                        return deferred.reject({message: strings.invalidNumber});
+                        
+                    var recipient = new Recipient({
                             name: name,
-                            number: parameters['phone-number']
+                            number: number
                         });
                         
                     recipient.save().then(function() {
@@ -71,7 +76,7 @@ router.post('/', function(req, res) {
         });
         
     }, function(err) {
-        var message = err.errors[Object.keys(err.errors)[0]].message || strings.error;
+        var message = err.message || err.errors[Object.keys(err.errors)[0]].message || strings.error;
         return res.json({displayText: message, speech: message, data: err});
     });
 	
