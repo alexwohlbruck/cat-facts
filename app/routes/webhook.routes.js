@@ -24,7 +24,7 @@ var processWebhook = function(req) {
                 if (req.body.result.parameters) {
                     var parameters = req.body.result.parameters,
                         name = parameters['given-name'] + (parameters['last-name'] ? ' ' + parameters['last-name'] : ''),
-                        number = parameters['phone-number'].replace(/\D/g,'');
+                        number = parameters['phone-number'].replace(/\D/g,'').replace(/^1+/, '');
                         
                     if (number.length != 10 || number.length != 11)
                         return deferred.reject({message: strings.invalidNumber});
@@ -36,7 +36,7 @@ var processWebhook = function(req) {
                         
                     recipient.save().then(function() {
                         IFTTTService.sendSingleMessage({
-                            number: parameters['phone-number'],
+                            number: number,
                             message: strings.welcomeMessage
                         });
                         
