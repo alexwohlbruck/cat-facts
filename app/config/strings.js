@@ -4,5 +4,6 @@ module.exports = {
     error: "Purr-don me, an error occured. Try again later!",
     recipient: {
         exists: "That person is already being facted."
-    }
+    },
+    invalidNumber: "That phone number is invalid!"
 };
