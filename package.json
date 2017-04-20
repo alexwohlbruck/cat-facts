@@ -5,6 +5,9 @@
   "main": "server.js",
   "repository": "",
   "author": "Mostafa Eweda <mo.eweda@gmail.com>",
+  "scripts": {
+    "start": "nodemon server.js --ignore /public"
+  },
   "dependencies": {
     "apiai": "^4.0.0",
     "apiai-promise": "^1.0.0",
@@ -14,10 +17,12 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
+    "googleapis": "^19.0.0",
     "method-override": "^2.3.7",
     "mongoose": "^4.7.6",
     "morgan": "^1.7.0",
     "node-ifttt-maker": "^0.1.2",
+    "nodemon": "^1.11.0",
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "path": "^0.12.7",

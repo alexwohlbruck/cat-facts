@@ -11,7 +11,8 @@ router.get('/google', passport.authenticate('google', {
 	scope: [
 	    'https://www.googleapis.com/auth/userinfo.email',
 	    'https://www.googleapis.com/auth/plus.login'
-	]
+	],
+	accessType: 'offline'
 }));
 
 router.get('/google/callback', passport.authenticate('google', {
