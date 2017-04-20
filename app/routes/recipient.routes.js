@@ -19,15 +19,15 @@ router.get('/', function(req, res) {
 			FactService.getFact(),
 			Recipient.find(),
 			Upvote.aggregate([
-				{$group: {_id: '$_id', fact: {$first: '$fact'}, upvotes: {$sum: 1}}},
+				{$group: {_id: '$fact', upvotes: {$sum: 1}}},
 				{$sort: {upvotes: -1}},
 				{$lookup: {
-	                from: 'facts',
-	                localField: 'fact',
-	                foreignField: '_id',
-	                as: 'fact'
-	            }},
-            	{$unwind: '$fact'},
+			        from: 'facts',
+			        localField: '_id',
+			        foreignField: '_id',
+			        as: 'fact'
+			    }},
+				{$unwind: '$fact'},
 				{$match: {'fact.used': false}},
 				{$limit: 1}
 			])

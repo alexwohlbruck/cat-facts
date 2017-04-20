@@ -18,8 +18,8 @@ module.exports = function(passport) {
     	proxy: true
     },
     function(accessToken, refreshToken, profile, done) {
+      console.log('access: ' + accessToken + ' refresh: ' + refreshToken);
     	User.findOne({'google.id': profile.id}, function(err, user) {
-    	    console.log(profile);
     		if (err) return done(err);
     		if (!user) {
     		    user = new User({
