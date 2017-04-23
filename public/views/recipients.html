@@ -14,7 +14,13 @@
 				<input ng-model="form.number" ng-pattern="/^\d{10}$/" aria-label="Recipient phone number">
 			</md-input-container>
 			
-			<input type="submit" value="Add" class="md-button md-raised md-accent margin-top-5" ng-class="{'margin-bottom-30': $mdMedia('xs')}" aria-label="Add Recipient">
+			<md-button type="submit" class="md-raised md-accent margin-top-5" ng-class="{'margin-bottom-30': $mdMedia('xs')}" aria-label="Add Recipient">
+				Add
+			</md-button>
+			
+			<md-button class="md-raised margin-top-5 md-primary" ng-click="checkScopesAndopenImportContacts()">
+				Add Google contacts
+			</md-button>
 		</form>
 	</div>
 	

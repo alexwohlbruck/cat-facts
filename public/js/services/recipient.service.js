@@ -15,4 +15,8 @@ app.service('RecipientService', ['$http', '$rootScope',
             $rootScope.toast({message: "Provide a name and phone number"});
         }
     };
+    
+    this.getGoogleContacts = function() {
+        return $http.get('/recipients/contacts'); 
+    };
 }]);

@@ -15,6 +15,7 @@
     "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.6",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "googleapis": "^19.0.0",
