@@ -46,36 +46,34 @@ router.get('/google/contacts', function(req, res) {
 		scope: contactsScopes,
 		state: encodeURIComponent(JSON.stringify({
 			action: 'contacts:import'
-		}))
+		})),
+		includeGrantedScopes: true
 	});
 	
-	console.log(url + '&include_granted_scopes=true');
-	return res.redirect(url + '&include_granted_scopes=true');
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// include_granted_scopes=true NEEDS to be included in query params for consent page
-	// FIND A BETTER SOLUTION THAN THIS
+	return res.redirect(url);
 });
 
-router.get('/google/contacts/callback', function(req, res) {
+router.get('/google/contacts/callback', function(req, res, next) {
 	var oauth2Client = googleConfig.newOauth2Client();
 	
 	oauth2Client.getToken(req.query.code, function(err, tokens) {
 		if (err) return res.status(400).json(err);
-		console.log(tokens);
 		
 		User.findByIdAndUpdate(req.user._id, {
 			'google.accessToken': tokens.access_token,
 			'google.refreshToken': tokens.refresh_token
 		}).then(function(user) {
-			
-			return res.status(req.user ? 200 : 204).render('../public/views/other/after-auth', {
-				state: JSON.parse(decodeURIComponent(req.query.state))
+			// Re-serialize user after updating data - Doesn't work automatically for some reason
+			req.login(user, function(err) {
+				if (err) return next(err);
+				
+				return res.status(req.user ? 200 : 204).render('../public/views/other/after-auth', {
+					state: JSON.parse(decodeURIComponent(req.query.state))
+				});
 			});
 		}, function(err) {
 			console.log(err);
 		});
-		
-		
 	});
 });
 

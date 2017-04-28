@@ -11,7 +11,9 @@ module.exports = function(passport) {
 	});
 	
 	passport.deserializeUser(function(user, done) {
-		done(null, user);
+		User.findById(user._id).then(function(user) {
+			done(null, user);
+		});
 	});
 	
 	passport.use(new GoogleStrategy({

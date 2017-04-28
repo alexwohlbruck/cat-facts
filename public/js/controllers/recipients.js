@@ -44,6 +44,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
     };
     
     $scope.checkScopesAndOpenImportContacts = function() {
+        // When Oauth for contacts is granted for the first time, the dialog opens, closes, and opens again //////////////////////////////////////////////////
         RecipientService.getGoogleContacts().then(function(response) {
             console.log('open contacts');
             $scope.openImportContacts(response.data);
@@ -53,7 +54,6 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
     };
     
     $rootScope.$on('contacts:import', function() {
-            console.log('open contacts 2');
         $scope.checkScopesAndOpenImportContacts();
     });
     

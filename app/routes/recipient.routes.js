@@ -108,7 +108,7 @@ router.post('/', function(req, res) {
 router.get('/contacts', function(req, res) {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
-	console.log(req.user.google);
+	console.log('TOKEN 1: '+ req.user.google.accessToken);
 	
 	var oauth2Client = googleConfig.newOauth2Client({
 		accessToken: req.user.google.accessToken,
@@ -122,7 +122,6 @@ router.get('/contacts', function(req, res) {
         'requestMask.includeField': ['person.phoneNumbers', 'person.names'],
         sortOrder: 'LAST_MODIFIED_ASCENDING'
     }, function(err, data) {
-    	console.log(err, data);
         if (err) return res.status(err.code || 400).json(err);
         
         /*
