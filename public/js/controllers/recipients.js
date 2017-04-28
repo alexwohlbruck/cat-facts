@@ -43,8 +43,13 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
         });
     };
     
+    /*
+     * Move these functions to a new controller for the dialog
+     * Open dialog immediately, have promised based loader in UI
+     * If oauth consent page is required, wait until finished and if successful, retry request
+     * If unsuccessful, close dialog and toast an error message
+     */
     $scope.checkScopesAndOpenImportContacts = function() {
-        // When Oauth for contacts is granted for the first time, the dialog opens, closes, and opens again //////////////////////////////////////////////////
         RecipientService.getGoogleContacts().then(function(response) {
             console.log('open contacts');
             $scope.openImportContacts(response.data);
