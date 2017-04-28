@@ -3,6 +3,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var User = require.main.require('./app/models/user');
 var google = require('googleapis');
 var googleConfig = require.main.require('./app/config/google');
+var OAuth2 = google.auth.OAuth2;
 
 module.exports = function(passport) {
 	passport.serializeUser(function(user, done) {
@@ -17,14 +18,13 @@ module.exports = function(passport) {
 		clientID: keys.oauth.GOOGLE_CLIENT_ID,
 		clientSecret: keys.oauth.GOOGLE_CLIENT_SECRET,
 		callbackURL: "/auth/google/callback",
-		proxy: true
+		accessType: 'offline',
+		proxy: true,
+		includeGrantedScopes: true
 	},
 	function(accessToken, refreshToken, profile, done) {
 		
-		googleConfig.oauth2Client.setCredentials({
-			access_token: accessToken,
-			refresh_token: refreshToken
-		});
+		console.log('access: ' + accessToken + ', refresh: ' + refreshToken);
 		
 		User.findOne({'google.id': profile.id}, function(err, user) {
 			if (err) return done(err);
@@ -37,6 +37,7 @@ module.exports = function(passport) {
 					email: profile.emails[0].value,
 					google: {
 						id: profile.id,
+						accessToken: accessToken,
 						refreshToken: refreshToken
 					}
 				});
@@ -45,7 +46,13 @@ module.exports = function(passport) {
 					return done(err, user);
 				});
 			} else {
-				return done(err, user);
+				User.findByIdAndUpdate(user._id, {
+					'google.accessToken': accessToken,
+					'google.refreshToken': refreshToken
+				}).then(function(user) {
+					console.log(user);
+					return done(err, user);
+				});
 			}
 		});
 	}));

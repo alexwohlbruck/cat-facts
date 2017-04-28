@@ -18,7 +18,7 @@
 				Add
 			</md-button>
 			
-			<md-button class="md-raised margin-top-5 md-primary" ng-click="checkScopesAndopenImportContacts()">
+			<md-button class="md-raised margin-top-5 md-primary" ng-click="checkScopesAndOpenImportContacts()">
 				Add Google contacts
 			</md-button>
 		</form>
@@ -53,6 +53,7 @@
 						<th md-column md-numeric><span>Phone Number</span></th>
 					</tr>
 				</thead>
+				
 				<tbody md-body>
 					<tr md-row
 						ng-repeat="recipient in recipients | orderBy: table.orderBy"

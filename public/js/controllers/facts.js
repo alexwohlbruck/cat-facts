@@ -44,7 +44,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
 	};
 	
 	function getFacts() {
-	    FactService.getSubmittedFacts().then(function(response) {
+	    $scope.promise = FactService.getSubmittedFacts().then(function(response) {
 	        $scope.facts = response.data;
 	        $scope.facts.forEach(function(fact, index) {
 	        	$scope.facts[index].upvoted = userUpvoted(fact);

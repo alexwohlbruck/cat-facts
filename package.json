@@ -1,10 +1,10 @@
 {
-  "name": "chat-example",
+  "name": "cat-facts",
   "version": "0.9.0",
-  "description": "A chat example to showcase how to use `socket.io` with a static `express` server with `async` for control flow.",
+  "description": "Daily cat facts!",
   "main": "server.js",
   "repository": "",
-  "author": "Mostafa Eweda <mo.eweda@gmail.com>",
+  "author": "Alex Wohlbruck <alexwohlbruck@gmail.com>",
   "scripts": {
     "start": "nodemon server.js --ignore /public"
   },

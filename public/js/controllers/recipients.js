@@ -9,10 +9,6 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
     
     getRecipients();
     
-    $rootScope.$on('contacts:import', function() {
-        $scope.checkScopesAndopenImportContacts();
-    });
-    
     $scope.addRecipient = function() {
         var name = $scope.form.name, number = $scope.form.number;
         
@@ -47,13 +43,19 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
         });
     };
     
-    $scope.checkScopesAndopenImportContacts = function() {
+    $scope.checkScopesAndOpenImportContacts = function() {
         RecipientService.getGoogleContacts().then(function(response) {
+            console.log('open contacts');
             $scope.openImportContacts(response.data);
         }, function(err) {
-            AuthService.openOAuth();
+            if (err.status == 403 || err.status == 401) AuthService.openOAuth();
         });
     };
+    
+    $rootScope.$on('contacts:import', function() {
+            console.log('open contacts 2');
+        $scope.checkScopesAndOpenImportContacts();
+    });
     
     $scope.openImportContacts = function(contacts) {
         $mdDialog.show({
@@ -63,7 +65,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
                 $scope.selectedContacts = [];
                 $scope.finish = function() {
                     $mdDialog.hide();
-                }
+                };
             }],
             templateUrl: '/views/partials/contacts.html',
             parent: angular.element(document.body),
@@ -73,7 +75,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
     };
     
     function getRecipients() {
-        RecipientService.getRecipients().then(function(response) {
+        $scope.promise = RecipientService.getRecipients().then(function(response) {
             $scope.recipients = response.data;
         }, function(err) {
             $rootScope.toast({message: err.data.message});

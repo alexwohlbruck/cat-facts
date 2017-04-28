@@ -18,7 +18,7 @@ app.service('AuthService', ['$rootScope', '$http', '$window', '$state', function
             
         oauthPopup = $window.open(url, 'google-oauth', 'width=' + width + ',height=' + height + ',scrollbars = 0, top=' + top + ',left=' + left);
         
-        // Fallback if popup window can't find callback function in parent
+        // Recieve message from popup window with action to perfom
         window.addEventListener('message', function(event) {
             var origin = event.origin || event.originalEvent.origin;
             

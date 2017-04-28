@@ -14,7 +14,7 @@ var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 var google = require('googleapis');
 var googleConfig = require.main.require('./app/config/google');
-var contacts = google.people('v1');
+var googleContacts = google.people('v1');
 
 // (Tasker route) Get all recipients and a fact to be sent out each day
 router.get('/', function(req, res) {
@@ -106,13 +106,23 @@ router.post('/', function(req, res) {
 });
 
 router.get('/contacts', function(req, res) {
-    contacts.people.connections.list({
-        auth: googleConfig.oauth2Client,
+	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+	
+	console.log(req.user.google);
+	
+	var oauth2Client = googleConfig.newOauth2Client({
+		accessToken: req.user.google.accessToken,
+		refreshToken: req.user.google.refreshToken
+	});
+	
+    googleContacts.people.connections.list({
+        auth: oauth2Client,
         resourceName: 'people/me',
         pageSize: 500,
         'requestMask.includeField': ['person.phoneNumbers', 'person.names'],
         sortOrder: 'LAST_MODIFIED_ASCENDING'
     }, function(err, data) {
+    	console.log(err, data);
         if (err) return res.status(err.code || 400).json(err);
         
         /*
@@ -120,6 +130,7 @@ router.get('/contacts', function(req, res) {
          * First filter out objects without any phone numbers,
          * then rip phone numbers out of their contact's object and make new objects for each one
          */
+        if (data.connections) {
         var contacts = data.connections
         	.filter(o => o.phoneNumbers && o.phoneNumbers.length > 0)
         	.map((o, i) => {
@@ -138,6 +149,7 @@ router.get('/contacts', function(req, res) {
         contacts = [].concat.apply([], contacts).reverse();
         
         return res.status(200).json(contacts);
+        }
     });
 });
 
