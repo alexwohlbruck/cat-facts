@@ -32,9 +32,6 @@ message .row-reverse .message-bubble {
 	color: #fff;
 }
 
-.grey { color: rgba(0,0,0,0.54) !important; }
-.blue { color: #2196f3; }
-
 .padding-0 { padding: 0px !important; }
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
@@ -61,6 +58,9 @@ message .row-reverse .message-bubble {
 	flex-direction: row-reverse !important;
 	-webkit-flex-direction: row-reverse !important;
 }
+
+.grey { color: rgba(0,0,0,0.54) !important; }
+.blue { color: #2196f3; }
 
 .bold { font-weight: 500 !important; }
 .center-text { 	text-align: center; }

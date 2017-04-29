@@ -55,3 +55,21 @@ server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() 
 	var addr = server.address();
 	console.log("Server listening at", addr.address + ":" + addr.port);
 });
+/*
+// Testing crypto
+// http://lollyrock.com/articles/nodejs-encryption/
+
+var crypto = require('crypto');
+var key = 'b02blap2b8dmso209bnz29b7eqobue8cmwlbja08jbklqibxjd';
+
+/*
+const hash = crypto.createHmac('sha256', secret)
+                   .update('some important information')
+                   .digest('hex');
+console.log(hash);
+
+/*/
+
+
+
+/**/

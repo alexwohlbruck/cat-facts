@@ -43,34 +43,33 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
         });
     };
     
-    /*
-     * Move these functions to a new controller for the dialog
-     * Open dialog immediately, have promised based loader in UI
-     * If oauth consent page is required, wait until finished and if successful, retry request
-     * If unsuccessful, close dialog and toast an error message
-     */
-    $scope.checkScopesAndOpenImportContacts = function() {
-        RecipientService.getGoogleContacts().then(function(response) {
-            console.log('open contacts');
-            $scope.openImportContacts(response.data);
-        }, function(err) {
-            if (err.status == 403 || err.status == 401) AuthService.openOAuth();
-        });
-    };
-    
-    $rootScope.$on('contacts:import', function() {
-        $scope.checkScopesAndOpenImportContacts();
-    });
-    
     $scope.openImportContacts = function(contacts) {
         $mdDialog.show({
-            controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
+            controller: ['$scope', '$rootScope', '$mdDialog', 'RecipientService', function($scope, $rootScope, $mdDialog, RecipientService) {
                 $scope.contacts = contacts;
                 $scope.table = {orderBy: 'name'};
                 $scope.selectedContacts = [];
+                
                 $scope.finish = function() {
                     $mdDialog.hide();
                 };
+                
+                $scope.checkScopesAndGetContacts = function() {
+                    $scope.promise = RecipientService.getGoogleContacts().then(function(response) {
+                        console.log(response);
+                        $scope.contacts = response.data;
+                    }, function(err) {
+                        if (err.status == 403 || err.status == 401) AuthService.openOAuth();
+                    });
+                };
+                
+                $rootScope.$on('contacts:import', function() {
+                    $scope.checkScopesAndGetContacts();
+                });
+                
+                (function() {
+                    $scope.checkScopesAndGetContacts();
+                })();
             }],
             templateUrl: '/views/partials/contacts.html',
             parent: angular.element(document.body),
