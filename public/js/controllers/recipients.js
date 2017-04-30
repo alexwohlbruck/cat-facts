@@ -85,6 +85,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
                 $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort(function(a, b) {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
+                
                 $rootScope.toast({message: "Added " + response.data.addedRecipients.length + " recipients"});
             }, function(err) {
                 $rootScope.toast({message: err.data.message || "Error adding recipients"});
