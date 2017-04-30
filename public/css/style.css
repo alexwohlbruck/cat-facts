@@ -46,6 +46,7 @@ message .row-reverse .message-bubble {
 .margin-bottom-0 { margin-bottom: 0px !important; }
 .margin-bottom-30 { margin-bottom: 30px !important }
 .margin-sides-0 { margin-left: 0px; margin-right: 0px; }
+.margin-sides-10 { margin-left: 10px; margin-right: 10px; }
 .min-width-350 { min-width: 350px !important; }
 .width-40 { width: 40px; }
 
@@ -76,4 +77,9 @@ md-input-container.no-space {
 }
 md-input-container.no-space .md-errors-spacer {
 	display: none;
+}
+
+.md-row[disabled=disabled] > td {
+	color: grey !important;
+	color: rgba(0,0,0,0.54) !important;
 }

@@ -26,8 +26,6 @@ module.exports = function(passport) {
 	},
 	function(accessToken, refreshToken, profile, done) {
 		
-		console.log('access: ' + accessToken + ', refresh: ' + refreshToken);
-		
 		User.findOne({'google.id': profile.id}, function(err, user) {
 			if (err) return done(err);
 			if (!user) {
@@ -52,7 +50,6 @@ module.exports = function(passport) {
 					'google.accessToken': accessToken,
 					'google.refreshToken': refreshToken
 				}).then(function(user) {
-					console.log(user);
 					return done(err, user);
 				});
 			}

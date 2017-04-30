@@ -51,12 +51,15 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
                 $scope.selectedContacts = [];
                 
                 $scope.finish = function() {
-                    $mdDialog.hide();
+                    if ($scope.selectedContacts.length > 0) {
+                        $mdDialog.hide($scope.selectedContacts);
+                    } else {
+                        $mdDialog.cancel();
+                    }
                 };
                 
                 $scope.checkScopesAndGetContacts = function() {
                     $scope.promise = RecipientService.getGoogleContacts().then(function(response) {
-                        console.log(response);
                         $scope.contacts = response.data;
                     }, function(err) {
                         if (err.status == 403 || err.status == 401) AuthService.openOAuth();
@@ -75,6 +78,17 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             fullscreen: $mdMedia('xs')
+        })
+        .then(function(recipients) {
+            
+            RecipientService.addRecipients(recipients).then(function(response) {
+                $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort(function(a, b) {
+                    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+                });
+                $rootScope.toast({message: "Added " + response.data.addedRecipients.length + " recipients"});
+            }, function(err) {
+                $rootScope.toast({message: err.data.message || "Error adding recipients"});
+            });
         });
     };
     

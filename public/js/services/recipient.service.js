@@ -17,7 +17,7 @@ app.service('RecipientService', ['$http', '$rootScope',
     };
     
     this.addRecipients = function(recipients) {
-        // TODO: Create api endpoint to create multiple recipients (Possibly combine into the current one)
+        return $http.post('/recipients', recipients);
     };
     
     this.getGoogleContacts = function() {
