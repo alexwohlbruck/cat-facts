@@ -68,6 +68,7 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthServic
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
 	$rootScope.$state = $state;
+	$window.name = 'cat-facts-base-window';
 	$window.ga('create', 'UA-88600627-2', 'auto'); // Start Google Analytics
 	
 	$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
@@ -99,6 +100,12 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthServic
 	$rootScope.$watch('$state.current.name', function(newValue, oldValue) {
 		$rootScope.startingState = newValue;
     });
+    
+    $window.finishOAuth = function(data) {
+		$rootScope.$apply(function() {
+			AuthService.finishOAuth(data);
+		});
+	};
 	
 	$rootScope.toast = function(options) {
 		$mdToast.show(

@@ -8,11 +8,19 @@ app.service('RecipientService', ['$http', '$rootScope',
         return $http.get('/recipients/me');
     };
     
-    this.addRecipient = function(data) {
-        if (data.name && data.number) {
-            return $http.post('/recipients', data);
+    this.addRecipient = function(recipient) {
+        if (recipient.name && recipient.number) {
+            return $http.post('/recipients', recipient);
         } else {
             $rootScope.toast({message: "Provide a name and phone number"});
         }
+    };
+    
+    this.addRecipients = function(recipients) {
+        return $http.post('/recipients', recipients);
+    };
+    
+    this.getGoogleContacts = function() {
+        return $http.get('/contacts'); 
     };
 }]);

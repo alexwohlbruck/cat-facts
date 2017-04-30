@@ -1,14 +1,16 @@
 var express = require('express');
 var router = express.Router();
+var bluebird = require('bluebird');
 var keys = require.main.require('./app/config/keys');
+var strings = require.main.require('./app/config/strings.js');
+
 var Recipient = require.main.require('./app/models/recipient');
 var Message = require.main.require('./app/models/message');
 var Fact = require.main.require('./app/models/fact');
 var Upvote = require.main.require('./app/models/upvote');
+
 var FactService = require.main.require('./app/services/fact.service');
 var IFTTTService = require.main.require('./app/services/ifttt.service.js');
-var strings = require.main.require('./app/config/strings.js');
-var bluebird = require('bluebird');
 
 // (Tasker route) Get all recipients and a fact to be sent out each day
 router.get('/', function(req, res) {
@@ -19,15 +21,15 @@ router.get('/', function(req, res) {
 			FactService.getFact(),
 			Recipient.find(),
 			Upvote.aggregate([
-				{$group: {_id: '$_id', fact: {$first: '$fact'}, upvotes: {$sum: 1}}},
+				{$group: {_id: '$fact', upvotes: {$sum: 1}}},
 				{$sort: {upvotes: -1}},
 				{$lookup: {
-	                from: 'facts',
-	                localField: 'fact',
-	                foreignField: '_id',
-	                as: 'fact'
-	            }},
-            	{$unwind: '$fact'},
+			        from: 'facts',
+			        localField: '_id',
+			        foreignField: '_id',
+			        as: 'fact'
+			    }},
+				{$unwind: '$fact'},
 				{$match: {'fact.used': false}},
 				{$limit: 1}
 			])
@@ -75,25 +77,57 @@ router.get('/me', function(req, res) {
 	}
 });
 
-// Add a new recipient
+// Add new recipient(s)
 router.post('/', function(req, res) {
 	if (req.user) {
 		var io = req.app.get('socketio');
 		
-		var newRecipient = new Recipient({
-			name: req.body.name,
-			number: req.body.number.replace(/\D/g,'').replace(/^1+/, ''),
-			addedBy: req.user._id
-		});
-		
-		newRecipient.save().then(function(recipient) {
-			io.emit('message', {message: strings.welcomeMessage, recipient: recipient});
-			IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
+		if (Array.isArray(req.body)) {
 			
-			return res.status(200).json(recipient);
-		}, function(err) {
-			return res.status(400).json(err);
-		});
+			// Submit multiple recipients
+			
+			var contacts = req.body.map(o => {
+				o.addedBy = req.user._id;
+				return o;
+			});
+			
+			Recipient.create(contacts, function(err, recipients) {
+				
+				if (err) {
+					console.log(err);
+					if (err.writeErrors) err.message = err.writeErrors.length + ' ' + (err.writeErrors.length == 1 ? 'contact' : 'contacts') + ' failed to submit';
+					return res.status(400).json(err);
+				}
+				
+				for (var i = 0; i < recipients.length; i++) {
+					io.emit('message', {message: strings.welcomeMessage, recipient: recipients[i]});
+					IFTTTService.sendSingleMessage({number: recipients[i].number, message: strings.welcomeMessage});
+				}
+				
+				return res.status(200).json({
+					addedRecipients: recipients
+				});
+			});
+			
+		} else {
+			
+			// Submit one recipient
+			
+			var newRecipient = new Recipient({
+				name: req.body.name,
+				number: req.body.number.replace(/\D/g,'').replace(/^1+/, ''),
+				addedBy: req.user._id
+			});
+			
+			newRecipient.save().then(function(recipient) {
+				io.emit('message', {message: strings.welcomeMessage, recipient: recipient});
+				IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
+				
+				return res.status(200).json(recipient);
+			}, function(err) {
+				return res.status(400).json(err);
+			});
+		}
 	} else {
 		return res.status(401).json({message: strings.unauthenticated});
 	}

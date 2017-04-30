@@ -1,0 +1,46 @@
+<html lang="en">  
+<head>  
+    <title>Authentication completed</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <style>
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin:  0;
+            padding: 0;
+            transform: translate(-50%, -50%);
+            font-family: Roboto, Helvetica, Arial;
+            font-size: 18px;
+            transition: ease-in-out all 300ms;
+            opacity: 0;
+        }
+        #loading.visible {
+            opacity: 1;
+        }
+    </style>
+    
+    <body>
+        <p id="loading">Loading...</p>
+    </body>
+</head>  
+<body>  
+<script type="text/javascript">
+    setTimeout(function() {document.getElementById('loading').className = 'visible';}, 0);
+    
+    var state = <%- JSON.stringify(state) %>;
+    var handle = window.open('', 'cat-facts-base-window', '');
+    
+    handle.postMessage(state, document.origin);
+    
+    setInterval(function() {
+        console.log(handle.finishOAuth);
+    }, 1000);
+    
+    setTimeout(function() {
+        handle.finishOAuth(state, function() { return window.close(); });
+    }, 5);
+</script>  
+</body>  
+</html>

@@ -1,3 +1,6 @@
+body {
+	overflow-y: hidden;
+}
 #main-content ui-view .layout-center {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -32,9 +35,6 @@ message .row-reverse .message-bubble {
 	color: #fff;
 }
 
-.grey { color: rgba(0,0,0,0.54) !important; }
-.blue { color: #2196f3; }
-
 .padding-0 { padding: 0px !important; }
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
@@ -49,6 +49,7 @@ message .row-reverse .message-bubble {
 .margin-bottom-0 { margin-bottom: 0px !important; }
 .margin-bottom-30 { margin-bottom: 30px !important }
 .margin-sides-0 { margin-left: 0px; margin-right: 0px; }
+.margin-sides-10 { margin-left: 10px; margin-right: 10px; }
 .min-width-350 { min-width: 350px !important; }
 .width-40 { width: 40px; }
 
@@ -61,6 +62,9 @@ message .row-reverse .message-bubble {
 	flex-direction: row-reverse !important;
 	-webkit-flex-direction: row-reverse !important;
 }
+
+.grey { color: rgba(0,0,0,0.54) !important; }
+.blue { color: #2196f3; }
 
 .bold { font-weight: 500 !important; }
 .center-text { 	text-align: center; }
@@ -76,4 +80,9 @@ md-input-container.no-space {
 }
 md-input-container.no-space .md-errors-spacer {
 	display: none;
+}
+
+.md-row[disabled=disabled] > td {
+	color: grey !important;
+	color: rgba(0,0,0,0.54) !important;
 }
