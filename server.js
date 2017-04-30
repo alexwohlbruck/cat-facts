@@ -17,12 +17,12 @@ var env = process.env.NODE_ENV || 'development';
 mongoose.connect('mongodb://alexwohlbruck:' + keys.dbPassword + '@ds157298.mlab.com:57298/cat-facts');
 
 app.set('socketio', io);
+app.set('view engine', 'ejs');
 
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.json()); 
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.static(__dirname + '/public'));
