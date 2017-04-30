@@ -1,0 +1,86 @@
+<md-dialog ng-class="{'margin-sides-0': $mdMedia('xs')}" flex-gt-xs="80" flex-gt-md="50">
+	<div flex layout="column" ng-show="contacts.length !== 0">
+		<md-toolbar class="md-table-toolbar md-default">
+			<div class="md-toolbar-tools">
+				<span class="md-subhead bold">
+					My Google Contacts <span class="grey">({{contacts.length}})</span>
+				</span>
+				
+				<span flex></span>
+			
+				<span class="padding-top-15">
+					<md-checkbox
+						ng-model="table.orderBy"
+						aria-label="Sort table by date added"
+						ng-true-value="''"
+						ng-false-value="'name'">
+					<span class="md-body-2">Sort by date modified</span>
+				</span>
+			</div>
+		</md-toolbar>
+	
+		<md-table-container flex>
+			<!-- Add better sorting, there's a built in method in md-data-table (RTFD) -->
+			<table
+			    md-table
+			    md-row-select="true"
+			    multiple
+			    ng-model="selectedContacts"
+			    md-progress="promise">
+			    
+				<thead md-head>
+					<tr md-row>
+						<th md-column><span>Name</span></th>
+						<th md-column md-numeric><span>Phone Number</span></th>
+					</tr>
+				</thead>
+				<tbody md-body>
+					<!-- Testing virual repeat in contacts list -- does not work -- figure it out -->
+					<md-virtual-repeat-container id="vertical-container">
+	 <!-- Replace with: md-virtual-repeat -->
+					<tr ng-repeat="contact in contacts | orderBy: table.orderBy"
+						ng-disabled="contact.added"
+						md-on-demand
+					    md-row
+					    md-select="contact"
+					    md-auto-select
+					    md-select-id="contact.number">
+						
+						<td md-cell>
+							<span>{{contact.name || 'No name'}}</span>
+							<span class="md-caption bold margin-sides-10" ng-if="contact.added">Already added</span>
+						</td>
+						<td md-cell>{{contact.number | tel}}</td>
+					</tr>
+					</md-virtual-repeat-container>
+				</tbody>
+			</table>
+		</md-table-container>
+		
+		<md-dialog-actions layout="row">
+		    <span flex></span>
+		    <md-button ng-click="finish()">Cancel</md-button>
+		    
+		    <md-button class="md-primary" ng-disabled="selectedContacts.length == 0" ng-click="finish(selectedContacts)">
+		        Add {{selectedContacts.length}} {{selectedContacts.length == 1 ? 'person' : 'people'}}
+		    </md-button>
+		</md-dialog-actions>
+	</div>
+	
+	<!-- Empty state -->
+	<md-dialog-content flex class="padding-30" layout="column" layout-align="center center" ng-show="contacts.length === 0" ng-style="{'background-color': '#D7F5FF'}">
+		<h3 class="md-headline margin-0 bold center-text">
+			You don't have any Google contacts!
+		</h3>
+		
+		<h4 class="md-body-2 accent-links margin-0 center-text">
+			<a ng-href="http://www.pcworld.com/article/3083430/ios/get-all-your-icloud-contacts-into-gmail-easily.html" target="_blank">
+				Trying to import your iCloud contacts?
+			</a>
+		</h4>
+		
+		<img ng-src="/img/res/svg/no-contacts.svg" class="padding-20" ng-style="{'width': $mdMedia('xs') ? '90%' : '70%'}">
+		
+		<md-button ng-click="finish()">Go back</md-button>
+	</md-dialog-content>
+</md-dialog>
