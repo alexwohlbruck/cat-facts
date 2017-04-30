@@ -1,3 +1,6 @@
+body {
+	overflow-y: hidden;
+}
 #main-content ui-view .layout-center {
 	max-width: 1200px;
 	margin: 0 auto;
