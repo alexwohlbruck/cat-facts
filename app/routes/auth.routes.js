@@ -37,7 +37,7 @@ router.get('/google/contacts', function(req, res) {
 	if (!req.user) return res.status(400).json({message: strings.unauthenticated});
 	
 	var oauth2Client = googleConfig.newOauth2Client({
-		accessToken: req.user.google.accessToken,
+		accessToken: User.decryptAccessToken(req.user.google.accessToken),
 		refreshToken: req.user.google.refreshToken
 	});
 	
@@ -60,12 +60,14 @@ router.get('/google/contacts/callback', function(req, res, next) {
 		if (err) return res.status(400).json(err);
 		
 		User.findByIdAndUpdate(req.user._id, {
-			'google.accessToken': tokens.access_token,
+			'google.accessToken': User.encryptAccessToken(tokens.access_token),
 			'google.refreshToken': tokens.refresh_token
 		}).then(function(user) {
-			// Re-serialize user after updating data - Doesn't work automatically for some reason
+			// Re-serialize user after updating data
 			req.login(user, function(err) {
 				if (err) return next(err);
+				
+				user.google.accessToken = User.decryptAccessToken(user.google.accessToken);
 				
 				return res.status(req.user ? 200 : 204).render('../public/views/other/after-auth', {
 					state: JSON.parse(decodeURIComponent(req.query.state))

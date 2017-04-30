@@ -104,8 +104,6 @@ router.post('/', function(req, res) {
 					IFTTTService.sendSingleMessage({number: recipients[i].number, message: strings.welcomeMessage});
 				}
 				
-				console.log(recipients);
-				
 				return res.status(200).json({
 					addedRecipients: recipients
 				});

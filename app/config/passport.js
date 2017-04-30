@@ -47,9 +47,10 @@ module.exports = function(passport) {
 				});
 			} else {
 				User.findByIdAndUpdate(user._id, {
-					'google.accessToken': accessToken,
+					'google.accessToken': User.encryptAccessToken(accessToken),
 					'google.refreshToken': refreshToken
 				}).then(function(user) {
+					user.google.accessToken = User.decryptAccessToken(user.google.accessToken);
 					return done(err, user);
 				});
 			}
