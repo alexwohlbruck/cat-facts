@@ -25,6 +25,7 @@ router.get('/', function(req, res) {
         'requestMask.includeField': ['person.phoneNumbers', 'person.names'],
         sortOrder: 'LAST_MODIFIED_ASCENDING'
     }, function(err, data) {
+        console.log(err, data);
         if (err) return res.status(err.code || 400).json(err);
         
         /*
@@ -59,7 +60,7 @@ router.get('/', function(req, res) {
                 return res.status(200).json(contacts); 
             });
         } else {
-            return res.status(400).json({message: "An unknown error occured"});
+            return res.status(204).json([]);
         }
     });
 });

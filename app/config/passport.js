@@ -37,7 +37,7 @@ module.exports = function(passport) {
 					email: profile.emails[0].value,
 					google: {
 						id: profile.id,
-						accessToken: accessToken,
+						accessToken: User.encryptAccessToken(accessToken),
 						refreshToken: refreshToken
 					}
 				});
