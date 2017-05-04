@@ -3,6 +3,9 @@ var IFTTT = require('node-ifttt-maker');
 var ifttt = new IFTTT(keys.ifttt.apiKey);
 var Message = require.main.require('./app/models/message');
 
+// Maybe use pushbullet instead? It supports native SMS sending
+// https://github.com/alexwhitman/node-pushbullet-api
+
 module.exports = {
     sendSingleMessage: function(data) {
         return new Promise(function(resolve, reject) {
