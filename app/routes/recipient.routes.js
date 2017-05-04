@@ -35,9 +35,12 @@ router.get('/', function(req, res) {
 			])
 		])
 		.spread(function(fact, recipients, highestUpvotedFact) {
+			console.log(highestUpvotedFact);
+			
 			highestUpvotedFact = highestUpvotedFact[0];
 			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
 			snowball.recipients = recipients;
+			
 				
 			var messages = recipients.map(function(o, i) {
 				io.emit('message', {message: snowball.fact, recipient: o});
@@ -45,8 +48,8 @@ router.get('/', function(req, res) {
 			});
 			
 			return Promise.all([
-				Message.create(messages),
-				Fact.update({_id: highestUpvotedFact ? highestUpvotedFact.fact._id : null}, {used: true})
+				// Message.create(messages),
+				// Fact.update({_id: highestUpvotedFact ? highestUpvotedFact.fact._id : null}, {used: true})
 			]);	
 		})
 		.then(function() {
