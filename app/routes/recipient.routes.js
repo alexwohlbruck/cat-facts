@@ -40,8 +40,8 @@ router.get('/', function(req, res) {
 			snowball.recipients = recipients;
 				
 			var messages = recipients.map(function(o, i) {
-				io.emit('message', {message: fact, recipient: o});
-				return new Message({text: fact, number: o.number, type: 'outgoing'});
+				io.emit('message', {message: snowball.fact, recipient: o});
+				return new Message({text: snowball.fact, number: o.number, type: 'outgoing'});
 			});
 			
 			return Promise.all([
