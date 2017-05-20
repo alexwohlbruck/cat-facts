@@ -103,7 +103,7 @@ router.get('/text', function(req, res) {
 
 // Get simple fact fact
 router.get('/', function(req, res) {
-	FactService.getFact(function(message) {
+	FactService.getFact().then(function(message) {
 		return res.json({
 			displayText: message
 		});

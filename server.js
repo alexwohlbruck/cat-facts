@@ -50,6 +50,7 @@ if (env === 'production') {
 }
 
 require('./app/config/passport')(passport);
+require('./app/cron');
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
 	var addr = server.address();

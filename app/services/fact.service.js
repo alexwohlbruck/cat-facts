@@ -1,22 +1,18 @@
-var http = require('http');
+var request = require('request-promise');
 
 module.exports = {
-	getFact: function(cb) {
+	getFact: function(amount) {
+		if (!amount) amount = 1;
+		
 		return new Promise(function(resolve, reject) {
-			var options = {
-				host: 'catfacts-api.appspot.com',
-				path: '/api/facts?number=1'
-			};
-				
-			http.get(options, function(res){
-				res.setEncoding('utf8');
-				res.on('data', function(data){
-					var fact = JSON.parse(data).facts[0];
-					if (cb) cb(fact);
-					resolve(fact);
-				});
-			}).on("error", function(err) {
-				if (cb) cb(err.message);
+			request({
+				method: 'GET',
+				uri: 'https://catfacts-api.appspot.com/api/facts?number='+amount,
+			}).then(function(response) {
+				var facts = JSON.parse(response).facts;
+				if (amount == 1) facts = facts[0];
+				resolve(facts);
+			}, function(err) {
 				reject(err);
 			});
 		});
