@@ -4,7 +4,7 @@ var FactService = require.main.require('./app/services/fact.service');
 module.exports = {
     scrape: function(amount) {
         return new Promise(function(resolve, reject) {
-            FactService.getFact((amount && !isNaN(amount) && amount <= 100) ? amount : 100).then(function(facts) {
+            FactService.getFactFromApi((amount && !isNaN(amount) && amount <= 100) ? amount : 100).then(function(facts) {
                 facts = facts.map(fact => {
                     return {
                         text: fact,

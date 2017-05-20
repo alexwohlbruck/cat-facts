@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
 		var io = req.app.get('socketio'), snowball = {};
 		
 		bluebird.all([
-			FactService.getFact(),
+			FactService.getFact({setUsed: true}),
 			Recipient.find(),
 			Upvote.aggregate([
 				{$group: {_id: '$fact', upvotes: {$sum: 1}}},

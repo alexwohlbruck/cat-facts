@@ -22,6 +22,7 @@
     "googleapis": "^19.0.0",
     "method-override": "^2.3.7",
     "mongoose": "^4.10.0",
+    "mongoose-simple-random": "^0.4.1",
     "morgan": "^1.7.0",
     "node-ifttt-maker": "^0.1.2",
     "nodemon": "^1.11.0",

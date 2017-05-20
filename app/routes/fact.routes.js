@@ -113,7 +113,7 @@ router.get('/', function(req, res) {
 // Get submitted facts
 router.get('/submitted', function(req, res) {
 	Fact.aggregate([
-		{$match: {used: false}},
+		{$match: {used: false, source: 'user'}},
 		{$lookup: {
 			from: 'users',
 			localField: 'user',
