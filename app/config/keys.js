@@ -17,5 +17,6 @@ module.exports = {
     database: {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD
-    }
+    },
+    generalAccessToken: process.env.GENERAL_ACCESS_TOKEN
 };

@@ -14,5 +14,8 @@ Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularj
 - Add recipients by talking to the Catbot!
 - Import all of your Google contacts at once
 
+### Setup
+If you want to set up your own version of Cat Facts, follow the instructions in this [guide](https://github.com/alexwohlbruck/cat-facts/blob/master/SETUP.md)
+
 Visit the site [here](https://cat-fact.herokuapp.com) and start messing with your friends!
 Talk to the API.AI bot [here](https://bot.api.ai/d7b47381-1453-4b31-a20c-9825de80cf88)
