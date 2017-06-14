@@ -3,8 +3,9 @@ var FactService = require.main.require('./app/services/fact.service');
 
 module.exports = {
     scrape: function(amount) {
-        return new Promise(function(resolve, reject) {
-            FactService.getFactFromApi((amount && !isNaN(amount) && amount <= 100) ? amount : 100).then(function(facts) {
+        // Grab facts from Cat Facts api and save them into local db
+        return new Promise((resolve, reject) => {
+            FactService.getFactFromApi((amount && !isNaN(amount) && amount <= 100) ? amount : 100).then(facts => {
                 facts = facts.map(fact => {
                     return {
                         text: fact,
@@ -13,16 +14,16 @@ module.exports = {
                     };
                 });
                 
-                Fact.insertMany(facts, {ordered: false}).then(function(data) {
+                Fact.insertMany(facts, {ordered: false}).then(data => {
                     resolve(data);
-                }, function(err) {
+                }, err => {
                     if (err.code == 11000) {
                         var duplicateCount = err.writeErrors ? err.writeErrors.length : 0;
                         resolve(duplicateCount);
                     }
                     reject(err);
                 });
-            }, function(err) {
+            }, err => {
                 reject(err);
             });
         });

@@ -14,5 +14,8 @@ module.exports = {
     ifttt: {
         apiKey: process.env.IFTTT_API_KEY
     },
-    dbPassword: process.env.DB_PASSWORD
+    database: {
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD
+    }
 };

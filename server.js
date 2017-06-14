@@ -14,7 +14,7 @@ var passport = require('passport');
 var keys = require.main.require('./app/config/keys');
 var env = process.env.NODE_ENV || 'development';
 
-mongoose.connect('mongodb://alexwohlbruck:' + keys.dbPassword + '@ds157298.mlab.com:57298/cat-facts');
+mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts');
 
 app.set('socketio', io);
 app.set('view engine', 'ejs');
