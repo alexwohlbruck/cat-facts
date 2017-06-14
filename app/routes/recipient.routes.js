@@ -14,7 +14,7 @@ var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 // (Tasker route) Get all recipients and a fact to be sent out each day
 router.get('/', function(req, res) {
-	if (req.query && req.query.code == keys.dbPassword) {
+	if (req.query && req.query.code == keys.generalAccessToken) {
 		var io = req.app.get('socketio'), snowball = {};
 		
 		bluebird.all([
