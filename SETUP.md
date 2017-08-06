@@ -32,8 +32,8 @@
             `https://cat-fact.herokuapp.com`
             If you're using Heroku for hosting, the domain should be `https://your-app-name.herokuapp.com`
         7. In the Authorized redirect URI's section, add two more URLs with the callback URLS like so:
-            `{https://what-ever-you-used-as-the-domain-above.com}/auth/google/callback`
-            `{https://what-ever-you-used-as-the-domain-above.com}/auth/google/contacts/callback`
+            `https://{what-ever-you-used-as-the-domain-above}.com/auth/google/callback`
+            `https://{what-ever-you-used-as-the-domain-above}.com/auth/google/contacts/callback`
         8. Take note of the Client ID and Client Secret, we'll use them later
     - IFTTT (Communication from server to your device)
         1. Download the IFTTT app to your Android phone and sign in
@@ -47,23 +47,33 @@
         3. Choose the AWS Provider and under the Single-node tab, choose the free Sandbox option
         4. Name your database "cat-facts" and create it
         5. Open the database and create a user for your database. Remember the username and password (this is different than the user/pass combo you used to login to mLab)
+    - Api.ai account (For conversational chatbot)
+        1. Visit [Api.ai](https://api.ai)'s website and sign in using your Google account
+        2. Download the [Cat Facts Api.ai agent from Google Drive](https://drive.google.com/file/d/0B4rWYiw5-JZtZEF4cnBQczM1cFE/view?usp=sharing)
+        3. Create a new agent and name it "Cat Facts"
+        4. Once it's created, click on the gear by the agent name to access it's settings
+        5. Under the "Export and Import" tab, click "Restore from ZIP" and upload the agent file. You should now have access to the full dashboard.
+        6. Now go to the "General" tab and keep note of the client access token. You will need this for later as well.
+        7. Under the "Fufillment" section of the console, make sure webhook is enabled, and update the URL to the same domain name you used earlier, followed by `/webhook`, example:
+            `https://{what-ever-you-used-as-the-domain-above}.com/webhook`
 
 4. Add tokens and other credentials to your config vars
     - Add the following config variables to your project (In the Settings tab of the Heroku console and in your development environment if you want to use one):
 
 		| Name 					  | Value																							|
 		| ----------------------- | ----------------------------------------------------------------------------------------------- |
+		| APIAI_ACCESS_TOKEN      | {Your api.ai access token}                                                                      |
 		| BASE_URL               | {Your heroku app's domain name}																	|
 		| DB_USERNAME             | {Your mLab database's user account name}														|
 		| DB_PASSWORD            | {Your mLab database's user account password}														|
 		| ENCRYPTION_ALGORITHM    | `aes-256-ctr`																					|
 		| ENCRYPTION_KEY          | {Generate a key using the password generator}													|
+		| GENERAL_ACCESS_TOKEN    | {Generate a key using the password generator}													|
 		| GOOGLE_CLIENT_ID       | {Your Client ID from the Google Developer's Platform												|
 		| GOOGLE_CLIENT_SECRET   | {Your Client Secret from the Google Developer's Platform}										|
 		| IFTTT_API_KEY           | {The service key provided by the IFTTT Maker Webhooks service}									|
 		| NODE_ENV                | {"production" for your heroku config and "development" for your own development environment}	|
 		| SESSION_SECRET          | {Generate a key using the password generator}													|
-		| GENERAL_ACCESS_TOKEN    | {Generate a key using the password generator}													|
 		
 	LastPass Random Password Generator: https://lastpass.com/generatepassword.php
 	

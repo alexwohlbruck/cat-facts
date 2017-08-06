@@ -7,6 +7,7 @@ var IFTTTService = require.main.require('./app/services/ifttt.service.js');
 var FactService = require.main.require('./app/services/fact.service');
 
 var processWebhook = function(req) {
+    console.log('worked');
     var deferred = bluebird.defer();
     
     if (req.body && req.body.result) {
@@ -48,6 +49,10 @@ var processWebhook = function(req) {
                 } else {
                     deferred.reject();
                 }
+            break;
+            
+            case 'recipient.unsubscribe':
+                console.log(req);
             break;
                 
             default:
