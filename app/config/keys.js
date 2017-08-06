@@ -14,6 +14,9 @@ module.exports = {
     ifttt: {
         apiKey: process.env.IFTTT_API_KEY
     },
+    apiai: {
+        accessToken: process.env.APIAI_ACCESS_TOKEN
+    },
     database: {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD

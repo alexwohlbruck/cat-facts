@@ -7,7 +7,8 @@ var Message = require.main.require('./app/models/message');
 var Recipient = require.main.require('./app/models/recipient');
 var FactService = require.main.require('./app/services/fact.service');
 var apiai = require('apiai-promise');
-var catbot = apiai('64bea369650e4de59e7aee3dbb03efdd');
+var keys = require.main.require('./app/config/keys');
+var catbot = apiai(keys.apiai.accessToken);
 var strings = require.main.require('./app/config/strings.js');
 var bluebird = require('bluebird');
 
