@@ -1,18 +1,24 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var strings = require.main.require('./app/config/strings');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const strings = require.main.require('./app/config/strings');
+const mongooseDelete = require('mongoose-delete');
 
-var RecipientSchema = new Schema({
+const RecipientSchema = new Schema({
     name: String,
-    number: {type: String, required: true, validate: validateNumber, unique: true},
+    number: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: [
+            function phoneNumber(string) {
+                return string.length == 10;
+            }
+        ]
+    },
     addedBy: {type: Schema.Types.ObjectId, ref: 'User'}
 }, {
     timestamps: true
 });
-
-function validateNumber(string) {
-    return string.length == 10;
-}
 
 RecipientSchema.path('number').validate(function(number, done) {
     this.model('Recipient').count({number: number}, function(err, count) {
@@ -21,6 +27,12 @@ RecipientSchema.path('number').validate(function(number, done) {
     });
 }, strings.recipient.exists);
 
-var Recipient = mongoose.model('Recipient', RecipientSchema);
+/**
+ * Soft delete implementation
+ * https://github.com/dsanel/mongoose-delete
+ */
+RecipientSchema.plugin(mongooseDelete, {overrideMethods: true});
+
+const Recipient = mongoose.model('Recipient', RecipientSchema);
 
 module.exports = Recipient; 

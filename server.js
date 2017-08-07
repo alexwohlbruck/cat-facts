@@ -1,18 +1,18 @@
-var http = require('http');
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-	mongoose.Promise = global.Promise;
-var morgan = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
-var session = require('express-session');
-var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
-var passport = require('passport');
-var keys = require.main.require('./app/config/keys');
-var env = process.env.NODE_ENV || 'development';
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+const session = require('express-session');
+const server = require('http').Server(app);
+const io = require('socket.io').listen(server);
+const passport = require('passport');
+const keys = require.main.require('./app/config/keys');
+const env = process.env.NODE_ENV || 'development';
+
+global.Promise = require('bluebird');
 
 mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts');
 
@@ -26,7 +26,7 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.static(__dirname + '/public'));
-var sessionMiddleware = session({secret: keys.session.secret, resave: true, saveUninitialized: true});
+const sessionMiddleware = session({secret: keys.session.secret, resave: true, saveUninitialized: true});
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session()); // Persistent login sessions
@@ -53,6 +53,6 @@ require('./app/config/passport')(passport);
 require('./app/cron');
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
-	var addr = server.address();
+	const addr = server.address();
 	console.log("Server listening at", addr.address + ":" + addr.port);
 });
