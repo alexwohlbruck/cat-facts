@@ -1,16 +1,16 @@
-var express = require('express');
-var router = express.Router();
-var Fact = require.main.require('./app/models/fact');
-var User = require.main.require('./app/models/user');
-var Upvote = require.main.require('./app/models/upvote');
-var Message = require.main.require('./app/models/message');
-var Recipient = require.main.require('./app/models/recipient');
-var FactService = require.main.require('./app/services/fact.service');
-var apiai = require('apiai-promise');
-var keys = require.main.require('./app/config/keys');
-var catbot = apiai(keys.apiai.accessToken);
-var strings = require.main.require('./app/config/strings.js');
-var bluebird = require('bluebird');
+const express = require('express');
+const router = express.Router();
+const Fact = require.main.require('./app/models/fact');
+const User = require.main.require('./app/models/user');
+const Upvote = require.main.require('./app/models/upvote');
+const Message = require.main.require('./app/models/message');
+const Recipient = require.main.require('./app/models/recipient');
+const FactService = require.main.require('./app/services/fact.service');
+const apiai = require('apiai-promise');
+const keys = require.main.require('./app/config/keys');
+const catbot = apiai(keys.apiai.accessToken);
+const strings = require.main.require('./app/config/strings.js');
+const Promise = require('bluebird');
 
 // (Tasker route) Text was recieved from recipient, process it and respond
 router.get('/text', function(req, res) {
@@ -18,9 +18,11 @@ router.get('/text', function(req, res) {
 	if (!req.query.query) return error({}, "No text query provided");
 	if (!req.query.number) return error({}, "No phone number provided");
 	
-	var io = req.app.get('socketio');
+	const io = req.app.get('socketio');
 	
-	Recipient.findOne({number: req.query.number})
+	var overrideMessage;
+	
+	Recipient.findOneWithDeleted({number: req.query.number})
 	
 	.then(function(recipient) {
 		
@@ -28,7 +30,12 @@ router.get('/text', function(req, res) {
 		
 		if (recipient) {
 			
-			var incoming = new Message({
+			if (recipient.deleted) {
+				recipient.restore();
+				overrideMessage = "Welcome back!";
+			}
+			
+			const incoming = new Message({
 				text: req.query.query,
 				number: req.query.number,
 				type: 'incoming'
@@ -51,7 +58,7 @@ router.get('/text', function(req, res) {
 	
 		}
 		
-		return bluebird.props(promises);
+		return Promise.props(promises);
 	})
 	
 	.then(function(result) {
@@ -68,7 +75,7 @@ router.get('/text', function(req, res) {
 			response = strings.welcomeMessage;
 		}
 		
-		var outgoing = new Message({text: response, number: req.query.number, type: 'outgoing'});
+		const outgoing = new Message({text: overrideMessage || response, number: req.query.number, type: 'outgoing'});
 							
 		outgoing.save().then(function(message) {
 			io.emit('message', {message: message, recipient: result.recipient});
@@ -77,8 +84,8 @@ router.get('/text', function(req, res) {
 		});
 	})
 	
-	.catch(function(error) {
-		return error(error.message || null);
+	.catch(function(err) {
+		return error(err.message || null);
 	});
 	
 	function success(message) {
@@ -148,9 +155,9 @@ router.post('/submitted', function(req, res) {
     if (req.user) {
         if (!req.body.text) return res.status(400).json({message: "Provide a cat fact"});
         
-        var io = req.app.get('socketio');
+        const io = req.app.get('socketio');
         
-        var fact = new Fact({
+        const fact = new Fact({
             user: req.user._id,
             text: req.body.text
         });
@@ -181,9 +188,9 @@ router.post('/submitted/:factID/upvote', function(req, res) {
         	if (!fact) return res.status(404).json({message: "That fact doesn't exist"});
         	if (fact.user.equals(req.user._id)) return  res.status(400).json({message: "You can't upvote your own fact"});
         
-        	var io = req.app.get('socketio');
+        	const io = req.app.get('socketio');
         
-			var upvote = new Upvote({
+			const upvote = new Upvote({
 				user: req.user._id,
 				fact: req.params.factID
 			});
@@ -208,7 +215,7 @@ router.delete('/submitted/:factID/upvote', function(req, res) {
 	if (req.user) {
         if (!req.params.factID) return res.status(400).json({message: "Provide a fact ID"});
         
-        var io = req.app.get('socketio');
+        const io = req.app.get('socketio');
         
         Upvote.findOneAndRemove({fact: req.params.factID, user: req.user._id}).then(function() {
         	io.emit('fact:unvote', {fact: {_id: req.params.factID}, user: req.user});
