@@ -1,16 +1,22 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var random = require('mongoose-simple-random');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const mongooseDelete = require('mongoose-delete');
+const random = require('mongoose-simple-random');
 
-var FactSchema = new Schema({
+const FactSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref: 'User'},
     text: {type: String, required: true, unique: true},
     used: {type: Boolean, default: false},
     source: {type: String, enum: ['user', 'api'], default: 'user'}
 });
 
+/**
+ * Soft delete implementation
+ * https://github.com/dsanel/mongoose-delete
+ */
+FactSchema.plugin(mongooseDelete, {overrideMethods: true});
 FactSchema.plugin(random);
 
-var Fact = mongoose.model('Fact', FactSchema);
+const Fact = mongoose.model('Fact', FactSchema);
 
 module.exports = Fact;
