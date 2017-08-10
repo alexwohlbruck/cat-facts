@@ -13,7 +13,7 @@ const apiai = require('apiai-promise');
 const catbot = apiai(keys.apiai.accessToken);
 const crypto = require('crypto');
 
-var processWebhook = function(req) {
+const processWebhook = function(req) {
     return new Promise((resolve, reject) => {
     
         if (req.body && req.body.result) {
@@ -67,6 +67,7 @@ var processWebhook = function(req) {
                             reject(err);
                         });
                     } else {
+                        // Get unsubscribe message from CatBot
                         const randomSessionId = crypto.createHash('md5').update((new Date()).getTime().toString()).digest('hex');
                         
                         catbot.textRequest('unsubscribe', {sessionId: randomSessionId}).then(response => {
