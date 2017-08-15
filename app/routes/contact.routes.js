@@ -13,8 +13,6 @@ var googleContacts = google.people('v1');
 router.get('/', function(req, res) {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
-	console.log(User.decryptAccessToken(req.user.google.accessToken));
-	
 	var oauth2Client = googleConfig.newOauth2Client({
 		accessToken: User.decryptAccessToken(req.user.google.accessToken),
 		refreshToken: req.user.google.refreshToken
