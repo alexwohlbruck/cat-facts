@@ -13,36 +13,20 @@ const isBetweenDates = function(target, min, max) {
  
 module.exports = {
     allowUsersToUnsubscribe: function() {
-        UnsubscribeDate.find().then(unsubscribableDates => {
-            const now = new Date();
-        
-            return unsubscribableDates
-                .map(range => {
-                    return isBetweenDates(now, range.start, range.end);
-                })
-                .reduce((sum, value) => sum || value);
+        return new Promise((resolve, reject) => {
+            UnsubscribeDate.find().then(unsubscribableDates => {
+                const now = new Date();
+                
+                const canUnsubscribe = unsubscribableDates
+                    .map(range => {
+                        return isBetweenDates(now, range.start, range.end);
+                    })
+                    .reduce((sum, value) => sum || value);
+                    
+                resolve(canUnsubscribe);
+            }, err => {
+                reject(err);
+            });
         });
     }
 };
-
-var allowUsersToUnsubscribe = function() {
-    return new Promise((resolve, reject) => {
-        UnsubscribeDate.find().then(unsubscribableDates => {
-            const now = new Date();
-            
-            const canUnsubscribe = unsubscribableDates
-                .map(range => {
-                    return isBetweenDates(now, range.start, range.end);
-                })
-                .reduce((sum, value) => sum || value);
-                
-            resolve(canUnsubscribe);
-        }, err => {
-            reject(err);
-        });
-    });
-};
-
-allowUsersToUnsubscribe().then(function(canUnsubscribe) {
-    console.log('can unsubscribe: ', canUnsubscribe);
-})
