@@ -133,4 +133,23 @@ router.post('/', function(req, res) {
 	}
 });
 
+// Get a recipient's catversation
+router.get('/:number/conversation', function(req, res) {
+    if (req.user) {
+        Promise.all([
+            Recipient.findOne({addedBy: req.user._id, number: req.params.number}),
+            Message.find({number: req.params.number})
+        ])
+        .then(function(results) {
+            if (results[0]) {
+                return res.status(200).json(results[1]);
+            } else {
+                return res.status(401).json({message: "You aren't facting this person"});
+            }
+        });
+    } else {
+        return res.status(401).json({message: strings.unauthenticated});
+    }
+});
+
 module.exports = router;
