@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Promise = require('bluebird');
 
-const appConfig = require.main.require('./app/config/app-settings');
+const UnsubscribeDate = require.main.require('./app/models/unsubscribe-date');
 const Recipient = require.main.require('./app/models/recipient');
 const strings = require.main.require('./app/config/strings');
 const IFTTTService = require.main.require('./app/services/ifttt.service.js');
@@ -58,22 +58,24 @@ const processWebhook = function(req) {
                 break;
                 
                 case 'recipient.unsubscribe':
-                    if (appConfig.allowUsersToUnsubscribe()) {
-                        const recipientNumber = req.body.sessionId;
-                        
-                        Recipient.delete({number: recipientNumber}).then(result => {
-                            resolve({message: req.body.result.fulfillment.messages[0].speech});
-                        }, err => {
-                            reject(err);
-                        });
-                    } else {
-                        // Get unsubscribe message from CatBot
-                        const randomSessionId = crypto.createHash('md5').update((new Date()).getTime().toString()).digest('hex');
-                        
-                        catbot.textRequest('unsubscribe', {sessionId: randomSessionId}).then(response => {
-                            resolve({message: response.result.fulfillment.speech});
-                        });
-                    }
+                    UnsubscribeDate.allowUnsubscribe().then(canUnsubscribe => {
+                        if (canUnsubscribe) {
+                            const recipientNumber = req.body.sessionId;
+                            
+                            Recipient.delete({number: recipientNumber}).then(result => {
+                                resolve({message: req.body.result.fulfillment.messages[0].speech});
+                            }, err => {
+                                reject(err);
+                            });
+                        } else {
+                            // Get unsubscribe message from CatBot
+                            const randomSessionId = crypto.createHash('md5').update((new Date()).getTime().toString()).digest('hex');
+                            
+                            catbot.textRequest('unsubscribe', {sessionId: randomSessionId}).then(response => {
+                                resolve({message: response.result.fulfillment.speech});
+                            });
+                        }
+                    });
                 break;
                     
                 default:
