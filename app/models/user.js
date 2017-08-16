@@ -14,7 +14,8 @@ var UserSchema = new Schema({
         id:     {type: String},
         accessToken: {type: String},
         refreshToken: {type: String}
-    }
+    },
+    isAdmin: {type: Boolean, default: false}
 }, {
     timestamps: true
 });

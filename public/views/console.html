@@ -1,0 +1,63 @@
+<div
+    layout="column"
+    class="layout-center"
+    ng-class="{'padding-0': $mdMedia('xs')}">
+    
+    <md-card>
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-title">All recipients ({{recipients.all.length}})</span>
+                <span class="md-subhead">Names and numbers of people who are registered for Cat Facts</span>
+            </md-card-title-text>
+        </md-card-title>
+        
+        <div class="list">
+            <recipients
+                recipients="recipients.all"
+                deletable="true"
+                limit-to="{{recipients.expanded ? null : 5}}"></recipients>
+        </div>
+        
+        <md-card-actions layout="row" layout-align="start center" ng-if="recipients.all.length > 5">
+            <md-button class="md-primary" ng-click="toggleExpandedRecipients()">
+                Show {{recipients.expanded ? 'less' : 'more'}}
+            </md-button>
+        </md-card-actions>
+    </md-card>
+    
+    <md-card>
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-title">Unsubscribe Dates</span>
+                <span class="md-subhead">Date ranges in which users are allowed to unsubscribe</span>
+            </md-card-title-text>
+        </md-card-title>
+        
+        <md-card-content class="list">
+            <md-list>
+                <md-list-item
+                    class="md-2-line"
+                    ng-repeat="unsubscribeDate in unsubscribeDates.all | limitTo: recipients.expanded ? null : 5">
+                    
+                    <div class="md-list-item-text">
+                        <h3>{{unsubscribeDate.start | date}} - {{unsubscribeDate.end | date}}</h3>
+                        <p>test</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-card-content>
+        
+        <md-card-actions layout="row" layout-align="start center" ng-if="unsubscribeDates.all.length > 5">
+            <md-button class="md-primary" ng-click="toggleExpandedDates()">
+                Show {{unsubscribeDates.expanded ? 'less' : 'more'}}
+            </md-button>
+        </md-card-actions>
+    </md-card>
+</div>
+
+<style type="text/css">
+    .list {
+        max-height: 50vh;
+        overflow-y: scroll;
+    }
+</style>

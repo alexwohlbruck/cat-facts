@@ -1,6 +1,7 @@
 module.exports = {
     welcomeMessage: "Thanks for signing up for Cat Facts! You will now receive fun facts about CATS every day! =^.^=",
     unauthenticated: "Sign in first",
+    unauthorized: "You aren't allowed to do that!",
     error: "Purr-don me, an error occured. Try again later!",
     recipient: {
         exists: "That person is already being facted."

@@ -2,8 +2,8 @@
 var app = angular.module('catfacts');
 
 
-app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
-	function($scope, $rootScope, FactService, socket) {
+app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
+	function($scope, $rootScope, ApiService, socket) {
     
     getFacts();
     setTimer();
@@ -18,7 +18,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
 	    var fact = $scope.form.newFact;
 	    
 	    if (fact && fact.trim().length != 0) {
-	        FactService.submitFact({text: fact});
+	        ApiService.submitFact({text: fact});
     	    $scope.form.newFact = '';
 	    } else {
 	        $scope.showToast("Type in a fact");
@@ -33,18 +33,18 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'FactService', 'socket',
 	$scope.upvoteFact = function(fact) {
 		var index = getIndexOfFact(fact);
 		if (userUpvoted(fact)) {
-			FactService.unvoteFact(fact._id).catch(function(err) {
+			ApiService.unvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
 			});
 		} else {
-			FactService.upvoteFact(fact._id).catch(function(err) {
+			ApiService.upvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
 			});
 		}
 	};
 	
 	function getFacts() {
-	    $scope.promise = FactService.getSubmittedFacts().then(function(response) {
+	    $scope.promise = ApiService.getSubmittedFacts().then(function(response) {
 	        $scope.facts = response.data;
 	        $scope.facts.forEach(function(fact, index) {
 	        	$scope.facts[index].upvoted = userUpvoted(fact);

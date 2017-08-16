@@ -43,6 +43,17 @@ app.config(['$stateProvider', '$urlRouterProvider',
 				showInNavigation: true
 			}
 		})
+		
+		.state('console', {
+			url: '/console',
+			templateUrl: '/views/console.html',
+			controller: 'ConsoleCtrl',
+			data: {
+				restricted: true,
+				showInNavigation: true,
+				adminRequired: true
+			}
+		})
 	;
 
 	$urlRouterProvider.otherwise('/');

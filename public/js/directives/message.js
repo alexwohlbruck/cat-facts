@@ -7,6 +7,6 @@ app.directive('message', function() {
         scope: {
             message: "="
         },
-        templateUrl: '/views/directives/message.directive.html'
+        templateUrl: '/views/directives/message.html'
     };
 });

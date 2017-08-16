@@ -1,20 +1,22 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'AuthService', '$mdDialog', '$mdMedia',
-    function($scope, $rootScope, RecipientService, AuthService, $mdDialog, $mdMedia) {
+app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthService', '$mdDialog', '$mdMedia',
+    function($scope, $rootScope, ApiService, AuthService, $mdDialog, $mdMedia) {
     
-    $scope.selected = [], $scope.recipients = [];
+    $scope.recipients = [];
     $scope.AuthService = AuthService;
     
-    getRecipients();
+    $scope.orderBy = 'name';
+    
+    getMyRecipients();
     
     $scope.addRecipient = function() {
         var name = $scope.form.name, number = $scope.form.number;
         
         if (name && number && number.replace(/[^0-9]/gi, '').trim().length == 10) {
             
-            RecipientService.addRecipient({
+            ApiService.addRecipient({
                 name: name,
                 number: number.replace(/[^0-9]/gi, '').trim()
             }).then(function(response) {
@@ -31,21 +33,9 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
         }
     };
     
-    $scope.openConversation = function(event, recipient) {
-        $mdDialog.show({
-            controller: 'ConversationCtrl',
-            templateUrl: '/views/partials/conversation.html',
-            parent: angular.element(document.body),
-            targetEvent: event,
-            clickOutsideToClose: true,
-            fullscreen: $mdMedia('xs'),
-            locals: {data: {recipient: recipient}}
-        });
-    };
-    
     $scope.openImportContacts = function(contacts) {
         $mdDialog.show({
-            controller: ['$scope', '$rootScope', '$mdDialog', 'RecipientService', function($scope, $rootScope, $mdDialog, RecipientService) {
+            controller: ['$scope', '$rootScope', '$mdDialog', 'ApiService', function($scope, $rootScope, $mdDialog, ApiService) {
                 $scope.contacts = contacts;
                 $scope.table = {orderBy: 'name'};
                 $scope.selectedContacts = [];
@@ -59,7 +49,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
                 };
                 
                 $scope.checkScopesAndGetContacts = function() {
-                    $scope.promise = RecipientService.getGoogleContacts().then(function(response) {
+                    $scope.promise = ApiService.getGoogleContacts().then(function(response) {
                         $scope.contacts = response.data;
                     }, function(err) {
                         if (err.status == 403 || err.status == 401) AuthService.openOAuth();
@@ -81,7 +71,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
         })
         .then(function(recipients) {
             
-            RecipientService.addRecipients(recipients).then(function(response) {
+            ApiService.addRecipients(recipients).then(function(response) {
                 $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort(function(a, b) {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
@@ -93,8 +83,8 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'RecipientService', 'A
         });
     };
     
-    function getRecipients() {
-        $scope.promise = RecipientService.getRecipients().then(function(response) {
+    function getMyRecipients() {
+        $scope.promise = ApiService.getMyRecipients().then(function(response) {
             $scope.recipients = response.data;
         }, function(err) {
             $rootScope.toast({message: err.data.message});
