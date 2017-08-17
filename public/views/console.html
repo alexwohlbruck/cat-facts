@@ -7,7 +7,7 @@
         <md-card>
             <md-card-title>
                 <md-card-title-text>
-                    <span class="md-title">All recipients ({{recipients.all.length}})</span>
+                    <span class="md-title">All recipients ({{recipients.total}})</span>
                     <span class="md-subhead">Names and numbers of people who are registered for Cat Facts</span>
                 </md-card-title-text>
             </md-card-title>
@@ -31,38 +31,41 @@
         <md-card>
             <md-card-title>
                 <md-card-title-text>
-                    <span class="md-title">Unsubscribe Dates</span>
+                    <span class="md-title">Unsubscribe dates</span>
                     <span class="md-subhead">Date ranges in which users are allowed to unsubscribe</span>
                 </md-card-title-text>
             </md-card-title>
             
             <div class="list">
-                <md-list>
+                <md-list class="dates-list">
                     <md-list-item
                         class="md-2-line"
                         ng-repeat="unsubscribeDate in unsubscribeDates.all | limitTo: recipients.expanded ? null : 5"
-                        ng-click="editDate($index, $event)">
+                        ng-click="editDate($index, $event)"
+                        ng-mouseover="unsubscribeDate.hover = true"
+                        ng-mouseleave="unsubscribeDate.hover = false"
+                        ng-disabled="unsubscribeDate.status == 'passed'">
                         
                         <div class="md-list-item-text">
                             <h3>
                                 <span>{{unsubscribeDate.start | date : 'short'}}</span>
-                                <md-icon class="material-icons">chevron_right</md-icon>
+                                <md-icon class="material-icons chevron">chevron_right</md-icon>
                                 <span>{{unsubscribeDate.end | date : 'short'}}</span>
                             </h3>
+                            
                             <p>
-                                <span>
-                                    <span>{{unsubscribeDate.intervalMs | timeIntervalFormat}}</span>
-                                    <md-tooltip
-                                        md-direction="right"
-                                        md-visible="true"
-                                        ng-if="unsubscribeDate.status != 'Passed'">
-                                        {{unsubscribeDate.status}}
-                                    </md-tooltip>
+                                <span class="md-body-2">{{unsubscribeDate.intervalMs | timeIntervalFormat}}</span>
+                                
+                                <span class="tag {{unsubscribeDate.status}}">
+                                    {{unsubscribeDate.status | capitalize}}
                                 </span>
                             </p>
                         </div>
                         
-                        <md-button class="md-secondary md-icon-button">
+                        <md-button
+                            class="md-secondary md-icon-button"
+                            ng-show="unsubscribeDate.hover && unsubscribeDate.status != 'passed'">
+                            
                             <md-icon class="material-icons">edit</md-icon>
                         </md-button>
                     </md-list-item>
@@ -76,6 +79,36 @@
             </md-card-actions>
         </md-card>
     </div>
+    
+    <div class="brick">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-title">All users</span>
+                    <span class="md-subhead">People who have made an account on Cat Facts</span>
+                </md-card-title-text>
+            </md-card-title>
+            
+            <md-card-content>
+                <p class="md-body-2">Feature not available yet</p>
+            </md-card-content>
+        </md-card>
+    </div>
+    
+    <div class="brick">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-title">Override facts</span>
+                    <span class="md-subhead">Replace the default Cat Fact for any given day</span>
+                </md-card-title-text>
+            </md-card-title>
+            
+            <md-card-content>
+                <p class="md-body-2">Feature not available yet</p>
+            </md-card-content>
+        </md-card>
+    </div>
 </div>
 
 <style>
@@ -84,14 +117,40 @@
         overflow-y: scroll;
     }
     
+    .dates-list .chevron {
+        transform: translateY(-1.6px);
+    }
+    
     .masonry {
         display: block;
-        column-count: 3;
+        column-count: 2;
         column-gap: 0;
     }
     .masonry .brick {
         display: block;
         break-inside: avoid;
         padding: 5px;
+    }
+    
+    .tag {
+        background-color: darkgrey;
+        color: rgba(255, 255, 255, 0.87);
+        font-size: 10px;
+        font-weight: 500;
+        padding: 2px 6px;
+        margin: 0px 4px;
+        border-radius: 4px;
+        height: 15px;
+        line-height: 15px;
+        display: inline-block;
+    }
+    .tag.passed {
+        background-color: #b71c1c;
+    }
+    .tag.ongoing {
+        background-color: #29b6f6;
+    }
+    .tag.upcoming {
+        background-color: #4caf50;
     }
 </style>

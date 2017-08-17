@@ -14,14 +14,19 @@ app.controller('ConsoleCtrl', ['$scope', 'ApiService', '$mdDialog', '$mdMedia',
     };
     
     ApiService.getConsoleData().then(function(response) {
-        $scope.recipients.all = response.data.recipients;
+        $scope.recipients.all = response.data.recipients.all;
+        $scope.recipients.total = response.data.recipients.total;
+        
         $scope.unsubscribeDates.all = response.data.unsubscribeDates
             .map(function(date) {
                 var now = new Date();
                 var start =  new Date(date.start);
                 var end =  new Date(date.end);
                 
-                date.status = (end < now ? 'Passed' : (start < now ? 'Ongoing' : 'Upcoming'));
+                date.start = start;
+                date.end = end; 
+                
+                date.status = (end < now ? 'passed' : (start < now ? 'ongoing' : 'upcoming'));
                 date.intervalMs = end.getTime() - start.getTime();
                 
                 return date;
@@ -54,14 +59,18 @@ app.controller('ConsoleCtrl', ['$scope', 'ApiService', '$mdDialog', '$mdMedia',
     
     $scope.editDate = function(index, ev) {
         $mdDialog.show({
-            controller: ['$scope', function($scope) {
-                
+            controller: ['$scope', 'date', '$mdDialog', function($scope, date, $mdDialog) {
+                $scope.date = date;
+                $scope.$mdDialog = $mdDialog;
             }],
             templateUrl: 'views/partials/edit-date.html',
+            locals: {date: $scope.unsubscribeDates.all[index]},
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: $mdMedia('xs')
+        }).then(function(date) {
+            
         });
     };
 }]);

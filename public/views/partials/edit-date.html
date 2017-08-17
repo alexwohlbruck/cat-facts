@@ -1,0 +1,30 @@
+<md-dialog>
+    <md-dialog-content class="md-dialog-content">
+        <h2 class="md-title">Edit date</h2>
+
+        <div>
+            <h4 class="md-body-2">Start</h4>
+            <md-datepicker ng-model="date.start" md-placeholder="Choose date"></md-datepicker>
+            
+            <md-input-container class="no-space">
+                <label>Choose time</label>
+                <input type="time" ng-model="date.start">
+            </md-input-container>
+        </div>
+        
+        <div>
+            <h4 class="md-body-2">End</h4>
+            <md-datepicker ng-model="date.end" md-placeholder="Choose date"></md-datepicker>
+            
+            <md-input-container class="no-space">
+                <label>Choose time</label>
+                <input type="time" ng-model="date.end">
+            </md-input-container>
+        </div>
+    </md-dialog-content>
+    
+    <md-dialog-actions>
+        <md-button ng-click="$mdDialog.cancel()">Cancel</md-button>
+        <md-button ng-click="$mdDialog.hide(date)" class="md-primary">Update</md-button>
+    </md-dialog-actions>
+</md-dialog>
