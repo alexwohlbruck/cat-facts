@@ -1,7 +1,9 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('ConsoleCtrl', ['$scope', 'ApiService', function($scope, ApiService) {
+app.controller('ConsoleCtrl', ['$scope', 'ApiService', '$mdDialog', '$mdMedia',
+    function($scope, ApiService, $mdDialog, $mdMedia) {
+    
     $scope.recipients = {
         loadedAll: false,
         expanded: false
@@ -13,7 +15,17 @@ app.controller('ConsoleCtrl', ['$scope', 'ApiService', function($scope, ApiServi
     
     ApiService.getConsoleData().then(function(response) {
         $scope.recipients.all = response.data.recipients;
-        $scope.unsubscribeDates.all = response.data.unsubscribeDates;
+        $scope.unsubscribeDates.all = response.data.unsubscribeDates
+            .map(function(date) {
+                var now = new Date();
+                var start =  new Date(date.start);
+                var end =  new Date(date.end);
+                
+                date.status = (end < now ? 'Passed' : (start < now ? 'Ongoing' : 'Upcoming'));
+                date.intervalMs = end.getTime() - start.getTime();
+                
+                return date;
+            });
     }, function(err) {
         console.log(err);
     });
@@ -38,5 +50,18 @@ app.controller('ConsoleCtrl', ['$scope', 'ApiService', function($scope, ApiServi
                 $scope.unsubscribeDates.all = reponse.data;
             });
         }
+    };
+    
+    $scope.editDate = function(index, ev) {
+        $mdDialog.show({
+            controller: ['$scope', function($scope) {
+                
+            }],
+            templateUrl: 'views/partials/edit-date.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: $mdMedia('xs')
+        });
     };
 }]);
