@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/alexwohlbruck/cat-facts.png?label=ready&title=Ready)](https://waffle.io/alexwohlbruck/cat-facts?utm_source=badge)
 ![Cat Facts logo](http://i.imgur.com/9RGJ5Ea.png)
 ---
 Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularjs.org/), and [Tasker](https://tasker.dinglisch.net/), this app will combine APIs and Services from the web to do just one thing... send cat facts.
