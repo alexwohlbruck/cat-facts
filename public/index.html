@@ -13,20 +13,12 @@
 	<link rel="manifest" href="config/manifest.json">
 	<link rel="icon" type="image/png" href="https://cat-fact.herokuapp.com/img/logo/favicon.ico"/>
 
-	<!-- Main CSS -->
 	<link rel="stylesheet" href="css/style.css">
-
-	<!-- Angular Material CSS -->
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.css"/>
-
-	<!-- Angular Material Dependencies -->
-	<!--<link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css"/>-->
-	<link rel="stylesheet" href="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.css"/>
-	<!--<link rel="stylesheet" href="bower_components/angular-carousel/angular-carousel.css" type="text/css"/>-->
-	<link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css"/>
-
-	<!-- Material Icons -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.css"/>
+	<link rel="stylesheet" href="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.css"/>
+	<link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css"/>
 </head>
 
 <body ng-controller="MainCtrl" layout="column" ng-cloak>
@@ -40,7 +32,13 @@
 			
 			<span flex></span>
 			
+			<md-button class="md-icon-button" aria-lable="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
+				<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
+				<md-icon class="material-icons grey">bug_report</md-icon>
+			</md-button>
+			
 			<md-button class="md-icon-button" aria-label="about" ng-click="openAbout($event)">
+				<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
 				<md-icon class="material-icons grey">info</md-icon>
 			</md-button>
 		</div>

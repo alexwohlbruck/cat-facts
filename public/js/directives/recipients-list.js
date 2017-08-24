@@ -9,12 +9,13 @@ app.directive('recipients', function() {
             promise: '=',
             orderBy: '@',
             limitTo: '@',
-            deletable: '='
+            show: '='
         },
         templateUrl: '/views/directives/recipients-list.html',
         controller: ['$scope', '$rootScope', '$mdDialog', '$mdMedia', 'ApiService',
             function($scope, $rootScope, $mdDialog, $mdMedia, ApiService) {
-                
+            
+            $scope.$mdMedia = $mdMedia;
             $scope.selected = [];
             
             $scope.openConversation = function(event, recipient) {
