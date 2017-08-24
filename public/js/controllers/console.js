@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('ConsoleCtrl', ['$scope', 'ApiService', '$mdDialog', '$mdMedia',
-    function($scope, ApiService, $mdDialog, $mdMedia) {
+app.controller('ConsoleCtrl', ['$scope', '$rootScope', 'ApiService', '$mdDialog', '$mdMedia',
+    function($scope, $rootScope, ApiService, $mdDialog, $mdMedia) {
     
     $scope.recipients = {
         loadedAll: false,
@@ -41,8 +41,13 @@ app.controller('ConsoleCtrl', ['$scope', 'ApiService', '$mdDialog', '$mdMedia',
         
         if (!$scope.recipients.loadedAll) {
             $scope.recipients.loadedAll = true;
+            $scope.recipients.loading = true;
             ApiService.getRecipients().then(function(reponse) {
+                $scope.recipients.loading = false;
                 $scope.recipients.all = reponse.data;
+            }, function(err) {
+                $rootScope.toast(err);
+                $scope.recipients.loading = false;
             });
         }
     };

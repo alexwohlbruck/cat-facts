@@ -12,7 +12,7 @@
                 </md-card-title-text>
             </md-card-title>
             
-            <div class="list">
+            <div>
                 <recipients
                     recipients="recipients.all"
                     deletable="true"
@@ -20,6 +20,10 @@
             </div>
             
             <md-card-actions layout="row" layout-align="start center" ng-if="recipients.all.length > 5">
+                <md-button class="md-primary" ui-sref="recipients">
+                    Add new
+                </md-button>
+                
                 <md-button class="md-primary" ng-click="toggleExpandedRecipients()">
                     Show {{recipients.expanded ? 'less' : 'more'}}
                 </md-button>
@@ -126,7 +130,7 @@
 </div>
 
 <style>
-    .list {
+    .list, recipients md-table-container {
         max-height: 50vh;
         overflow-y: scroll;
     }
