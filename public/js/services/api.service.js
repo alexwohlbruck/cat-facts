@@ -43,6 +43,15 @@ app.service('ApiService', ['$rootScope', '$http', function($rootScope, $http) {
         }
     };
     
+    this.addRecipients = function(recipients) {
+        return $http.post('/recipients', recipients);
+    };
+    
+    this.editRecipient = function(recipient) {
+        console.log(recipient);
+        return $http.patch('/recipients/' + recipient._id, recipient);
+    };
+    
     this.deleteRecipients = function(options) {
         // options: { recipients[], permanent (bool) }
         return $http({
@@ -50,10 +59,6 @@ app.service('ApiService', ['$rootScope', '$http', function($rootScope, $http) {
             method: 'DELETE',
             params: options
         });
-    };
-    
-    this.addRecipients = function(recipients) {
-        return $http.post('/recipients', recipients);
     };
     
     this.getGoogleContacts = function() {

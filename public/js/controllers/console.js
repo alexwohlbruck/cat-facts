@@ -16,6 +16,7 @@ app.controller('ConsoleCtrl', ['$scope', 'ApiService', '$mdDialog', '$mdMedia',
     ApiService.getConsoleData().then(function(response) {
         $scope.recipients.all = response.data.recipients.all;
         $scope.recipients.total = response.data.recipients.total;
+        $scope.users = response.data.users;
         
         $scope.unsubscribeDates.all = response.data.unsubscribeDates
             .map(function(date) {

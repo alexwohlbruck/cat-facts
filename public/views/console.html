@@ -85,13 +85,27 @@
             <md-card-title>
                 <md-card-title-text>
                     <span class="md-title">All users</span>
-                    <span class="md-subhead">People who have made an account on Cat Facts</span>
+                    <span class="md-subhead">People who have made accounts on Cat Facts</span>
                 </md-card-title-text>
             </md-card-title>
             
-            <md-card-content>
-                <p class="md-body-2">Feature not available yet</p>
-            </md-card-content>
+            <md-list>
+                <md-list-item class="md-3-line" ng-repeat="user in users | limitTo: 5">
+                    <img ng-src="{{user.photo || '/img/res/avatars/user-face.png'}}" class="md-avatar"/>
+                    
+                    <div class="md-list-item-text" layout="column">
+                        <h3>{{user.name.first}} {{user.name.last}}</h3>
+                        <h4>{{user.email}}</h4>
+                        <p>Joined {{user.createdAt | date}}</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+            
+            <md-card-actions layout="row" layout-align="start center" ng-if="users.length > 5">
+                <md-button class="md-primary" ng-click="toggleExpandedUsers()">
+                    Show {{users.expanded ? 'less' : 'more'}}
+                </md-button>
+            </md-card-actions>
         </md-card>
     </div>
     
@@ -105,7 +119,7 @@
             </md-card-title>
             
             <md-card-content>
-                <p class="md-body-2">Feature not available yet</p>
+                <p class="md-body-2">Feature not yet available</p>
             </md-card-content>
         </md-card>
     </div>
@@ -125,6 +139,7 @@
         display: block;
         column-count: 2;
         column-gap: 0;
+        padding-bottom: 0px;
     }
     .masonry .brick {
         display: block;

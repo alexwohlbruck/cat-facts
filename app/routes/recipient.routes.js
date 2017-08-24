@@ -9,12 +9,13 @@ const IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 // Get all recipients
 router.get('/', (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
+	// if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+	// if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
 	
-	Recipient.find().sort('-createdAt').then(recipients => {
+	Recipient.find().sort('-createdAt').populate({path: 'addedBy', select: 'name'}).then(recipients => {
 		return res.status(200).json(recipients);
 	}, err => {
+		console.log(err);
 		return res.status(400).json(err);
 	});
 });
@@ -81,6 +82,21 @@ router.post('/', (req, res) => {
 			return res.status(400).json(err);
 		});
 	}
+});
+
+router.patch('/:recipientId', function(req, res) {
+	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+	
+	Recipient.update({_id: req.params.recipientId}, {
+		$set: {
+			name: req.body.name,
+			number: req.body.number
+		}
+	}).then(recipient => {
+		return res.status(200).json(recipient);
+	}, err => {
+		return res.status(err.statusCode || 400).json(err);
+	});
 });
 
 router.delete('/', (req, res) => {

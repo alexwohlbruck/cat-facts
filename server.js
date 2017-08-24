@@ -14,7 +14,7 @@ const env = process.env.NODE_ENV || 'development';
 
 global.Promise = require('bluebird');
 
-mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts');
+mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {useMongoClient: true});
 
 app.set('socketio', io);
 app.set('view engine', 'ejs');

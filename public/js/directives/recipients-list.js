@@ -29,6 +29,34 @@ app.directive('recipients', function() {
                 });
             };
             
+            $scope.editRecipient = function(recipient, ev) {
+                $mdDialog.show({
+                    controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
+                        $scope.recipient = recipient;
+                        $scope.cancel = $mdDialog.hide;
+                        $scope.save = function() {
+                            ApiService.editRecipient($scope.recipient).then(function(recipient) {
+                                $mdDialog.hide(recipient);
+                            }, function(err) {
+                                $mdDialog.cancel(err);
+                            });
+                        };
+                    }],
+                    templateUrl: 'views/partials/edit-recipient.html',
+                    parent: angular.element(document.body),
+                    targetEvent: ev,
+                    clickOutsideToClose: true,
+                    fullscreen: $mdMedia('xs')
+                }).then(function(editedRecipient) {
+                    if (editedRecipient) {
+                        $rootScope.toast({message: 'Recipient updated'});
+                        $scope.selected = [];
+                    }
+                }, function(err) {
+                    $rootScope.toast(err);
+                });
+            };
+            
             $scope.deleteRecipients = function(recipients, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
