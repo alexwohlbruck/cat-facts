@@ -17,6 +17,12 @@ app.controller('ConsoleCtrl', ['$scope', '$rootScope', 'ApiService', '$mdDialog'
         $scope.recipients.all = response.data.recipients.all;
         $scope.recipients.total = response.data.recipients.total;
         $scope.users = response.data.users;
+        $scope.today = new Date();
+        
+        $scope.overrideFacts = response.data.overrideFacts.map(function(overrideFact) {
+            overrideFact.sendDate = new Date(overrideFact.sendDate);
+            return overrideFact;
+        });
         
         $scope.unsubscribeDates.all = response.data.unsubscribeDates
             .map(function(date) {

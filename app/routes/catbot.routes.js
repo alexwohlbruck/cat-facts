@@ -19,6 +19,7 @@ router.get('/daily', function(req, res) {
 		var io = req.app.get('socketio'), snowball = {};
 		
 		Promise.all([
+			Fact.findOne({sendDate: {$gte: new Date(), $lte: new Date()}}),
 			FactService.getFact({setUsed: true}),
 			Recipient.find(),
 			Upvote.aggregate([
@@ -35,10 +36,17 @@ router.get('/daily', function(req, res) {
 				{$limit: 1}
 			])
 		])
-		.spread(function(fact, recipients, highestUpvotedFact) {
+		.spread(function(overrideFact, fact, recipients, highestUpvotedFact) {
 			highestUpvotedFact = highestUpvotedFact[0];
 			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
 			snowball.recipients = recipients;
+			
+			if (overrideFact) {
+				console.log('using overrideFact', overrideFact);
+				snowball.fact = overrideFact.text;
+				overrideFact.used = true;
+				overrideFact.save();
+			}
 				
 			var messages = recipients.map(function(o, i) {
 				io.emit('message', {message: snowball.fact, recipient: o});

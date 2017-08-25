@@ -20,11 +20,9 @@ router.get('/', function(req, res) {
 // Get submitted facts
 router.get('/submitted', function(req, res) {
 	
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	
 	// Define states of pipeline
-	var matchAll = {$match: {used: false, source: 'user'}},
-		matchMe = {$match: {user: req.user._id}},
+	var matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}}},
+		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query'}},
 		lookupUsers = {$lookup: {
 			from: 'users',
 			localField: 'user',

@@ -9,7 +9,7 @@ module.exports = {
 		return new Promise((resolve, reject) => {
 			Fact.findRandom({}, {}, {limit: options.amount}, (err, facts) => {
 				if (err) return reject(err);
-				if (options.amount == 1 && options.setUsed) {
+				if (options.amount == 1 && options.setUsed && !facts[0].sendDate) {
 					Fact.findOneAndUpdate({_id: facts[0]._id}, {used: true});
 				}
 				facts = facts.map(o => o.text);

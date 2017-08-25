@@ -128,16 +128,16 @@
             </md-card-title>
             
             <md-list>
-                <md-list-item class="md-2-line" ng-repeat="fact in [0,1,2,3,4]">
+                <md-list-item class="md-2-line" ng-repeat="fact in overrideFacts">
                     <div class="md-list-item-text">
-                        <h3>Hey guys, today is international dog day! I've decided to lament this holiday by allowing one more oppertunity to unsubscribe. You have 24 hours!</h3>
-                        <p>Sending on August 26, 2017</p>
+                        <h3>{{fact.text}}</h3>
+                        <p>{{fact.sendDate > today ? 'Sending' : 'Sent'}} on {{fact.sendDate | date}}
                     </div>
                 </md-list-item>
             </md-list>
             
             <md-card-actions layout="row">
-                <md-button class="md-primary" ng-disabled="true">
+                <md-button class="md-primary" ui-sref="facts">
                     Add new
                 </md-button>
             </md-card-actions>
