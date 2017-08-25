@@ -9,7 +9,8 @@ app.directive('recipients', function() {
             promise: '=',
             orderBy: '@',
             limitTo: '@',
-            show: '='
+            options: '=',
+            selected: '='
         },
         templateUrl: '/views/directives/recipients-list.html',
         controller: ['$scope', '$rootScope', '$mdDialog', '$mdMedia', 'ApiService',

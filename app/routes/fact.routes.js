@@ -19,30 +19,43 @@ router.get('/', function(req, res) {
 
 // Get submitted facts
 router.get('/submitted', function(req, res) {
-	Fact.aggregate([
-		{$match: {used: false, source: 'user'}},
-		{$lookup: {
+	
+	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+	
+	// Define states of pipeline
+	var matchAll = {$match: {used: false, source: 'user'}},
+		matchMe = {$match: {user: req.user._id}},
+		lookupUsers = {$lookup: {
 			from: 'users',
 			localField: 'user',
 			foreignField: '_id',
 			as: 'user'
 		}},
-		{$project: {
+		projectUsers = {$project: {
 			text: 1,
 			user: { $arrayElemAt: ['$user', 0], }
 		}},
-		{$lookup: {
+		lookupUpvotes = {$lookup: {
 			from: 'upvotes',
 			localField: '_id',
 			foreignField: 'fact',
 			as: 'upvotes'
 		}},
-		{$project: {
+		projectUpvotes = {$project: {
 			text: 1,
 			user: { _id: 1, name: 1 },
 			upvotes: { user: 1 },
-		}}
-	]).then(function(data) {
+			used: 1
+		}};
+	
+	Promise.props({
+		all: Fact.aggregate([
+			matchAll, lookupUsers, projectUsers, lookupUpvotes, projectUpvotes
+		]),
+		me: Fact.aggregate([
+			matchMe, lookupUpvotes, projectUpvotes
+		])
+	}) .then(function(data) {
 		return res.status(200).json(data);
 	}, function(err) {
         return res.status(400).json(err);

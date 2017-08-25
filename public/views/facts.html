@@ -24,7 +24,7 @@
 	    		<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
 	    			<div
 	    				flex class="facts-empty padding-30"
-	    				ng-if="facts.length == 0"
+	    				ng-if="facts.all.length == 0"
 	    				layout="column"
 	    				layout-align="center center">
 	    				
@@ -39,13 +39,13 @@
 						</span>
 	    			</div>
 	    			
-	            	<md-table-container ng-if="facts.length != 0">
+	            	<md-table-container ng-if="facts.all.length != 0">
 	            		<table md-table ng-model="selected" md-progress="promise">
 	            			<thead md-head>
 	            				<tr md-row md-row-select="false">
 	            					<th md-column><span>Name</span></th>
 	            					<th md-column><span>Fact</span></th>
-	            					<th md-column md-numeric style="padding-right: 90px !important">Points</th>
+	            					<th md-column md-numeric style="padding-right: 90px !important">Votes</th>
 	            				</tr>
 	            			</thead>
 	            			<tbody md-body>
@@ -53,7 +53,7 @@
 	            					md-row md-select="fact"
 	            					md-select-id="name"
 	            					md-auto-select
-	            					ng-repeat="fact in facts | orderBy:'-upvotes.length'"
+	            					ng-repeat="fact in facts.all | orderBy:'-upvotes.length'"
 	            					ng-animater="'animate'">
 	            					
 	            					<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
@@ -92,11 +92,11 @@
 	            			<thead md-head>
 	            				<tr md-row md-row-select="false">
 	            					<th md-column><span>Fact</span></th>
-	            					<th md-column md-numeric style="padding-right: 90px !important">Points</th>
+	            					<th md-column md-numeric style="padding-right: 90px !important">Votes</th>
 	            				</tr>
 	            			</thead>
 	            			<tbody md-body>
-	            				<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts | filter: {user: {_id: authenticatedUser._id}} | orderBy: '-upvotes.length'">
+	            				<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
 	            					<td md-cell>"{{fact.text}}"</td>
 	            					<td md-cell>
 	            						<span>{{fact.upvotes.length}}</span>

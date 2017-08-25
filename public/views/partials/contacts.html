@@ -18,9 +18,11 @@
 				</span>
 			</div>
 		</md-toolbar>
+		
+		<!-- Replace the table with recipients directive -->
+		<!--<recipients recipients="contacts" promise="promise" options="{selectable: true}" selected="selectedContacts"></recipients>-->
 	
 		<md-table-container flex>
-			<!-- Add better sorting, there's a built in method in md-data-table (RTFD) -->
 			<table
 			    md-table
 			    md-row-select="true"
@@ -35,9 +37,7 @@
 					</tr>
 				</thead>
 				<tbody md-body>
-					<!-- Testing virual repeat in contacts list -- does not work -- figure it out -->
 					<md-virtual-repeat-container id="vertical-container">
-	 <!-- Replace with: md-virtual-repeat -->
 					<tr ng-repeat="contact in contacts | orderBy: table.orderBy"
 						ng-disabled="contact.added"
 						md-on-demand

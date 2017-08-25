@@ -15,11 +15,12 @@
             <div>
                 <recipients
                     recipients="recipients.all"
-                    show="{deletable: true, addedBy: true}"
-                    limit-to="{{recipients.expanded ? null : 5}}"></recipients>
+                    options="{selectable: true, addedBy: true, editable: true}"
+                    limit-to="{{recipients.expanded ? null : 5}}"
+                    selected="[]"></recipients>
             </div>
             
-            <md-card-actions layout="row" layout-align="start center" ng-if="recipients.all.length > 5">
+            <md-card-actions layout="row" ng-if="recipients.all.length > 5">
                 <md-button class="md-primary" ui-sref="recipients">
                     Add new
                 </md-button>
@@ -36,7 +37,7 @@
             <md-card-title>
                 <md-card-title-text>
                     <span class="md-title">Unsubscribe dates</span>
-                    <span class="md-subhead">Date ranges in which users are allowed to unsubscribe</span>
+                    <span class="md-subhead">Date ranges in which recipients are allowed to unsubscribe</span>
                 </md-card-title-text>
             </md-card-title>
             
@@ -76,8 +77,12 @@
                 </md-list>
             </div>
             
-            <md-card-actions layout="row" layout-align="start center" ng-if="unsubscribeDates.all.length > 5">
-                <md-button class="md-primary" ng-click="toggleExpandedDates()">
+            <md-card-actions layout="row">
+                <md-button class="md-primary" ng-disabled="true">
+                    Add new
+                </md-button>
+                
+                <md-button class="md-primary" ng-click="toggleExpandedDates()" ng-show="unsubscribeDates.all.length > 5">
                     Show {{unsubscribeDates.expanded ? 'less' : 'more'}}
                 </md-button>
             </md-card-actions>
@@ -105,7 +110,7 @@
                 </md-list-item>
             </md-list>
             
-            <md-card-actions layout="row" layout-align="start center" ng-if="users.length > 5">
+            <md-card-actions layout="row" ng-if="users.length > 5">
                 <md-button class="md-primary" ng-click="toggleExpandedUsers()">
                     Show {{users.expanded ? 'less' : 'more'}}
                 </md-button>
@@ -122,9 +127,20 @@
                 </md-card-title-text>
             </md-card-title>
             
-            <md-card-content>
-                <p class="md-body-2">Feature not yet available</p>
-            </md-card-content>
+            <md-list>
+                <md-list-item class="md-2-line" ng-repeat="fact in [0,1,2,3,4]">
+                    <div class="md-list-item-text">
+                        <h3>Hey guys, today is international dog day! I've decided to lament this holiday by allowing one more oppertunity to unsubscribe. You have 24 hours!</h3>
+                        <p>Sending on August 26, 2017</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+            
+            <md-card-actions layout="row">
+                <md-button class="md-primary" ng-disabled="true">
+                    Add new
+                </md-button>
+            </md-card-actions>
         </md-card>
     </div>
 </div>

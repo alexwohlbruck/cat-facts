@@ -46,18 +46,19 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
 	function getFacts() {
 	    $scope.promise = ApiService.getSubmittedFacts().then(function(response) {
 	        $scope.facts = response.data;
-	        $scope.facts.forEach(function(fact, index) {
-	        	$scope.facts[index].upvoted = userUpvoted(fact);
+	        $scope.facts.all = $scope.facts.all.map(function(fact) {
+	        	fact.upvoted = userUpvoted(fact);
+	        	return fact;
 	        });
 	    });
 	}
 	
 	function userUpvoted(fact) {
-		return !!fact.upvotes.find(o => o.user == $rootScope.authenticatedUser._id);
+		return !!fact.upvotes.find(function(o) { return o.user == $rootScope.authenticatedUser._id});
 	}
 	
 	function getIndexOfFact(factID) {
-		return $scope.facts.map(o => o._id).indexOf(factID);
+		return $scope.facts.all.map(function(o) { return o._id }).indexOf(factID);
 	}
 	
 	function setTimer() {
@@ -80,19 +81,19 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
     
     socket.on('fact', function(data) {
 	    data.upvotes = [];
-    	$scope.facts.push(data);
+    	$scope.facts.all.push(data);
     });
     
     socket.on('fact:upvote', function(data) {
     	var factIndex = getIndexOfFact(data.fact._id);
-    	$scope.facts[factIndex].upvotes.push({user: data.user._id});
-		$scope.facts[factIndex].upvoted = true;
+    	$scope.facts.all[factIndex].upvotes.push({user: data.user._id});
+		$scope.facts.all[factIndex].upvoted = true;
     });
     
     socket.on('fact:unvote', function(data) {
     	var factIndex = getIndexOfFact(data.fact._id);
-    	$scope.facts[factIndex].upvotes.splice($scope.facts[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
-    	$scope.facts[factIndex].upvoted = false;
+    	$scope.facts.all[factIndex].upvotes.splice($scope.facts[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
+    	$scope.facts.all[factIndex].upvoted = false;
     });
     
 }]);

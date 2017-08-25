@@ -1,4 +1,4 @@
-<md-toolbar ng-show="selected.length != 0">
+<md-toolbar ng-show="options.editable && selected.length != 0">
     <div class="md-toolbar-tools">
         <span class="md-subhead" flex>
         	{{selected.length}} {{selected.length == 1 ? 'recipient' : 'recipients'}} selected
@@ -14,13 +14,13 @@
     </div>
 </md-toolbar>
 
-<md-table-container>
-	<table md-table md-row-select="show.deletable" multiple ng-model="selected" md-progress="promise">
+<md-table-container flex>
+	<table md-table md-row-select="options.selectable" multiple ng-model="selected" md-progress="promise">
 		<thead md-head>
 			<tr md-row>
 				<th md-column><span>Name</span></th>
-				<th md-column ng-if="show.addedBy"><span>Added By</span></th>
-				<th md-column ng-show="show.dateAdded && $mdMedia('gt-xs')">Date Added</th>
+				<th md-column ng-if="options.addedBy"><span>Added By</span></th>
+				<th md-column ng-show="options.dateAdded && $mdMedia('gt-xs')">Date Added</th>
 				<th md-column md-numeric><span>Phone Number</span></th>
 			</tr>
 		</thead>
@@ -33,9 +33,9 @@
 				md-select="recipient"
 				md-select-id="_id">
 				
-				<td md-cell>{{recipient.name}}</td>
-				<td md-cell ng-if="show.addedBy">{{recipient.addedBy.name.first}} {{recipient.addedBy.name.last}}</td>
-				<td md-cell ng-show="show.dateAdded && $mdMedia('gt-xs')">{{recipient.updatedAt | date:'MMMM d, yyyy'}}</td>
+				<td md-cell>{{recipient.name || 'No name'}}</td>
+				<td md-cell ng-if="options.addedBy">{{recipient.addedBy.name.first}} {{recipient.addedBy.name.last}}</td>
+				<td md-cell ng-show="options.dateAdded && $mdMedia('gt-xs')">{{recipient.updatedAt | date:'MMMM d, yyyy'}}</td>
 				<td md-cell>{{recipient.number | tel}}</td>
 			</tr>
 		</tbody>
