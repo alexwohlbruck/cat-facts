@@ -18,8 +18,11 @@ router.get('/daily', function(req, res) {
 	if (req.query && req.query.code == keys.generalAccessToken) {
 		var io = req.app.get('socketio'), snowball = {};
 		
+		const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+		const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
+		
 		Promise.all([
-			Fact.findOne({sendDate: {$gte: new Date(), $lte: new Date()}}),
+			Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
 			FactService.getFact({setUsed: true}),
 			Recipient.find(),
 			Upvote.aggregate([
@@ -37,15 +40,16 @@ router.get('/daily', function(req, res) {
 			])
 		])
 		.spread(function(overrideFact, fact, recipients, highestUpvotedFact) {
+			
 			highestUpvotedFact = highestUpvotedFact[0];
+			
 			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
 			snowball.recipients = recipients;
 			
 			if (overrideFact) {
-				console.log('using overrideFact', overrideFact);
 				snowball.fact = overrideFact.text;
 				overrideFact.used = true;
-				overrideFact.save();
+				overrideFact.save().then((overrideFact) => overrideFact.delete());
 			}
 				
 			var messages = recipients.map(function(o, i) {
@@ -53,9 +57,11 @@ router.get('/daily', function(req, res) {
 				return new Message({text: snowball.fact, number: o.number, type: 'outgoing'});
 			});
 			
+			var usedFactId = overrideFact ? overrideFact.id : (highestUpvotedFact ? highestUpvotedFact.id : null);
+			
 			return Promise.all([
 				Message.create(messages),
-				Fact.update({_id: highestUpvotedFact ? highestUpvotedFact.fact._id : null}, {used: true})
+				Fact.update({_id: usedFactId}, {used: true})
 			]);	
 		})
 		.then(function() {
