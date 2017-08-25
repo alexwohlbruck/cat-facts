@@ -93,7 +93,7 @@
     5. Add the following actions to this task:
         1. HTTP Get
             - Server:Port: `{Your heroku app's domain name}`
-            - Path: `/recipients`
+            - Path: `/catbot/daily`
             - Attributes: `code={Your general access token from config vars}`
         2. JavaScriptlet
             - Code: 
@@ -114,15 +114,9 @@
     6. Go back to the Profiles tab and create an event based profile for "Recieved Text Any"
     7. Create a task for this profile called "CatBot Single"
     8. This task will include these actions:
-        1. HTTP Get
+        1. HTTP Post
             - Server:Port: `{Your heroku app's domain name}`
-            - Path: `/facts/text`
-            - Attributes:
-                ```
-                query=%SMSRB
-                number=%SMSRF
-                name=%SMSRN
-                ```
+            - Path: `/catbot/message?query=%SMSRB&number=%SMSRF&name=%SMSRN`
         2. JavaScriptlet
             - Code:
                 ```

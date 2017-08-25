@@ -1,0 +1,191 @@
+<div
+    layout="row"
+    class="layout-center masonry"
+    ng-class="{'padding-0': $mdMedia('xs')}">
+    
+    <div class="brick">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-title">All recipients ({{recipients.total}})</span>
+                    <span class="md-subhead">Names and numbers of people who are registered for Cat Facts</span>
+                </md-card-title-text>
+            </md-card-title>
+            
+            <div>
+                <recipients
+                    recipients="recipients.all"
+                    options="{selectable: true, addedBy: true, editable: true}"
+                    limit-to="{{recipients.expanded ? null : 5}}"
+                    selected="[]"></recipients>
+            </div>
+            
+            <md-card-actions layout="row" ng-if="recipients.all.length > 5">
+                <md-button class="md-primary" ui-sref="recipients">
+                    Add new
+                </md-button>
+                
+                <md-button class="md-primary" ng-click="toggleExpandedRecipients()">
+                    Show {{recipients.expanded ? 'less' : 'more'}}
+                </md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    
+    <div class="brick">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-title">Unsubscribe dates</span>
+                    <span class="md-subhead">Date ranges in which recipients are allowed to unsubscribe</span>
+                </md-card-title-text>
+            </md-card-title>
+            
+            <div class="list">
+                <md-list class="dates-list">
+                    <md-list-item
+                        class="md-2-line"
+                        ng-repeat="unsubscribeDate in unsubscribeDates.all | limitTo: recipients.expanded ? null : 5"
+                        ng-click="editDate($index, $event)"
+                        ng-mouseover="unsubscribeDate.hover = true"
+                        ng-mouseleave="unsubscribeDate.hover = false"
+                        ng-disabled="unsubscribeDate.status == 'passed'">
+                        
+                        <div class="md-list-item-text">
+                            <h3>
+                                <span>{{unsubscribeDate.start | date : 'short'}}</span>
+                                <md-icon class="material-icons chevron">chevron_right</md-icon>
+                                <span>{{unsubscribeDate.end | date : 'short'}}</span>
+                            </h3>
+                            
+                            <p>
+                                <span class="md-body-2">{{unsubscribeDate.intervalMs | timeIntervalFormat}}</span>
+                                
+                                <span class="tag {{unsubscribeDate.status}}">
+                                    {{unsubscribeDate.status | capitalize}}
+                                </span>
+                            </p>
+                        </div>
+                        
+                        <md-button
+                            class="md-secondary md-icon-button"
+                            ng-show="unsubscribeDate.hover && unsubscribeDate.status != 'passed'">
+                            
+                            <md-icon class="material-icons">edit</md-icon>
+                        </md-button>
+                    </md-list-item>
+                </md-list>
+            </div>
+            
+            <md-card-actions layout="row">
+                <md-button class="md-primary" ng-disabled="true">
+                    Add new
+                </md-button>
+                
+                <md-button class="md-primary" ng-click="toggleExpandedDates()" ng-show="unsubscribeDates.all.length > 5">
+                    Show {{unsubscribeDates.expanded ? 'less' : 'more'}}
+                </md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    
+    <div class="brick">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-title">All users</span>
+                    <span class="md-subhead">People who have made accounts on Cat Facts</span>
+                </md-card-title-text>
+            </md-card-title>
+            
+            <md-list>
+                <md-list-item class="md-3-line" ng-repeat="user in users | limitTo: 5">
+                    <img ng-src="{{user.photo || '/img/res/avatars/user-face.png'}}" class="md-avatar"/>
+                    
+                    <div class="md-list-item-text" layout="column">
+                        <h3>{{user.name.first}} {{user.name.last}}</h3>
+                        <h4>{{user.email}}</h4>
+                        <p>Joined {{user.createdAt | date}}</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+            
+            <md-card-actions layout="row" ng-if="users.length > 5">
+                <md-button class="md-primary" ng-click="toggleExpandedUsers()">
+                    Show {{users.expanded ? 'less' : 'more'}}
+                </md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    
+    <div class="brick">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-title">Override facts</span>
+                    <span class="md-subhead">Replace the default Cat Fact for any given day</span>
+                </md-card-title-text>
+            </md-card-title>
+            
+            <md-list>
+                <md-list-item class="md-2-line" ng-repeat="fact in overrideFacts">
+                    <div class="md-list-item-text">
+                        <h3>{{fact.text}}</h3>
+                        <p>{{fact.sendDate > today ? 'Sending' : 'Sent'}} on {{fact.sendDate | date}}
+                    </div>
+                </md-list-item>
+            </md-list>
+            
+            <md-card-actions layout="row">
+                <md-button class="md-primary" ui-sref="facts">
+                    Add new
+                </md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+</div>
+
+<style>
+    .list, recipients md-table-container {
+        max-height: 50vh;
+        overflow-y: scroll;
+    }
+    
+    .dates-list .chevron {
+        transform: translateY(-1.6px);
+    }
+    
+    .masonry {
+        display: block;
+        column-count: 2;
+        column-gap: 0;
+        padding-bottom: 0px;
+    }
+    .masonry .brick {
+        display: block;
+        break-inside: avoid;
+        padding: 5px;
+    }
+    
+    .tag {
+        background-color: darkgrey;
+        color: rgba(255, 255, 255, 0.87);
+        font-size: 10px;
+        font-weight: 500;
+        padding: 2px 6px;
+        margin: 0px 4px;
+        border-radius: 4px;
+        height: 15px;
+        line-height: 15px;
+        display: inline-block;
+    }
+    .tag.passed {
+        background-color: #b71c1c;
+    }
+    .tag.ongoing {
+        background-color: #29b6f6;
+    }
+    .tag.upcoming {
+        background-color: #4caf50;
+    }
+</style>

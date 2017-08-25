@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('ConversationCtrl', ['$scope', 'ConversationService', 'data', 'socket', '$mdDialog',
-    function($scope, ConversationService, ConversationData, socket, $mdDialog) {
+app.controller('ConversationCtrl', ['$scope', 'ApiService', 'data', 'socket', '$mdDialog',
+    function($scope, ApiService, ConversationData, socket, $mdDialog) {
         
     $scope.data = ConversationData;
     
@@ -13,7 +13,7 @@ app.controller('ConversationCtrl', ['$scope', 'ConversationService', 'data', 'so
         }
     });
         
-    ConversationService.getConversation(ConversationData.recipient.number).then(function(response) {
+    ApiService.getConversation(ConversationData.recipient.number).then(function(response) {
         $scope.messages = response.data;
     });
     

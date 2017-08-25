@@ -20,81 +20,113 @@
 	
 	<md-tabs md-dynamic-height md-center-tabs>
 		<md-tab label="All Facts">
-		    <md-content>
-	    		<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
-	            	<md-table-container>
-	            		<table md-table ng-model="selected" md-progress="promise">
-	            			<thead md-head>
-	            				<tr md-row md-row-select="false">
-	            					<th md-column><span>Name</span></th>
-	            					<th md-column><span>Fact</span></th>
-	            					<th md-column md-numeric style="padding-right: 90px !important">Points</th>
-	            				</tr>
-	            			</thead>
-	            			<tbody md-body>
-	            				<tr
-	            					md-row md-select="fact"
-	            					md-select-id="name"
-	            					md-auto-select
-	            					ng-repeat="fact in facts | orderBy:'-upvotes.length'"
-	            					ng-animater="'animate'">
-	            					
-	            					<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
-	            					<td md-cell class="padding-20">"{{fact.text}}"</td>
-	            					<td md-cell>
-	            						<span>{{fact.upvotes.length}}</span>
-	            						<md-button
-	            							ng-click="upvoteFact(fact)"
-	            							ng-if="authenticatedUser"
-	            							ng-disabled="fact.user._id == authenticatedUser._id"
-	            							title="Vote up"
-	            							aria-label="Vote up"
-	            							class="md-icon-button md-icon-button-small">
-	            							
-	            							<md-icon
-	            								class="material-icons"
-	            								ng-class="{'blue': fact.upvoted}"
-	            								aria-label="Vote up">
-	            								thumb_up
-	            							<md-icon>
-	            						</md-button>
-	            					</td>
-	            				</tr>
-	            			</tbody>
-	            		</table>
-	            	</md-table-container>
-	            </md-card>
-	        </md-content>
+			<md-content>
+				<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
+					<div
+						flex class="facts-empty padding-30"
+						ng-if="facts.all.length == 0"
+						layout="column"
+						layout-align="center center">
+						
+						<span class="text">
+							<h3 class="md-headline margin-0 bold center-text">
+								There aren't any new cat facts!
+							</h3>
+							
+							<h4 class="md-body-2 accent-links margin-0 center-text">
+								Submit one in the field above
+							</h4>
+						</span>
+					</div>
+					
+					<md-table-container ng-if="facts.all.length != 0">
+						<table md-table ng-model="selected" md-progress="promise">
+							<thead md-head>
+								<tr md-row md-row-select="false">
+									<th md-column><span>Name</span></th>
+									<th md-column><span>Fact</span></th>
+									<th md-column md-numeric style="padding-right: 90px !important">Votes</th>
+								</tr>
+							</thead>
+							<tbody md-body>
+								<tr
+									md-row md-select="fact"
+									md-select-id="name"
+									md-auto-select
+									ng-repeat="fact in facts.all | orderBy:'-upvotes.length'"
+									ng-animater="'animate'">
+									
+									<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
+									<td md-cell class="padding-20">"{{fact.text}}"</td>
+									<td md-cell>
+										<span>{{fact.upvotes.length}}</span>
+										<md-button
+											ng-click="upvoteFact(fact)"
+											ng-if="authenticatedUser"
+											ng-disabled="fact.user._id == authenticatedUser._id"
+											title="Vote up"
+											aria-label="Vote up"
+											class="md-icon-button md-icon-button-small">
+											
+											<md-icon
+												class="material-icons"
+												ng-class="{'blue': fact.upvoted}"
+												aria-label="Vote up">
+												thumb_up
+											<md-icon>
+										</md-button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</md-table-container>
+				</md-card>
+			</md-content>
 		</md-tab>
 		
 		<md-tab label="My Facts">
 			<md-content>
-	    		<md-card ng-if="authenticatedUser" ng-class="{'margin-sides-0': $mdMedia('xs')}">
-	            	<md-table-container>
-	            		<table md-table ng-model="selected" md-progress="promise">
-	            			<thead md-head>
-	            				<tr md-row md-row-select="false">
-	            					<th md-column><span>Fact</span></th>
-	            					<th md-column md-numeric style="padding-right: 90px !important">Points</th>
-	            				</tr>
-	            			</thead>
-	            			<tbody md-body>
-	            				<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts | filter: {user: {_id: authenticatedUser._id}} | orderBy: '-upvotes.length'">
-	            					<td md-cell>"{{fact.text}}"</td>
-	            					<td md-cell>
-	            						<span>{{fact.upvotes.length}}</span>
-	            					</td>
-	            				</tr>
-	            			</tbody>
-	            		</table>
-	            	</md-table-container>
-	            </md-card>
-	            
-	            <div ng-if="!authenticatedUser" layout="column" layout-align="start center">
-	            	<p>To view your submitted facts,</p>
-	            	<md-button class="md-raised md-accent" ng-href="/auth/google">Sign in</md-button>
-	            </div>
-	        </md-content>
+				<md-card ng-if="authenticatedUser" ng-class="{'margin-sides-0': $mdMedia('xs')}">
+					<md-table-container>
+						<table md-table ng-model="selected" md-progress="promise">
+							<thead md-head>
+								<tr md-row md-row-select="false">
+									<th md-column><span>Fact</span></th>
+									<th md-column md-numeric style="padding-right: 90px !important">Votes</th>
+								</tr>
+							</thead>
+							<tbody md-body>
+								<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
+									<td md-cell>"{{fact.text}}"</td>
+									<td md-cell>
+										<span>{{fact.upvotes.length}}</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</md-table-container>
+				</md-card>
+				
+				<div ng-if="!authenticatedUser" layout="column" layout-align="start center">
+					<p>To view your submitted facts,</p>
+					<md-button class="md-raised md-accent" ng-href="/auth/google">Sign in</md-button>
+				</div>
+			</md-content>
 		</md-tab>
 	</md-tabs>
 </div>
+
+<style>
+	.facts-empty {
+		 background-color: #D7F5FF;
+		 background-image: url('img/res/other/cat-pattern.png');
+		 background-size: 150px;
+		 background-repeat: repeat;
+	}
+	.facts-empty .text {
+		background-color: #d7f5ff;
+		border-radius: 30px;
+		box-shadow: 0px 0px 40px 25px rgba(215,245,255,1);
+		padding: 20px 25px;
+	}
+</style>

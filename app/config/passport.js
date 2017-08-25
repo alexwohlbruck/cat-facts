@@ -34,6 +34,7 @@ module.exports = function(passport) {
 						first: profile.name.givenName,
 						last: profile.name.familyName
 					},
+					photo: profile.photos[0] && !profile._json.image.isDefault ? profile.photos[0].value.replace("?sz=50", "?sz=200") : user.photo,
 					email: profile.emails[0].value,
 					google: {
 						id: profile.id,

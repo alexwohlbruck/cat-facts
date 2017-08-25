@@ -10,11 +10,13 @@ var UserSchema = new Schema({
         last:   {type: String, required: true}
     },
     email:      {type: String, required: true, unique: true},
+    photo:      {type: String},
     google: {
-        id:     {type: String},
-        accessToken: {type: String},
+        id:           {type: String},
+        accessToken:  {type: String},
         refreshToken: {type: String}
-    }
+    },
+    isAdmin: {type: Boolean, default: false}
 }, {
     timestamps: true
 });

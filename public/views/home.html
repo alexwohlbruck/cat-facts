@@ -1,3 +1,29 @@
+<div id="jumbo" layout="column" layout-align="start center">
+    <img id="app-logo" ng-src="img/logo/app-logo.png" alt="Logo"/>
+    <span id="app-slogan" class="md-headline">{{fact}}</span>
+    <div id="call-to-action" layout="row">
+        <md-button ng-href="/auth/google" class="md-button md-raised md-primary">Get Started</md-button>
+    </div>
+</div>
+
+<ul class="carousel"
+    rn-carousel
+    rn-carousel-auto-slide="3"
+    rn-carousel-controls-allow-loop
+    rn-carousel-buffered
+    rn-carousel-transition="fadeAndSlide"
+    class="image">
+    
+    <li ng-repeat="image in carousel.catImages">
+        <div ng-style="{'background-image': 'url(' + image.link + ')'}" class="bgimage"></div>
+    </li>
+</ul>
+
+<div class="messages" layout="column" layout-align-sm="center center">
+    <img src="img/res/home/left.png" class="left" alt="Example conversation left"/>
+    <img src="img/res/home/right.png" class="right" alt="Example conversation right"/>
+</div>
+
 <style>
     #main-content, ui-view {
         overflow: hidden;
@@ -76,30 +102,4 @@
     #call-to-action .md-button {
         padding: 2px 14px;
     }
-</style> 
-
-<div id="jumbo" layout="column" layout-align="start center">
-    <img id="app-logo" ng-src="img/logo/app-logo.png" alt="Logo"/>
-    <span id="app-slogan" class="md-headline">{{fact}}</span>
-    <div id="call-to-action" layout="row">
-        <md-button ng-href="/auth/google" class="md-button md-raised md-primary">Get Started</md-button>
-    </div>
-</div>
-
-<ul class="carousel"
-    rn-carousel
-    rn-carousel-auto-slide="3"
-    rn-carousel-controls-allow-loop
-    rn-carousel-buffered
-    rn-carousel-transition="fadeAndSlide"
-    class="image">
-    
-    <li ng-repeat="image in carousel.catImages">
-        <div ng-style="{'background-image': 'url(' + image.link + ')'}" class="bgimage"></div>
-    </li>
-</ul>
-
-<div class="messages" layout="column" layout-align-sm="center center">
-    <img src="img/res/home/left.png" class="left" alt="Example conversation left"/>
-    <img src="img/res/home/right.png" class="right" alt="Example conversation right"/>
-</div>
+</style>

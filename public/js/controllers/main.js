@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$mdDialog', '$mdBottomSheet', 'FactService',
-	function($scope, $rootScope, $mdSidenav, $mdToast, $mdDialog, $mdBottomSheet, FactService) {
+app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$mdDialog', '$mdBottomSheet', 'ApiService',
+	function($scope, $rootScope, $mdSidenav, $mdToast, $mdDialog, $mdBottomSheet, ApiService) {
 
 	$scope.sideNav = {
 		left: {
@@ -42,7 +42,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
     };
     
     $scope.showCatFact = function() {
-    	FactService.getFact().then(function(response) {
+    	ApiService.getFact().then(function(response) {
     		$mdBottomSheet.show({
     		    templateUrl: '/views/partials/bottom-sheet-fact.html',
     		    controller: ['$scope', '$rootScope', function($scope, $rootScope) {

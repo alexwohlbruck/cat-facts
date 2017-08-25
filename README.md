@@ -13,6 +13,7 @@ Using a combination of [Node.js](https://nodejs.org), [Angular](https://angularj
 - Quick copy-and-paste-able cat facts with the "Get Fact" button
 - Add recipients by talking to the Catbot!
 - Import all of your Google contacts at once
+- Admin console panel for managing the app
 
 ### Setup
 If you want to set up your own version of Cat Facts, follow the instructions in this [guide](https://github.com/alexwohlbruck/cat-facts/blob/master/SETUP.md)

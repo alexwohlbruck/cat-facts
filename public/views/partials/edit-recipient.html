@@ -1,0 +1,22 @@
+<md-dialog>
+    <md-dialog-content class="md-dialog-content">
+        <h2 class="md-title">
+            Editing {{recipient.name}}
+        </h2>
+        
+        <md-input-container class="no-space">
+            <label>Name</label>
+            <input ng-model="recipient.name">
+        </md-input-container>
+        
+        <md-input-container class="no-space">
+            <label>Phone number</label>
+            <input ng-model="recipient.number">
+        </md-input-container>
+    </md-dialog-content>
+    
+    <md-dialog-actions>
+        <md-button ng-click="cancel()">Cancel</md-button>
+        <md-button ng-click="save()" class="md-primary">Save</md-button>
+    </md-dialog-actions>
+</md-dialog>

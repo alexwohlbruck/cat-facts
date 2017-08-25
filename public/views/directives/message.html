@@ -1,6 +1,6 @@
 <div layout="column" layout-align="center {{message.type == 'outgoing' ? 'end' : 'start'}}" class="margin-top-2">
     <div layout="row" layout-align="start center" ng-class="{'row-reverse': message.type == 'outgoing'}">
-        <img src="https://i.imgur.com/{{message.type == 'outgoing' ? 'Lqa8gr5' : 'qRzcYj4'}}.png" class="avatar">
+        <img src="img/res/avatars/{{message.type == 'outgoing' ? 'catbot' : 'user-number'}}.png" class="avatar">
         <div class="message-bubble" md-whiteframe="1">
             <span>{{message.text}}</span>
         </div>
