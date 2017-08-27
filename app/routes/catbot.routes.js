@@ -156,6 +156,11 @@ router.post('/message', function(req, res) {
 	});
 	
 	function success(message) {
+		console.log({
+			response: message,
+			delay: computeTypingDelay(message.text),
+			number: req.query.number
+		})
 		res.status(200).json({
 			response: message,
 			delay: computeTypingDelay(message.text),
