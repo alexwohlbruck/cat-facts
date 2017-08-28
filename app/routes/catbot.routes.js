@@ -22,9 +22,8 @@ router.get('/daily', function(req, res) {
 		const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
 		
 		Promise.all([
-			Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
-			FactService.getFact({setUsed: true}),
 			Recipient.find(),
+			Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
 			Upvote.aggregate([
 				{$group: {_id: '$fact', upvotes: {$sum: 1}}},
 				{$sort: {upvotes: -1}},
@@ -37,38 +36,49 @@ router.get('/daily', function(req, res) {
 				{$unwind: '$fact'},
 				{$match: {'fact.used': false}},
 				{$limit: 1}
-			])
+			]),
+			FactService.getFact()
 		])
-		.spread(function(overrideFact, fact, recipients, highestUpvotedFact) {
+		.spread((recipients, overrideFact, highestUpvotedFact, fact) => {
 			
-			highestUpvotedFact = highestUpvotedFact[0];
-			
-			snowball.fact = (highestUpvotedFact && highestUpvotedFact.upvotes > 0) ? highestUpvotedFact.fact.text : fact;
-			snowball.recipients = recipients;
-			
-			if (overrideFact) {
-				snowball.fact = overrideFact.text;
-				overrideFact.used = true;
-				overrideFact.save().then((overrideFact) => overrideFact.delete());
-			}
+			highestUpvotedFact = highestUpvotedFact[0].fact;
+		
+			return new Promise((resolve, reject) => {
+		
+				const factToSend = overrideFact || highestUpvotedFact || fact;
 				
-			var messages = recipients.map(function(o, i) {
-				io.emit('message', {message: snowball.fact, recipient: o});
-				return new Message({text: snowball.fact, number: o.number, type: 'outgoing'});
+				console.log('fact to send', factToSend)
+		
+				const messages = recipients.map(r => {
+		
+					io.emit('message', {
+						message: snowball.fact, 
+						recipient: r
+					});
+		
+					return new Message({
+						text: factToSend.text,
+						number: r.number,
+						type: 'outgoing'
+					});
+				});
+				
+				Message.create(messages);
+		
+				if (overrideFact) {
+					overrideFact.delete();
+				}
+		
+				Fact.update({_id: factToSend._id}, {used: true});
+		
+				resolve({
+					fact: factToSend.text,
+					recipients: recipients.map(r => r.number)
+				});
 			});
-			
-			var usedFactId = overrideFact ? overrideFact.id : (highestUpvotedFact ? highestUpvotedFact.id : null);
-			
-			return Promise.all([
-				Message.create(messages),
-				Fact.update({_id: usedFactId}, {used: true})
-			]);	
 		})
-		.then(function() {
-			return res.status(200).json({
-				fact: snowball.fact,
-				recipients: snowball.recipients.map(o => o.number)
-			});
+		.then(function(response) {
+			return res.status(200).json(response);
 		})
 		.catch(function(err) {
 			console.log(err);
@@ -136,7 +146,7 @@ router.post('/message', function(req, res) {
 			if (result.catbotResponse.result && result.catbotResponse.result.fulfillment.speech) {
 				response = result.catbotResponse.result.fulfillment.speech;
 			} else {
-				response = result.catFact;
+				response = result.catFact.text;
 			}
 		} else {
 			response = strings.welcomeMessage;
@@ -156,6 +166,11 @@ router.post('/message', function(req, res) {
 	});
 	
 	function success(message) {
+		console.log({
+			response: message,
+			delay: computeTypingDelay(message.text),
+			number: req.query.number
+		})
 		res.status(200).json({
 			response: message,
 			delay: computeTypingDelay(message.text),

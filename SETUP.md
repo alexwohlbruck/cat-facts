@@ -18,7 +18,7 @@
 3. Create your service tokens
     - Heroku Hosting (Skip this if you want to use your own web hosting)
         1. Log in or Sign up at https://heroku.com
-        2. Create a new app and name it whatever you like. This name has to be unique and not in use.
+        2. Create a new app and name it whatever you like. This name has to be unique and not in use
         3. You can either connect the app to a GitHub repository or use Heroku's own Git service via the CLI:
             - With the Heroku CLI: Follow the instructions on the Deploy tab in Heroku
             - With Connect to GitHub: Sign into GitHub and pick your repository to connect. Enable auto-deploys if you'd like
@@ -117,6 +117,7 @@
         1. HTTP Post
             - Server:Port: `{Your heroku app's domain name}`
             - Path: `/catbot/message?query=%SMSRB&number=%SMSRF&name=%SMSRN`
+            - Content Type: `text/plain`
         2. JavaScriptlet
             - Code:
                 ```
@@ -135,7 +136,14 @@
             - Message: `%CATBOTRESPONSE`
     9. Click the back button and exit the app to save changes
     10. To test if Tasker is working, open the "CatBot Many" task and click the green arrow to run it. Cat Facts should be sent to all the recipients that are saved in your database
-    
+
+7. Modify Android sms sending limit
+    1. Android will block tasker from sending too many messages at once. You will need to use the Android Debug Bridge (ADB) tool from the Android Platform SDK to fix this
+    2. Go to the [Android Developers website](https://developer.android.com/studio/releases/platform-tools.html) and download the SDK tools
+    3. Once the tools have been installed, head to the `platform-tools` directory on your machine where the adb application is located
+    4. Open the command line in this directory and run this command `adb shell settings put global sms_outgoing_check_max_count 1000000000`
+    5. The SMS outgoing limit is now increased to 1000000000 messages at once, that ought to cover it
+
 ##### That's it!
     
 And in those few easy steps (lolwut), you should have a clone of the Cat Facts codebase and you can now make any changes that your heart desires.
