@@ -10,9 +10,9 @@ const strings = require.main.require('./app/config/strings.js');
 
 // Get simple fact fact
 router.get('/', function(req, res) {
-	FactService.getFact().then(function(message) {
+	FactService.getFact().then(function(fact) {
 		return res.json({
-			displayText: message
+			displayText: fact.text
 		});
 	});
 });

@@ -22,7 +22,7 @@ const processWebhook = function(req) {
         	    case 'fact.get':
         	        
                     FactService.getFact().then(function(fact) {
-                        resolve({message: fact});
+                        resolve({message: fact.text});
                     });
                 
                 break;

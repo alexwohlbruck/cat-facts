@@ -70,7 +70,7 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 		})
 		.accentPalette('teal', {
 			'default': 'A400'
-		}).dark();
+		});
 }]);
 
 app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthService', '$mdMedia',
