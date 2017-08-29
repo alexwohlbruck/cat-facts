@@ -29,12 +29,12 @@
 						layout-align="center center">
 						
 						<span class="text">
-							<h3 class="md-headline margin-0 bold center-text">
+							<h3 class="black md-headline margin-0 bold center-text">
 								There aren't any new cat facts!
 							</h3>
 							
-							<h4 class="md-body-2 accent-links margin-0 center-text">
-								Submit one in the field above
+							<h4 class="black md-body-2 accent-links margin-0 center-text">
+								{{ authenticatedUser ? 'Submit one in the field above' : 'Sign in to submit one' }}
 							</h4>
 						</span>
 					</div>
@@ -122,6 +122,7 @@
 		 background-image: url('img/res/other/cat-pattern.png');
 		 background-size: 150px;
 		 background-repeat: repeat;
+		 overflow: hidden;
 	}
 	.facts-empty .text {
 		background-color: #d7f5ff;

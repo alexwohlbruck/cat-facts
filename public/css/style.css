@@ -65,6 +65,8 @@ message .row-reverse .message-bubble {
 
 .grey { color: rgba(0,0,0,0.54) !important; }
 .blue { color: #2196f3; }
+.black { color: #1e1e1e; }
+.translucent { opacity: .5; }
 
 .bold { font-weight: 500 !important; }
 .center-text { 	text-align: center; }
@@ -85,4 +87,18 @@ md-input-container.no-space .md-errors-spacer {
 .md-row[disabled=disabled] > td {
 	color: grey !important;
 	color: rgba(0,0,0,0.54) !important;
+}
+
+.md-dark-theme .md-table th,
+.md-dark-theme .md-table td {
+	color: white !important;
+}
+
+.md-dark-theme .md-default {
+	background-color: #2b2b2b !important;
+	color: white !important;
+}
+
+._md-nav-button.md-active {
+	color: white !important;
 }

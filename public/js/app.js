@@ -53,15 +53,14 @@ app.config(['$stateProvider', '$urlRouterProvider',
 				showInNavigation: true,
 				adminRequired: true
 			}
-		})
-	;
+		});
 
 	$urlRouterProvider.otherwise('/');
 }]);
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 		
-	$mdThemingProvider.theme('default')
+	$mdThemingProvider.theme('light')
 		.primaryPalette('blue', {
 			'default': '500',
 			'hue-1': '100',
@@ -71,10 +70,25 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 		.accentPalette('teal', {
 			'default': 'A400'
 		});
+		
+	$mdThemingProvider.theme('dark')
+		.primaryPalette('blue', {
+			'default': '500',
+			'hue-1': '100',
+			'hue-2': '600',
+			'hue-3': 'A100'
+		})
+		.accentPalette('teal', {
+			'default': 'A400'
+		})
+		.dark();
+	
+	$mdThemingProvider.setDefaultTheme('light');
+	$mdThemingProvider.alwaysWatchTheme(true);
 }]);
 
-app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthService', '$mdMedia',
-	function($rootScope, $state, $window, $location, $mdToast, AuthService, $mdMedia) {
+app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', '$mdMedia',
+	function($rootScope, $state, $window, $location, $mdToast, ApiService, $mdMedia) {
 	
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
@@ -86,7 +100,7 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'AuthServic
 		
 		if ($rootScope.authenticatedUser === null) {
 			
-			AuthService.getAuthenticatedUser()
+			ApiService.getAuthenticatedUser()
 				.then(function(response) {
 					$rootScope.authenticatedUser = response.data;
 				}).catch(function(response) {

@@ -8,11 +8,6 @@ var User = require.main.require('./app/models/user');
 var google = require('googleapis');
 var googleConfig = require.main.require('./app/config/google');
 
-router.get('/me', function(req, res) {
-	if (req.user) return res.status(200).json(req.user);
-	return res.status(401).json(false);
-});
-
 var baseScopes = [
 	'https://www.googleapis.com/auth/userinfo.email',
 	'https://www.googleapis.com/auth/plus.login'

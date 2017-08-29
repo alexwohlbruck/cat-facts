@@ -5,10 +5,6 @@ app.service('AuthService', ['$rootScope', '$http', '$window', '$state', function
     var that = this;
     var oauthPopup;
     
-    this.getAuthenticatedUser = function() {
-        return $http.get('/auth/me');
-    };
-    
     this.openOAuth = function() {
         var url = $window.location.origin + '/auth/google/contacts',
             width = 500,

@@ -41,18 +41,16 @@ router.get('/daily', function(req, res) {
 		])
 		.spread((recipients, overrideFact, highestUpvotedFact, fact) => {
 			
-			highestUpvotedFact = highestUpvotedFact[0].fact;
+			highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
 		
 			return new Promise((resolve, reject) => {
 		
 				const factToSend = overrideFact || highestUpvotedFact || fact;
 				
-				console.log('fact to send', factToSend)
-		
 				const messages = recipients.map(r => {
 		
 					io.emit('message', {
-						message: snowball.fact, 
+						message: factToSend.text, 
 						recipient: r
 					});
 		
@@ -81,7 +79,6 @@ router.get('/daily', function(req, res) {
 			return res.status(200).json(response);
 		})
 		.catch(function(err) {
-			console.log(err);
 			return res.status(400).json(err);
 		});
 	} else {
@@ -166,11 +163,6 @@ router.post('/message', function(req, res) {
 	});
 	
 	function success(message) {
-		console.log({
-			response: message,
-			delay: computeTypingDelay(message.text),
-			number: req.query.number
-		})
 		res.status(200).json({
 			response: message,
 			delay: computeTypingDelay(message.text),

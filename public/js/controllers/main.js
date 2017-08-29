@@ -65,5 +65,11 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
             fullscreen: false
         });
     };
+    
+    $scope.toggleDarkTheme = function(newTheme) {
+        ApiService.updateUserSettings({
+            theme: newTheme
+        });
+    };
 
 }]);

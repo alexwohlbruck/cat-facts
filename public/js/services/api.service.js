@@ -2,6 +2,16 @@
 var app = angular.module('catfacts');
 
 app.service('ApiService', ['$rootScope', '$http', function($rootScope, $http) {
+    
+    // User
+    
+    this.getAuthenticatedUser = function() {
+        return $http.get('/users/me');
+    };
+    
+    this.updateUserSettings = function(data) {
+        return $http.put('/users/me/settings', data).then(data => console.log(data), err => console.log(err));
+    };
         
     // Fact
     

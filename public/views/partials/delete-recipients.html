@@ -4,7 +4,7 @@
             Remove {{recipients.length}} {{recipients.length == 1 ? 'recipient' : 'recipients'}}?
         </h2>
         
-        <p>These people will no longer recieve facts</p>
+        <p>{{recipients.length == 1 ? 'This person' : 'These people'}} will no longer recieve facts</p>
         
         <md-checkbox ng-model="permanent" aria-label="Checkbox 1">
             Delete permanently
