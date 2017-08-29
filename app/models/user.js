@@ -16,7 +16,10 @@ var UserSchema = new Schema({
         accessToken:  {type: String},
         refreshToken: {type: String}
     },
-    isAdmin: {type: Boolean, default: false}
+    isAdmin: {type: Boolean, default: false},
+    settings: {
+        theme: {type: String, enum: ['light, dark'], default: 'light'}
+    }
 }, {
     timestamps: true
 });

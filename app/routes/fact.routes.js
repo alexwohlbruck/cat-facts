@@ -81,6 +81,10 @@ router.post('/submitted', function(req, res) {
             return res.status(200).json(fact);
         })
         .catch(function(err) {
+        	if (err.code === 11000) {
+        		err.message = strings.fact.exists;
+        		return res.status(409).json(err);
+        	}
             return res.status(400).json(err);
         });
     } else {

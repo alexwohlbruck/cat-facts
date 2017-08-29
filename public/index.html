@@ -21,7 +21,7 @@
 	<link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css"/>
 </head>
 
-<body ng-controller="MainCtrl" layout="column" ng-cloak>
+<body ng-controller="MainCtrl" layout="column" ng-cloak md-theme="{{authenticatedUser.settings.theme}}">
 	<md-toolbar class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
 			<img src="img/logo/launcher-icon-1x.png" ui-sref="home" ng-hide="!$state.current.data.showInNavigation" class="width-40 margin-10 pointer">
@@ -32,7 +32,17 @@
 			
 			<span flex></span>
 			
-			<md-button class="md-icon-button" aria-lable="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
+			<span class="md-body-2 grey margin-sides-10">Dark mode</span>
+			
+			<md-switch
+				aria-label="Toggle dark theme"
+				ng-model="authenticatedUser.settings.theme"
+				ng-true-value="'dark'"
+				ng-false-value="'light'"
+				ng-change="toggleDarkTheme(authenticatedUser.settings.theme)">
+			</md-switch>
+			
+			<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
 				<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
 				<md-icon class="material-icons grey">bug_report</md-icon>
 			</md-button>
