@@ -26,14 +26,15 @@
 						flex class="facts-empty padding-30"
 						ng-if="facts.all.length == 0"
 						layout="column"
-						layout-align="center center">
+						layout-align="center center"
+						md-whiteframe="4dp">
 						
 						<span class="text">
-							<h3 class="black md-headline margin-0 bold center-text">
+							<h3 class="white md-headline margin-0 bold center-text">
 								There aren't any new cat facts!
 							</h3>
 							
-							<h4 class="black md-body-2 accent-links margin-0 center-text">
+							<h4 class="white md-body-2 accent-links margin-0 center-text">
 								{{ authenticatedUser ? 'Submit one in the field above' : 'Sign in to submit one' }}
 							</h4>
 						</span>
@@ -118,16 +119,16 @@
 
 <style>
 	.facts-empty {
-		 background-color: #D7F5FF;
+		 background-color: #006c90;
 		 background-image: url('img/res/other/cat-pattern.png');
 		 background-size: 150px;
 		 background-repeat: repeat;
 		 overflow: hidden;
 	}
 	.facts-empty .text {
-		background-color: #d7f5ff;
+		background-color: #006c90;
 		border-radius: 30px;
-		box-shadow: 0px 0px 40px 25px rgba(215,245,255,1);
+		box-shadow: 0px 0px 150px 50px rgb(0, 108, 144);
 		padding: 20px 25px;
 	}
 </style>

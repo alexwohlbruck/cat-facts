@@ -63,6 +63,7 @@ message .row-reverse .message-bubble {
 	-webkit-flex-direction: row-reverse !important;
 }
 
+.white { color: white; }
 .grey { color: rgba(0,0,0,0.54) !important; }
 .blue { color: #2196f3; }
 .black { color: #1e1e1e; }
