@@ -66,8 +66,9 @@ router.get('/daily', function(req, res) {
 				if (overrideFact) {
 					overrideFact.delete();
 				}
-		
-				Fact.update({_id: factToSend._id}, {used: true});
+				
+				// .then() must be called for save to work
+				Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
 		
 				resolve({
 					fact: factToSend.text,

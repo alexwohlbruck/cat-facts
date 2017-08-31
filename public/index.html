@@ -32,15 +32,17 @@
 			
 			<span flex></span>
 			
-			<span class="md-body-2 grey margin-sides-10">Dark mode</span>
-			
-			<md-switch
-				aria-label="Toggle dark theme"
-				ng-model="authenticatedUser.settings.theme"
-				ng-true-value="'dark'"
-				ng-false-value="'light'"
-				ng-change="toggleDarkTheme(authenticatedUser.settings.theme)">
-			</md-switch>
+			<span layout="row" layout-align="center center" ng-hide="$state.current.name == 'home'">
+				<span class="md-body-2 grey margin-sides-10">Dark mode</span>
+				
+				<md-switch
+					aria-label="Toggle dark theme"
+					ng-model="authenticatedUser.settings.theme"
+					ng-true-value="'dark'"
+					ng-false-value="'light'"
+					ng-change="toggleDarkTheme(authenticatedUser.settings.theme)">
+				</md-switch>
+			</span>
 			
 			<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
 				<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>

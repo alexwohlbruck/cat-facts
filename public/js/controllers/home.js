@@ -14,7 +14,7 @@ app.controller('HomeCtrl', function($scope, $http) {
         method: 'GET',
         url: 'https://cat-fact-alexwohlbruck.c9users.io/fact'
     }).then(function(response) {
-        $scope.fact = response.data.displayText;
+        $scope.fact = response.data.text;
     })
         
     // Get background images from Imgur

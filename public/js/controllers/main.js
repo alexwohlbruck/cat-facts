@@ -41,18 +41,44 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
 		return $mdDialog.show(prompt);
     };
     
+    
+    /* global SpeechSynthesisUtterance */
+    var synth = window.speechSynthesis;
+    var defaultVoice = null;
+    
+    synth.onvoiceschanged = function() {
+        var voices = synth.getVoices();
+        defaultVoice = voices.find(function(voice) {
+            return voice.name == 'Google UK English Male';
+        });
+    };
+    		    
     $scope.showCatFact = function() {
+        
     	ApiService.getFact().then(function(response) {
+    	    
+    	    var fact = response.data.text;
+    	    
     		$mdBottomSheet.show({
     		    templateUrl: '/views/partials/bottom-sheet-fact.html',
     		    controller: ['$scope', '$rootScope', function($scope, $rootScope) {
-    		        $scope.fact = response.data.displayText;
+    		        $scope.fact = fact;
     		        
     		        $scope.alertCopied = function() {
     		            $rootScope.showToast("Text copied to clipboard");
     		        };
     		    }]
     		});
+    		
+    		var speech = new SpeechSynthesisUtterance(fact);
+    		
+    		if (defaultVoice) {
+    		    speech.voice = defaultVoice;
+    		}
+    		
+    		speech.pitch = 1.8;
+    		
+    		synth.speak(speech);
     	});
     };
     
