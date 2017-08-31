@@ -10,10 +10,12 @@ const strings = require.main.require('./app/config/strings.js');
 
 // Get simple fact fact
 router.get('/', function(req, res) {
-	FactService.getFact().then(function(fact) {
-		return res.json({
-			displayText: fact.text
-		});
+	FactService.getFact({amount: req.query.amount}).then(function(facts) {
+		/*return res.json({
+			displayText: Array.isArray(fact) ? fact : fact.text
+		});*/
+		
+		return res.json(facts);
 	});
 });
 
