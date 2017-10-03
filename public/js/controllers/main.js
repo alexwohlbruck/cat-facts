@@ -21,11 +21,20 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
 	        window.onblur = bushDid911;
 	        window.onfocus = bushDid911;
 	        
-	        var els = document.getElementsByTagName('md-content');
+	        var bgs = document.getElementsByTagName('md-content');
+	        var cards = document.getElementsByTagName('md-card');
+	        var header = document.getElementsByTagName('md-toolbar')[0];
 	        
-	        for (var i = 0; i < els.length; i++) {
-	            els[i].style.backgroundImage = 'url(https://imgur.com/' + catGifs[Math.floor(Math.random() * catGifs.length)] + '.gif)';
-	            els[i].style.backgroundSize = 'cover';
+            header.style.backgroundImage = 'url(https://imgur.com/' + catGifs[Math.floor(Math.random() * catGifs.length)] + '.gif)';
+	        
+	        for (var i = 0; i < bgs.length; i++) {
+	            bgs[i].style.backgroundImage = 'url(https://imgur.com/' + catGifs[Math.floor(Math.random() * catGifs.length)] + '.gif)';
+	            bgs[i].style.backgroundSize = 'cover';
+	            bgs[i].style.backgroundPosition = 'center';
+	        }
+	        
+	        for (var i = 0; i < cards.length; i++) {
+	            cards[i].style.backgroundColor = 'rgba(255, 255, 255, .3)';
 	        }
 	    }
 	});
