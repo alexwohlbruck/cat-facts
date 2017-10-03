@@ -1,8 +1,34 @@
-/* global angular */
+/* global angular, rekt */
 var app = angular.module('catfacts');
 
-app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$mdDialog', '$mdBottomSheet', 'ApiService',
-	function($scope, $rootScope, $mdSidenav, $mdToast, $mdDialog, $mdBottomSheet, ApiService) {
+app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$mdDialog', '$mdBottomSheet', 'ApiService', 'hotkeys',
+	function($scope, $rootScope, $mdSidenav, $mdToast, $mdDialog, $mdBottomSheet, ApiService, hotkeys) {
+	    
+	function bushDid911() {
+	    var audio = new Audio('audio/illuminati.mp3');
+            audio.play();
+	}
+	
+	var catGifs = ['1iJvWqn','OoaHq88','bkvWQKe','3b2NwUb','xXz0reC','y2iF3r3','nz928M8','dbMqyX2','gLqCiBh','HvGHFly','zURa0Th','IWo0WFN','yT7TsnH'];
+	    
+	hotkeys.add({
+	    combo: 'up up down down left right left right b a',
+	    description: 'Konami code',
+	    callback: function(event, hotkey) {
+	        event.preventDefault();
+	        bushDid911();
+	
+	        window.onblur = bushDid911;
+	        window.onfocus = bushDid911;
+	        
+	        var els = document.getElementsByTagName('md-content');
+	        
+	        for (var i = 0; i < els.length; i++) {
+	            els[i].style.backgroundImage = 'url(https://imgur.com/' + catGifs[Math.floor(Math.random() * catGifs.length)] + '.gif)';
+	            els[i].style.backgroundSize = 'cover';
+	        }
+	    }
+	});
 
 	$scope.sideNav = {
 		left: {

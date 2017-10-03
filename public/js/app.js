@@ -7,7 +7,8 @@ var app = angular.module('catfacts', [
 	'angular-carousel',
 	'btford.socket-io',
 	'luegg.directives',
-	'ngclipboard'
+	'ngclipboard',
+	'cfp.hotkeys'
 ]);
 
 app.config(['$stateProvider', '$urlRouterProvider', 
