@@ -35,6 +35,11 @@ message .row-reverse .message-bubble {
 	color: #fff;
 }
 
+.quick-fact .fact {
+    max-height: 55vh !important;
+    overflow: scroll;
+}
+
 .padding-0 { padding: 0px !important; }
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
