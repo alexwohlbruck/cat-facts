@@ -7,6 +7,7 @@ const keys = require.main.require('./app/config/keys');
 const catbot = apiai(keys.apiai.accessToken);
 const strings = require.main.require('./app/config/strings.js');
 const FactService = require.main.require('./app/services/fact.service');
+const twitter = require.main.require('./app/services/twitter.service');
 
 const Fact = require.main.require('./app/models/fact');
 const Message = require.main.require('./app/models/message');
@@ -16,7 +17,7 @@ const Upvote = require.main.require('./app/models/upvote');
 // Get all recipients and a fact to be sent out each day
 router.get('/daily', function(req, res) {
 	if (req.query && req.query.code == keys.generalAccessToken) {
-		var io = req.app.get('socketio'), snowball = {};
+		var io = req.app.get('socketio');
 		
 		const todayStart = new Date(); todayStart.setHours(0,0,0,0);
 		const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
@@ -69,6 +70,8 @@ router.get('/daily', function(req, res) {
 				
 				// .then() must be called for save to work
 				Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
+
+				twitter.tweet(factToSend.text);
 		
 				resolve({
 					fact: factToSend.text,
