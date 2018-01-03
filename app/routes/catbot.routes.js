@@ -38,7 +38,7 @@ router.get('/daily', function(req, res) {
 				{$match: {'fact.used': false}},
 				{$limit: 1}
 			]),
-			FactService.getFact()
+			FactService.getFact({filter: {used: false}})
 		])
 		.spread((recipients, overrideFact, highestUpvotedFact, fact) => {
 			
@@ -121,7 +121,7 @@ router.post('/message', function(req, res) {
 			
 			promises.recipient = recipient;
 			promises.message = incoming.save();
-			promises.catFact = FactService.getFact();
+			promises.catFact = FactService.getFact({fields: {used: false}});
 			promises.catbotResponse = catbot.textRequest(req.query.query, {
 				sessionId: req.query.number
 			});
