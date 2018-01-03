@@ -6,6 +6,7 @@ module.exports = {
 		return new Promise((resolve, reject) => {
 			Fact.findRandom(filter, {}, {limit: amount}, (err, facts) => {
 				if (err) return reject(err);
+				facts = facts || [];
 				
 				resolve(amount == 1 ? facts[0] : facts);
 			});
