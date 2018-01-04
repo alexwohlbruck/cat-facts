@@ -22,7 +22,7 @@ router.get('/daily', async (req, res) => {
 		const todayStart = new Date(); todayStart.setHours(0,0,0,0);
 		const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
 		
-		Promise.props({
+		let {recipients, overrideFact, highestUpvotedFact, fact} = await Promise.props({
 			recipients: Recipient.find(),
 			overrideFact: Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
 			highestUpvotedFact: Upvote.aggregate([
@@ -39,18 +39,18 @@ router.get('/daily', async (req, res) => {
 				{$limit: 1}
 			]),
 			fact: FactService.getFact({filter: {used: false}})
-		})
-		.spread(async ({recipients, overrideFact, highestUpvotedFact, fact}) => {
-			
-			if (!fact) {
-				// No unused facts are available, reset all facts to unused
-				await Fact.update({}, {$set: {used: false}}, {multi: true});
-			}
-			
-			highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
+		});
 		
-			return new Promise((resolve, reject) => {
+		if (!fact) {
+			// No unused facts are available, reset all facts to unused
+			await Fact.update({}, {$set: {used: false}}, {multi: true});
+		}
 		
+		highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
+		
+		try {
+			const response = await new Promise(async (resolve, reject) => {
+	
 				const factToSend = overrideFact || highestUpvotedFact || fact;
 				
 				const messages = recipients.map(r => {
@@ -67,29 +67,27 @@ router.get('/daily', async (req, res) => {
 					});
 				});
 				
-				Message.create(messages);
+				// await Message.create(messages);
 		
 				if (overrideFact) {
-					overrideFact.delete();
+					await overrideFact.delete();
 				}
 				
 				// .then() must be called for save to work
-				Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
-
-				twitter.tweet(factToSend.text);
+				// await Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
+	
+				await twitter.tweet(factToSend.text);
 		
 				resolve({
 					fact: factToSend.text,
 					recipients: recipients.map(r => r.number)
 				});
 			});
-		})
-		.then(response => {
+		
 			return res.status(200).json(response);
-		})
-		.catch(err => {
+		} catch (err) {
 			return res.status(400).json(err);
-		});
+		}
 	} else {
 		return res.status(400).json({message: "Provide the code to recieve recipients"});
 	}
