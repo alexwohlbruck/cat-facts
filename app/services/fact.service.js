@@ -12,20 +12,4 @@ module.exports = {
 			});
 		});
 	},
-	
-	getFactFromApi (amount = 1) {
-		return new Promise((resolve, reject) => {
-			request({
-				method: 'GET',
-				uri: 'https://catfacts-api.appspot.com/api/facts?number='+amount,
-			})
-			.then(response => {
-				
-				var facts = JSON.parse(response).facts;
-				if (amount == 1) facts = facts[0];
-				resolve(facts);
-
-			}, reject);
-		});
-	}
 };

@@ -15,17 +15,17 @@ const Recipient = require.main.require('./app/models/recipient');
 const Upvote = require.main.require('./app/models/upvote');
 
 // Get all recipients and a fact to be sent out each day
-router.get('/daily', (req, res) => {
+router.get('/daily', async (req, res) => {
 	if (req.query && req.query.code == keys.generalAccessToken) {
 		var io = req.app.get('socketio');
 		
 		const todayStart = new Date(); todayStart.setHours(0,0,0,0);
 		const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
 		
-		Promise.all([
-			Recipient.find(),
-			Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
-			Upvote.aggregate([
+		Promise.props({
+			recipients: Recipient.find(),
+			overrideFact: Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
+			highestUpvotedFact: Upvote.aggregate([
 				{$group: {_id: '$fact', upvotes: {$sum: 1}}},
 				{$sort: {upvotes: -1}},
 				{$lookup: {
@@ -38,13 +38,13 @@ router.get('/daily', (req, res) => {
 				{$match: {'fact.used': false}},
 				{$limit: 1}
 			]),
-			FactService.getFact({filter: {used: false}})
-		])
-		.spread((recipients, overrideFact, highestUpvotedFact, fact) => {
+			fact: FactService.getFact({filter: {used: false}})
+		})
+		.spread(async ({recipients, overrideFact, highestUpvotedFact, fact}) => {
 			
 			if (!fact) {
 				// No unused facts are available, reset all facts to unused
-				Fact.update({}, {$set: {used: false}}, {multi: true});
+				await Fact.update({}, {$set: {used: false}}, {multi: true});
 			}
 			
 			highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
