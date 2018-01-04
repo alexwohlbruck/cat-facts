@@ -4,9 +4,9 @@ const Promise = require('bluebird');
 
 const UnsubscribeDate = require.main.require('./app/models/unsubscribe-date');
 const Recipient = require.main.require('./app/models/recipient');
+const Fact = require.main.require('./app/models/fact');
 const strings = require.main.require('./app/config/strings');
 const IFTTTService = require.main.require('./app/services/ifttt.service.js');
-const FactService = require.main.require('./app/services/fact.service');
 
 const keys = require.main.require('./app/config/keys');
 const apiai = require('apiai-promise');
@@ -21,7 +21,7 @@ const processWebhook = function(req) {
         	switch (req.body.result.action) {
         	    case 'fact.get':
         	        
-                    FactService.getFact().then(function(fact) {
+                    Fact.getFact().then(function(fact) {
                         resolve({message: fact.text});
                     });
                 

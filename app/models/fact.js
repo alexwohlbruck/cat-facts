@@ -20,6 +20,17 @@ const FactSchema = new Schema({
 FactSchema.plugin(mongooseDelete, {overrideMethods: true});
 FactSchema.plugin(random);
 
+FactSchema.statics.getFact = function ({amount = 1, filter = {}}) {
+	return new Promise((resolve, reject) => {
+		this.findRandom(filter, {}, {limit: amount}, (err, facts) => {
+			if (err) return reject(err);
+			facts = facts || [];
+			
+			resolve(amount == 1 ? facts[0] : facts);
+		});
+	});
+};
+
 const Fact = mongoose.model('Fact', FactSchema);
 
 module.exports = Fact;

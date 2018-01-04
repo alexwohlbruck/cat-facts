@@ -5,12 +5,11 @@ const Fact = require.main.require('./app/models/fact');
 const User = require.main.require('./app/models/user');
 const Upvote = require.main.require('./app/models/upvote');
 
-const FactService = require.main.require('./app/services/fact.service');
 const strings = require.main.require('./app/config/strings.js');
 
 // Get simple fact fact
 router.get('/', function(req, res) {
-	FactService.getFact({amount: req.query.amount}).then(function(facts) {
+	Fact.getFact({amount: req.query.amount}).then(function(facts) {
 		/*return res.json({
 			displayText: Array.isArray(fact) ? fact : fact.text
 		});*/
