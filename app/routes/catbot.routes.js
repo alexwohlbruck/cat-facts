@@ -15,7 +15,7 @@ const Recipient = require.main.require('./app/models/recipient');
 const Upvote = require.main.require('./app/models/upvote');
 
 // Get all recipients and a fact to be sent out each day
-router.get('/daily', function(req, res) {
+router.get('/daily', (req, res) => {
 	if (req.query && req.query.code == keys.generalAccessToken) {
 		var io = req.app.get('socketio');
 		
@@ -38,9 +38,14 @@ router.get('/daily', function(req, res) {
 				{$match: {'fact.used': false}},
 				{$limit: 1}
 			]),
-			FactService.getFact()
+			FactService.getFact({filter: {used: false}})
 		])
 		.spread((recipients, overrideFact, highestUpvotedFact, fact) => {
+			
+			if (!fact) {
+				// No unused facts are available, reset all facts to unused
+				Fact.update({}, {$set: {used: false}}, {multi: true});
+			}
 			
 			highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
 		
@@ -79,10 +84,10 @@ router.get('/daily', function(req, res) {
 				});
 			});
 		})
-		.then(function(response) {
+		.then(response => {
 			return res.status(200).json(response);
 		})
-		.catch(function(err) {
+		.catch(err => {
 			return res.status(400).json(err);
 		});
 	} else {
@@ -91,7 +96,7 @@ router.get('/daily', function(req, res) {
 });
 
 // Text was recieved from recipient, process it and respond
-router.post('/message', function(req, res) {
+router.post('/message', (req, res) => {
 	
 	if (!req.query.query) return error({}, "No text query provided");
 	if (!req.query.number) return error({}, "No phone number provided");
@@ -121,7 +126,7 @@ router.post('/message', function(req, res) {
 			
 			promises.recipient = recipient;
 			promises.message = incoming.save();
-			promises.catFact = FactService.getFact();
+			promises.catFact = FactService.getFact({fields: {used: false}});
 			promises.catbotResponse = catbot.textRequest(req.query.query, {
 				sessionId: req.query.number
 			});
@@ -139,7 +144,7 @@ router.post('/message', function(req, res) {
 		return Promise.props(promises);
 	})
 	
-	.then(function(result) {
+	.then(result => {
 		
 		var response;
 	
@@ -155,14 +160,14 @@ router.post('/message', function(req, res) {
 		
 		const outgoing = new Message({text: overrideMessage || response, number: req.query.number, type: 'outgoing'});
 							
-		outgoing.save().then(function(message) {
+		outgoing.save().then(message => {
 			io.emit('message', {message: message, recipient: result.recipient});
 			
 			return success(message);
 		});
 	})
 	
-	.catch(function(err) {
+	.catch(err => {
 		return error(err.message || null);
 	});
 	
