@@ -6,7 +6,6 @@ const apiai = require('apiai-promise');
 const keys = require.main.require('./app/config/keys');
 const catbot = apiai(keys.apiai.accessToken);
 const strings = require.main.require('./app/config/strings.js');
-const FactService = require.main.require('./app/services/fact.service');
 const twitter = require.main.require('./app/services/twitter.service');
 
 const Fact = require.main.require('./app/models/fact');
@@ -38,7 +37,7 @@ router.get('/daily', async (req, res) => {
 				{$match: {'fact.used': false}},
 				{$limit: 1}
 			]),
-			fact: FactService.getFact({filter: {used: false}})
+			fact: Fact.getFact({filter: {used: false}})
 		});
 		
 		if (!fact) {
@@ -67,14 +66,14 @@ router.get('/daily', async (req, res) => {
 					});
 				});
 				
-				// await Message.create(messages);
+				await Message.create(messages);
 		
 				if (overrideFact) {
 					await overrideFact.delete();
 				}
 				
 				// .then() must be called for save to work
-				// await Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
+				await Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
 	
 				await twitter.tweet(factToSend.text);
 		
@@ -124,7 +123,7 @@ router.post('/message', (req, res) => {
 			
 			promises.recipient = recipient;
 			promises.message = incoming.save();
-			promises.catFact = FactService.getFact({fields: {used: false}});
+			promises.catFact = Fact.getFact({fields: {used: false}});
 			promises.catbotResponse = catbot.textRequest(req.query.query, {
 				sessionId: req.query.number
 			});
