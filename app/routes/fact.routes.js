@@ -9,8 +9,26 @@ const strings = require.main.require('./app/config/strings.js');
 
 // Get a random fact
 router.get('/', async (req, res) => {
-	const facts = await Fact.getFact({amount: req.query.amount});
-	return res.status(200).json(facts);
+	try {
+		const facts = await Fact.getFact({amount: req.query.amount});
+		return res.status(200).json(facts);
+	} catch (err) {
+		return res.status(err).json(err);
+	}
+});
+
+router.get('/:factID', async (req, res) => {
+	try {
+		const fact = await Fact.findById(req.params.factID);
+		
+		if (!fact) {
+			return res.status(404).json({message: 'Fact not found'});
+		}
+		
+		return res.status(200).json(fact);
+	} catch (err) {
+		return res.status(400).json(err);
+	}
 });
 
 // Get submitted facts
