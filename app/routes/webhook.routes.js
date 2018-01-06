@@ -13,17 +13,16 @@ const apiai = require('apiai-promise');
 const catbot = apiai(keys.apiai.accessToken);
 const crypto = require('crypto');
 
-const processWebhook = function(req) {
-    return new Promise((resolve, reject) => {
+const processWebhook = req => {
+    return new Promise(async (resolve, reject) => {
     
         if (req.body && req.body.result) {
         	
         	switch (req.body.result.action) {
         	    case 'fact.get':
         	        
-                    Fact.getFact().then(function(fact) {
-                        resolve({message: fact.text});
-                    });
+                    const fact = await Fact.getFact();
+                    resolve({message: fact.text});
                 
                 break;
                 
@@ -32,50 +31,56 @@ const processWebhook = function(req) {
                         var parameters = req.body.result.parameters,
                             name = parameters['given-name'] + (parameters['last-name'] ? ' ' + parameters['last-name'] : ''),
                             number = parameters['phone-number'].replace(/\D/g,'').replace(/^1+/, '');
-                            console.log(number);
+                            
                         if (number.length != 10 && number.length != 11)
                             return resolve({message: strings.invalidNumber});
                             
                         var recipient = new Recipient({
-                                name: name,
-                                number: number
-                            });
-                            
-                        recipient.save().then(function() {
-                            IFTTTService.sendSingleMessage({
-                                number: number,
-                                msg: strings.welcomeMessage
-                            });
-                            
-                            resolve({message: req.body.result.fulfillment.messages[0].speech});
-                            
-                        }, function(err) {
-                            reject(err);
+                            name: name,
+                            number: number
                         });
+                        
+                        try {
+                            await recipient.save();
+                        }
+                        
+                        catch (err) {
+                            reject(err);
+                        }
+                        
+                        IFTTTService.sendSingleMessage({
+                            number: number,
+                            msg: strings.welcomeMessage
+                        });
+                            
+                        resolve({message: req.body.result.fulfillment.messages[0].speech});
                     } else {
                         reject();
                     }
                 break;
                 
                 case 'recipient.unsubscribe':
-                    UnsubscribeDate.allowUnsubscribe().then(canUnsubscribe => {
-                        if (canUnsubscribe) {
-                            const recipientNumber = req.body.sessionId;
-                            
-                            Recipient.delete({number: recipientNumber}).then(result => {
-                                resolve({message: req.body.result.fulfillment.messages[0].speech});
-                            }, err => {
-                                reject(err);
-                            });
-                        } else {
-                            // Get unsubscribe message from CatBot
-                            const randomSessionId = crypto.createHash('md5').update((new Date()).getTime().toString()).digest('hex');
-                            
-                            catbot.textRequest('unsubscribe', {sessionId: randomSessionId}).then(response => {
-                                resolve({message: response.result.fulfillment.speech});
-                            });
+                    const canUnsubscribe = await UnsubscribeDate.allowUnsubscribe();
+                    
+                    if (canUnsubscribe) {
+                        const recipientNumber = req.body.sessionId;
+                        
+                        try {
+                            await Recipient.delete({number: recipientNumber});
+                            resolve({message: req.body.result.fulfillment.messages[0].speech});
                         }
-                    });
+                        
+                        catch (err) {
+                            reject(err);
+                        }
+                    } else {
+                        // Get unsubscribe message from CatBot
+                        const randomSessionId = crypto.createHash('md5').update((new Date()).getTime().toString()).digest('hex');
+                        
+                        const response = await catbot.textRequest('unsubscribe', {sessionId: randomSessionId});
+                        
+                        resolve({message: response.result.fulfillment.speech});
+                    }
                 break;
                     
                 default:
@@ -90,9 +95,10 @@ const processWebhook = function(req) {
 
 
 // Route for api.ai webhook
-router.post('/', function(req, res) {
+router.post('/', async (req, res) => {
     
-    processWebhook(req).then(function(response) {
+    try {
+        const response = await processWebhook(req);
         
         return res.json({
         	speech: response.message,
@@ -101,11 +107,12 @@ router.post('/', function(req, res) {
         	contextOut: [],
         	source: "Cat Facts"
         });
-        
-    }, function(err) {
+    }
+    
+    catch (err) {
         var message = err.message || err.errors[Object.keys(err.errors)[0]].message || strings.error;
         return res.json({displayText: message, speech: message, data: err});
-    });
+    }
 	
 });
 

@@ -7,30 +7,38 @@ var Message = require.main.require('./app/models/message');
 // https://github.com/alexwhitman/node-pushbullet-api
 
 module.exports = {
-    sendSingleMessage: function(data) {
-        return new Promise(function(resolve, reject) {
-            ifttt.request({
-                event: 'message:send:single',
-                method: 'GET',
-                params: {
-                    'value1': data.number,
-                    'value2': data.message
-                }
-            }, function(err) {
-                if (err) return reject(err);
+    sendSingleMessage: data => {
+        return new Promise(async (resolve, reject) => {
+            
+            try {
+                await ifttt.request({
+                    event: 'message:send:single',
+                    method: 'GET',
+                    params: {
+                        'value1': data.number,
+                        'value2': data.message
+                    }
+                });
                 
-                var message = new Message({
+                const message = new Message({
                     text: data.message,
                     number: data.number,
                     type: 'outgoing'
                 });
                 
-                message.save(message).then(function() {
+                try {
+                    await message.save(message);
                     resolve(message);
-                }, function(err) {
+                }
+                
+                catch (err) {
                     reject(err);
-                });
-            });
+                }
+            }
+            
+            catch (err) {
+                return reject(err);
+            }
         });
     }
 };
