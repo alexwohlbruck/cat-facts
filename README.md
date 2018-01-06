@@ -22,7 +22,7 @@ Using a combination of Node.js, Angular, and Tasker, this app will combine APIs 
 [Visit](https://cat-fact.herokuapp.com) the site  and start messing with your friends!
 
 ### API Documentation
-[Start developing!](docs)
+[Start developing!](docs/index.md)
 
 ### Other sites
 Follow Cat Facts on [Twitter](https://twitter.com/datos_de_gatos)
