@@ -7,19 +7,32 @@ const Upvote = require.main.require('./app/models/upvote');
 
 const strings = require.main.require('./app/config/strings.js');
 
-// Get simple fact fact
-router.get('/', function(req, res) {
-	Fact.getFact({amount: req.query.amount}).then(function(facts) {
-		/*return res.json({
-			displayText: Array.isArray(fact) ? fact : fact.text
-		});*/
+// Get a random fact
+router.get('/', async (req, res) => {
+	try {
+		const facts = await Fact.getFact({amount: req.query.amount});
+		return res.status(200).json(facts);
+	} catch (err) {
+		return res.status(err).json(err);
+	}
+});
+
+router.get('/:factID', async (req, res) => {
+	try {
+		const fact = await Fact.findById(req.params.factID);
 		
-		return res.json(facts);
-	});
+		if (!fact) {
+			return res.status(404).json({message: 'Fact not found'});
+		}
+		
+		return res.status(200).json(fact);
+	} catch (err) {
+		return res.status(400).json(err);
+	}
 });
 
 // Get submitted facts
-router.get('/submitted', function(req, res) {
+router.get('/submitted', async (req, res) => {
 	
 	// Define states of pipeline
 	var matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}}},
@@ -47,100 +60,121 @@ router.get('/submitted', function(req, res) {
 			used: 1
 		}};
 	
-	Promise.props({
-		all: Fact.aggregate([
-			matchAll, lookupUsers, projectUsers, lookupUpvotes, projectUpvotes
-		]),
-		me: Fact.aggregate([
-			matchMe, lookupUpvotes, projectUpvotes
-		])
-	}) .then(function(data) {
+	try {
+		const data = await Promise.props({
+			all: Fact.aggregate([
+				matchAll, lookupUsers, projectUsers, lookupUpvotes, projectUpvotes
+			]),
+			me: Fact.aggregate([
+				matchMe, lookupUpvotes, projectUpvotes
+			])
+		});
+		
 		return res.status(200).json(data);
-	}, function(err) {
+	}
+	catch (err) {
         return res.status(400).json(err);
-	});
+	}
 });
 
 // Submit a fact
-router.post('/submitted', function(req, res) {
-    if (req.user) {
-        if (!req.body.text) return res.status(400).json({message: "Provide a cat fact"});
+router.post('/submitted', async (req, res) => {
+    if (!req.user) {
+    	return res.status(401).json({message: strings.unauthenticated});
+    }
+    
+    if (!req.body.text) {
+    	return res.status(400).json({message: "Provide a cat fact"});
+    }
+    
+    const io = req.app.get('socketio');
+    
+    const fact = new Fact({
+        user: req.user._id,
+        text: req.body.text
+    });
+	    
+	try {
+	    const savedFact = await fact.save();
+	    
+		const populatedFact = await User.populate(savedFact, {path: 'user', select: 'name'});
+	    	
+		io.emit('fact', populatedFact);
+		
+	    return res.status(200).json(populatedFact);
+	}
         
-        const io = req.app.get('socketio');
-        
-        const fact = new Fact({
-            user: req.user._id,
-            text: req.body.text
-        });
-        
-        fact.save()
-        .then(function(fact) {
-        	return User.populate(fact, {path: 'user', select: 'name'});
-        })
-        .then(function(fact) {
-        	io.emit('fact', fact);
-            return res.status(200).json(fact);
-        })
-        .catch(function(err) {
-        	if (err.code === 11000) {
-        		err.message = strings.fact.exists;
-        		return res.status(409).json(err);
-        	}
-            return res.status(400).json(err);
-        });
-    } else {
-        return res.status(401).json({message: strings.unauthenticated});
+    catch (err) {
+    	if (err.code === 11000) {
+    		err.message = strings.fact.exists;
+    		return res.status(409).json(err);
+    	}
+        return res.status(400).json(err);
     }
 });
 
 // Upvote a fact
-router.post('/submitted/:factID/upvote', function(req, res) {
-    if (req.user) {
-        if (!req.params.factID) return res.status(400).json({message: "Provide a fact ID"});
-        
-        Fact.findById(req.params.factID)
-		.then(function(fact) {
-        	if (!fact) return res.status(404).json({message: "That fact doesn't exist"});
-        	if (fact.user.equals(req.user._id)) return  res.status(400).json({message: "You can't upvote your own fact"});
-        
-        	const io = req.app.get('socketio');
-        
-			const upvote = new Upvote({
-				user: req.user._id,
-				fact: req.params.factID
-			});
-			
-			return upvote.save().then(function() {
-				io.emit('fact:upvote', {fact: fact, user: req.user});
-			});
-        })
-        
-        .then(function(upvote) {
-            return res.status(201).send();
-        }, function(err) {
-            return res.status(400).json(err);
-        });
-    } else {
+router.post('/submitted/:factID/upvote', async (req, res) => {
+    if (!req.user) {
     	return res.status(401).json({message: strings.unauthenticated});
+    }
+    
+    if (!req.params.factID) {
+    	return res.status(400).json({message: "Provide a fact ID"});
+    }
+    
+    try {
+	    const fact = await Fact.findById(req.params.factID);
+	    
+		if (!fact) {
+			return res.status(404).json({message: "That fact doesn't exist"});
+		}
+		
+		if (fact.user.equals(req.user._id)) {
+			return res.status(400).json({message: "You can't upvote your own fact"});
+		}
+		
+		const io = req.app.get('socketio');
+	
+		const upvote = new Upvote({
+			user: req.user._id,
+			fact: req.params.factID
+		});
+		
+		await upvote.save();
+		
+		io.emit('fact:upvote', {fact: fact, user: req.user});
+	    
+	    return res.status(201).send();
+	}
+        
+    catch (err) {
+        return res.status(400).json(err);
     }
 });
 
 // Unvote (un-upvote) a fact
-router.delete('/submitted/:factID/upvote', function(req, res) {
+router.delete('/submitted/:factID/upvote', async (req, res) => {
 	if (req.user) {
-        if (!req.params.factID) return res.status(400).json({message: "Provide a fact ID"});
-        
-        const io = req.app.get('socketio');
-        
-        Upvote.findOneAndRemove({fact: req.params.factID, user: req.user._id}).then(function() {
-        	io.emit('fact:unvote', {fact: {_id: req.params.factID}, user: req.user});
-        	
-        	return res.status(204).send();
-        }, function(err) {
-        	return res.stauts(400).json(err);
-        });
-	} else {
-    	return res.status(401).json({message: strings.unauthenticated});
+		return res.status(401).json({message: strings.unauthenticated});	
+	}
+	
+    if (!req.params.factID) {
+    	return res.status(400).json({message: "Provide a fact ID"});
+    }
+    
+    const io = req.app.get('socketio');
+    
+    try {
+	    await Upvote.findOneAndRemove({fact: req.params.factID, user: req.user._id});
+	    
+    	io.emit('fact:unvote', {fact: {_id: req.params.factID}, user: req.user});
+	    	
+    	return res.status(204).send();
+    }
+    
+    catch (err) {
+    	return res.stauts(400).json(err);
     }
 });
 
