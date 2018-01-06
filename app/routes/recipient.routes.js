@@ -8,31 +8,32 @@ const strings = require.main.require('./app/config/strings.js');
 const IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 // Get all recipients
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
 	// if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	// if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
 	
-	Recipient.find().sort('-createdAt').populate({path: 'addedBy', select: 'name'}).then(recipients => {
+	try {
+		const recipients = await Recipient.find().sort('-createdAt').populate({path: 'addedBy', select: 'name'});
 		return res.status(200).json(recipients);
-	}, err => {
-		console.log(err);
+	} catch (err) {
 		return res.status(400).json(err);
-	});
+	}
 });
 
 // Get user's recipients
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
-	Recipient.find({addedBy: req.user._id}).sort('name').then(recipients => {
+	try {
+		const recipients = await Recipient.find({addedBy: req.user._id}).sort('name');
 		return res.status(200).json(recipients);
-	}, err => {
+	} catch (err) {
 		return res.status(400).json(err);
-	});
+	}
 });
 
 // Add new recipient(s)
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
 	
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
@@ -47,12 +48,8 @@ router.post('/', (req, res) => {
 			return o;
 		});
 		
-		Recipient.create(contacts, (err, recipients) => {
-			
-			if (err) {
-				if (err.writeErrors) err.message = err.writeErrors.length + ' ' + (err.writeErrors.length == 1 ? 'contact' : 'contacts') + ' failed to submit';
-				return res.status(400).json(err);
-			}
+		try {
+			const recipients = await Recipient.create(contacts);
 			
 			for (var i = 0; i < recipients.length; i++) {
 				io.emit('message', {message: strings.welcomeMessage, recipient: recipients[i]});
@@ -62,7 +59,12 @@ router.post('/', (req, res) => {
 			return res.status(200).json({
 				addedRecipients: recipients
 			});
-		});
+		}
+		
+		catch (err) {
+			if (err.writeErrors) err.message = err.writeErrors.length + ' ' + (err.writeErrors.length == 1 ? 'contact' : 'contacts') + ' failed to submit';
+			return res.status(400).json(err);
+		}
 		
 	} else {
 		// Submit one recipient
@@ -73,33 +75,41 @@ router.post('/', (req, res) => {
 			addedBy: req.user._id
 		});
 		
-		newRecipient.save().then(recipient => {
+		try {
+			const recipient = await newRecipient.save();
+			
 			io.emit('message', {message: strings.welcomeMessage, recipient: recipient});
 			IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
 			
 			return res.status(200).json(recipient);
-		}, err => {
+		}
+		
+		catch (err) {
 			return res.status(400).json(err);
-		});
+		}
 	}
 });
 
-router.patch('/:recipientId', function(req, res) {
+router.patch('/:recipientId', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
-	Recipient.update({_id: req.params.recipientId}, {
-		$set: {
-			name: req.body.name,
-			number: req.body.number
-		}
-	}).then(recipient => {
+	try {
+		const recipient = await Recipient.update({_id: req.params.recipientId}, {
+			$set: {
+				name: req.body.name,
+				number: req.body.number
+			}
+		});
+		
 		return res.status(200).json(recipient);
-	}, err => {
+	}
+	
+	catch (err) {
 		return res.status(err.statusCode || 400).json(err);
-	});
+	}
 });
 
-router.delete('/', (req, res) => {
+router.delete('/', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
 	
@@ -107,28 +117,35 @@ router.delete('/', (req, res) => {
 	
 	const action = req.query.permanent == 'true' ? 'remove' : 'delete';
 	
-	Recipient[action](query).then(data => {
+	try {
+		const data = await Recipient[action](query);
 		return res.status(200).json(data);
-	}, err => {
+	}
+	catch (err) {
 		return res.status(400).json(err);
-	});
+	}
 });
 
 // Get a recipient's catversation
-router.get('/:number/conversation', (req, res) => {
+router.get('/:number/conversation', async (req, res) => {
     if (!req.user) return res.status(401).json({message: strings.unauthenticated});
     
-    Promise.all([
-        Recipient.findOne({addedBy: req.user._id, number: req.params.number}),
-        Message.find({number: req.params.number})
-    ])
-    .then(results => {
-        if (results[0]) {
-            return res.status(200).json(results[1]);
-        } else {
-            return res.status(401).json({message: "You aren't facting this person"});
-        }
-    });
+    try {
+	    const results = await Promise.all([
+	        Recipient.findOne({addedBy: req.user._id, number: req.params.number}),
+	        Message.find({number: req.params.number})
+	    ]);
+	    
+	    if (results[0]) {
+		    return res.status(200).json(results[1]);
+		} else {
+		    return res.status(401).json({message: "You aren't facting this person"});
+		}
+    }
+    
+    catch (err) {
+    	return res.status(400).json(err);
+    }
 });
 
 module.exports = router;
