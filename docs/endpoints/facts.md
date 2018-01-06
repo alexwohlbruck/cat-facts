@@ -1,4 +1,3 @@
-
 ## `Fact` endpoints
 
 ### Get some cat facts
@@ -40,6 +39,8 @@ Retrieve one or more cat facts.
 	}
 ]
 ```
+
+---
 
 ### Get fact by ID
 `GET /facts/:factID`
