@@ -7,32 +7,8 @@ const Upvote = require.main.require('./app/models/upvote');
 
 const strings = require.main.require('./app/config/strings.js');
 
-// Get a random fact
-router.get('/', async (req, res) => {
-	try {
-		const facts = await Fact.getFact({amount: req.query.amount});
-		return res.status(200).json(facts);
-	} catch (err) {
-		return res.status(err).json(err);
-	}
-});
-
-router.get('/:factID', async (req, res) => {
-	try {
-		const fact = await Fact.findById(req.params.factID);
-		
-		if (!fact) {
-			return res.status(404).json({message: 'Fact not found'});
-		}
-		
-		return res.status(200).json(fact);
-	} catch (err) {
-		return res.status(400).json(err);
-	}
-});
-
 // Get submitted facts
-router.get('/submitted', async (req, res) => {
+router.get('/', async (req, res) => {
 	
 	// Define states of pipeline
 	var matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}}},
@@ -77,6 +53,31 @@ router.get('/submitted', async (req, res) => {
 	}
 });
 
+// Get a random fact
+router.get('/random', async (req, res) => {
+	try {
+		const facts = await Fact.getFact({amount: req.query.amount});
+		return res.status(200).json(facts);
+	} catch (err) {
+		return res.status(err).json(err);
+	}
+});
+
+// Get fact by ID
+router.get('/:factID', async (req, res) => {
+	try {
+		const fact = await Fact.findById(req.params.factID);
+		
+		if (!fact) {
+			return res.status(404).json({message: 'Fact not found'});
+		}
+		
+		return res.status(200).json(fact);
+	} catch (err) {
+		return res.status(400).json(err);
+	}
+});
+
 // Submit a fact
 router.post('/submitted', async (req, res) => {
     if (!req.user) {
@@ -114,7 +115,7 @@ router.post('/submitted', async (req, res) => {
 });
 
 // Upvote a fact
-router.post('/submitted/:factID/upvote', async (req, res) => {
+router.post('/:factID/upvote', async (req, res) => {
     if (!req.user) {
     	return res.status(401).json({message: strings.unauthenticated});
     }
@@ -154,9 +155,9 @@ router.post('/submitted/:factID/upvote', async (req, res) => {
 });
 
 // Unvote (un-upvote) a fact
-router.delete('/submitted/:factID/upvote', async (req, res) => {
-	if (req.user) {
-		return res.status(401).json({message: strings.unauthenticated});	
+router.delete('/:factID/upvote', async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json({message: strings.unauthenticated});
 	}
 	
     if (!req.params.factID) {
