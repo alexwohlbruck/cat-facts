@@ -16,23 +16,26 @@ app.service('ApiService', ['$rootScope', '$http', function($rootScope, $http) {
     // Fact
     
     this.getSubmittedFacts = function() {
-        return $http.get('/facts/submitted');
+        return $http.get('/facts');
     };
     
     this.submitFact = function(fact) {
-        return $http.post('/facts/submitted', fact);
+        return $http.post('/facts', fact);
     };
     
     this.upvoteFact = function(factID) {
-        return $http.post('/facts/submitted/' + factID + '/upvote');
+        return $http.post('/facts/' + factID + '/upvote');
     };
     
     this.unvoteFact = function(factID) {
-        return $http.delete('/facts/submitted/' + factID + '/upvote');
+        return $http.delete('/facts/' + factID + '/upvote');
     };
     
-    this.getFact = function() {
-        return $http.get('/facts');
+    this.getFact = function(amount) {
+        return $http.get('/facts/random', {
+            params: { amount
+            }
+        });
     };
     
     // Recipient

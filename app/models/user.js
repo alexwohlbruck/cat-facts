@@ -18,7 +18,12 @@ var UserSchema = new Schema({
     },
     isAdmin: {type: Boolean, default: false},
     settings: {
-        theme: {type: String, enum: ['light, dark'], default: 'light'}
+        theme: {
+            type: String,
+            required: true,
+            enum: ['light', 'dark'],
+            default: 'light'
+        }
     }
 }, {
     timestamps: true
