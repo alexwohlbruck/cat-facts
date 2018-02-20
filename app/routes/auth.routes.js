@@ -28,7 +28,7 @@ router.get('/google/callback', passport.authenticate('google', {
 	res.redirect('/#/facts');
 });
 
-router.get('/google/contacts', function(req, res) {
+router.get('/google/contacts', (req, res) => {
 	if (!req.user) return res.status(400).json({message: strings.unauthenticated});
 	
 	var oauth2Client = googleConfig.newOauth2Client({
@@ -48,18 +48,18 @@ router.get('/google/contacts', function(req, res) {
 	return res.redirect(url);
 });
 
-router.get('/google/contacts/callback', function(req, res, next) {
+router.get('/google/contacts/callback', (req, res, next) => {
 	var oauth2Client = googleConfig.newOauth2Client();
 	
-	oauth2Client.getToken(req.query.code, function(err, tokens) {
+	oauth2Client.getToken(req.query.code, (err, tokens) => {
 		if (err) return res.status(400).json(err);
 		
 		User.findByIdAndUpdate(req.user._id, {
 			'google.accessToken': User.encryptAccessToken(tokens.access_token),
 			'google.refreshToken': tokens.refresh_token
-		}).then(function(user) {
+		}).then(user => {
 			// Re-serialize user after updating data
-			req.login(user, function(err) {
+			req.login(user, err => {
 				if (err) return next(err);
 				
 				user.google.accessToken = User.decryptAccessToken(user.google.accessToken);
@@ -68,7 +68,7 @@ router.get('/google/contacts/callback', function(req, res, next) {
 					state: JSON.parse(decodeURIComponent(req.query.state))
 				});
 			});
-		}, function(err) {
+		}, err => {
 			console.log(err);
 		});
 	});

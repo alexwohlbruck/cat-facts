@@ -22,7 +22,8 @@ Using a combination of Node.js, Angular, and Tasker, this app will combine APIs 
 [Visit](https://cat-fact.herokuapp.com) the site  and start messing with your friends!
 
 ### API Documentation
-[Start developing!](https://alexwohlbruck.github.io/cat-facts/docs/index.md)
+[Start developing!](https://alexwohlbruck.github.io/cat-facts/docs)
+
 [Docs homepage](https://alexwohlbruck.github.io/cat-facts)
 
 ### Other sites
@@ -31,4 +32,4 @@ Follow Cat Facts on [Twitter](https://twitter.com/datos_de_gatos)
 Talk to the DialogFlow bot [here](https://bot.dialogflow.com/d7b47381-1453-4b31-a20c-9825de80cf88)
 
 ### Setup
-If you want to set up your own version of Cat Facts, follow the instructions in this [guide](docs/setup.md)
+If you want to set up your own version of Cat Facts, follow the instructions in this [guide](https://alexwohlbruck.github.io/cat-facts/docs/setup)

@@ -5,7 +5,7 @@
 Retrieve one or more cat facts.
 
 ##### Endpoint
-`GET /facts`
+`GET /facts/random`
 
 ##### Query parameters
 
@@ -14,7 +14,7 @@ Retrieve one or more cat facts.
 | amount    | 1       | Number of cats to retrieve. If set to one, response will be a fact object. If many, response will be an array of facts. |
 
 ##### Example request
-`GET /facts?amount=2`
+`GET /facts/random?amount=2`
 
 ##### Example response
 ```
@@ -43,6 +43,8 @@ Retrieve one or more cat facts.
 ---
 
 ### Get fact by ID
+
+### Endpoint
 `GET /facts/:factID`
 
 ##### Example request
@@ -59,4 +61,65 @@ Retrieve one or more cat facts.
     "source": "api",
     "used": false
 }
+```
+
+---
+
+### Get pending facts
+
+These are user-submitted facts that are waiting to be sent
+
+##### Endpoint
+`GET /facts`
+
+
+##### Returns
+An object containing an array of the pending facts, as well as an array of facts that the authenticated user submitted.
+
+##### Example response
+
+```
+{
+  "all": [
+    {
+      "_id": "5887e1d85c873e0011036889",
+      "text": "Cats make about 100 different sounds. Dogs make only about 10.",
+      "upvotes": [
+        {
+          "user": "588e677c06ac2b00110e59ae"
+        },
+        {
+          "user": "588e6e8806ac2b00110e59c3"
+        }
+      ]
+    },
+    {
+      "_id": "5894af975cdc7400113ef7f9",
+      "text": "The technical term for a cat’s hairball is a bezoar.",
+      "user": {
+        "_id": "587288f6e6f85e64ae1c7ef7",
+        "name": {
+          "first": "Alex",
+          "last": "Wohlbruck"
+        }
+      },
+      "upvotes": [
+        {
+          "user": "5872812829f7f43cacb0c4de"
+        }
+      ]
+    }
+  ],
+  "me": [
+	{
+      "_id": "590b9d90229d260020af0b06",
+      "text": "Evidence suggests domesticated cats have been around since 3600 B.C., 2,000 years before Egypt's pharaohs.",
+      "used": false,
+      "upvotes": [
+        {
+          "user": "587288f6e6f85e64ae1c7ef7"
+        }
+      ]
+    }
+  ]
 ```

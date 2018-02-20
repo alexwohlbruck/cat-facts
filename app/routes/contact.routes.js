@@ -10,10 +10,10 @@ var google = require('googleapis');
 var googleConfig = require.main.require('./app/config/google');
 var googleContacts = google.people('v1');
 
-router.get('/', function(req, res) {
+router.get('/', (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
-	var oauth2Client = googleConfig.newOauth2Client({
+	const oauth2Client = googleConfig.newOauth2Client({
 		accessToken: User.decryptAccessToken(req.user.google.accessToken),
 		refreshToken: req.user.google.refreshToken
 	});
@@ -24,7 +24,7 @@ router.get('/', function(req, res) {
         pageSize: 500,
         'requestMask.includeField': ['person.phoneNumbers', 'person.names'],
         sortOrder: 'LAST_MODIFIED_ASCENDING'
-    }, function(err, data) {
+    }, (err, data) => {
         if (err) return res.status(err.code || 400).json(err);
         
         /*
@@ -33,7 +33,7 @@ router.get('/', function(req, res) {
          * then rip phone numbers out of their contact's object and make new objects for each one
          */
         if (data.connections) {
-            var contacts = data.connections
+            let contacts = data.connections
             	.filter(o => o.phoneNumbers && o.phoneNumbers.length > 0)
             	.map((o, i) => {
     	        	if (!o.phoneNumbers) return o;

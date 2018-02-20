@@ -16,7 +16,7 @@ const client = twitterKeysExist ?
 : null;
 
 module.exports = {
-    tweet(message) {
+    async tweet(message) {
         
         const maxTweetLength = 280;
         
@@ -26,10 +26,14 @@ module.exports = {
             message = message.substr(0, maxTweetLength-2) + '…';
         }
         
-        client.post('statuses/update', {
-            status: message
-        }).catch(err => {
+        try {
+            await client.post('statuses/update', {
+                status: message
+            });
+        }
+        
+        catch (err) {
             console.log(message, err);
-        });
+        }
     }
 };
