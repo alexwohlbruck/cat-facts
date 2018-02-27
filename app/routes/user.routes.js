@@ -15,7 +15,7 @@ router.put('/me/settings', async (req, res) => {
 	const query = prefixObjectKeys(req.body, 'settings.');
 	
 	try {
-    	const user = User.update({_id: req.user._id}, {$set: query});
+    	const user = await User.update({_id: req.user._id}, {$set: query});
 	    return res.status(200).json(user);
 	} catch (err) {
 	    return res.status(400).json(err);
