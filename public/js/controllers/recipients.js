@@ -11,19 +11,30 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
     
     getMyRecipients();
     
-    $scope.addRecipient = function() {
+    $scope.validatePhone = (number, returnNumber = false) => {
+        const trim = number.replace(/[^0-9]/gi, '').trim();
+        return returnNumber ? trim : trim.length == 10;
+    };
+    
+    $scope.validatePhoneNgPattern = (function() {
+        return {
+            test: $scope.validatePhone
+        };
+    })();
+    
+    $scope.addRecipient = () => {
         var name = $scope.form.name, number = $scope.form.number;
         
-        if (name && number && number.replace(/[^0-9]/gi, '').trim().length == 10) {
+        if (name && number && $scope.validatePhone(number)) {
             
             ApiService.addRecipient({
                 name: name,
-                number: number.replace(/[^0-9]/gi, '').trim()
-            }).then(function(response) {
+                number: $scope.validatePhone(number, true)
+            }).then(response => {
                 $scope.recipients.push(response.data);
                 $rootScope.toast({message: "Recipient added!"});
                 $scope.form = null;
-            }, function(err) {
+            }, err => {
                 console.log(err);
                 $rootScope.toast({message: err.data.errors[Object.keys(err.data.errors)[0]].message || err.data.message});
             });
@@ -33,14 +44,14 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
         }
     };
     
-    $scope.openImportContacts = function(contacts) {
+    $scope.openImportContacts = contacts => {
         $mdDialog.show({
             controller: ['$scope', '$rootScope', '$mdDialog', 'ApiService', function($scope, $rootScope, $mdDialog, ApiService) {
                 $scope.contacts = contacts;
                 $scope.table = {orderBy: 'name'};
                 $scope.selectedContacts = [];
                 
-                $scope.finish = function() {
+                $scope.finish = () => {
                     if ($scope.selectedContacts.length > 0) {
                         $mdDialog.hide($scope.selectedContacts);
                     } else {
@@ -48,19 +59,19 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
                     }
                 };
                 
-                $scope.checkScopesAndGetContacts = function() {
-                    $scope.promise = ApiService.getGoogleContacts().then(function(response) {
+                $scope.checkScopesAndGetContacts = () => {
+                    $scope.promise = ApiService.getGoogleContacts().then(response => {
                         $scope.contacts = response.data;
-                    }, function(err) {
+                    }, err => {
                         if (err.status == 403 || err.status == 401) AuthService.openOAuth();
                     });
                 };
                 
-                $rootScope.$on('contacts:import', function() {
+                $rootScope.$on('contacts:import', () => {
                     $scope.checkScopesAndGetContacts();
                 });
                 
-                (function() {
+                (() => {
                     $scope.checkScopesAndGetContacts();
                 })();
             }],
@@ -69,24 +80,24 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
             clickOutsideToClose: true,
             fullscreen: $mdMedia('xs')
         })
-        .then(function(recipients) {
+        .then(recipients => {
             
-            ApiService.addRecipients(recipients).then(function(response) {
-                $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort(function(a, b) {
+            ApiService.addRecipients(recipients).then(response => {
+                $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort((a, b) => {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
                 
                 $rootScope.toast({message: "Added " + response.data.addedRecipients.length + " recipients"});
-            }, function(err) {
+            }, err => {
                 $rootScope.toast({message: err.data.message || "Error adding recipients"});
             });
         });
     };
     
     function getMyRecipients() {
-        $scope.promise = ApiService.getMyRecipients().then(function(response) {
+        $scope.promise = ApiService.getMyRecipients().then(response => {
             $scope.recipients = response.data;
-        }, function(err) {
+        }, err => {
             $rootScope.toast({message: err.data.message});
         });
     }
