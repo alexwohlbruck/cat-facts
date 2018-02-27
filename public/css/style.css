@@ -37,7 +37,7 @@ message .row-reverse .message-bubble {
 
 .quick-fact .fact {
     max-height: 55vh !important;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 .padding-0 { padding: 0px !important; }
