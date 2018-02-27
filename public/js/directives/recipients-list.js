@@ -84,11 +84,14 @@ app.directive('recipients', function() {
                 })
                 .then(function(data) {
                     ApiService.deleteRecipients(data).then(function(response) {
-                        $rootScope.toast({message: "Recipients deleted"});
                         
                         $scope.recipients = $scope.recipients.filter(function(recipient) {
                             return !data.recipients.includes(recipient._id);
                         });
+                        
+                        $scope.selected = [];
+                        $rootScope.toast({message: "Recipients deleted"});
+                        
                     }, function(err) {
                         $rootScope.toast({message: err.message});
                     });
