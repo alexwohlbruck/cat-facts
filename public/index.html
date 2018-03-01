@@ -53,6 +53,25 @@
 				<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
 				<md-icon class="material-icons grey">info</md-icon>
 			</md-button>
+			
+			<md-menu>
+				<md-button ng-click="showToast('test')" ng-mouseenter="$mdMenu.open()" aria-label="Profile" class="md-icon-button">
+					<md-icon class="material-icons" md-menu-origin>home</md-icon>
+				</md-button>
+				<md-menu-content width="4" ng-mouseleave="$mdMenu.close()">
+					<md-menu-item ng-repeat="item in [1, 2, 3]">
+						<md-button>
+							Option {{item}}
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+			
+			<img
+				ng-src="{{authenticatedUser.photo}}"
+				class="avatar small md-whiteframe-1dp"
+				alt="{{authenticatedUser.email}}"
+			/>
 		</div>
 		
 		<md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation">

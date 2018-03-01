@@ -62,6 +62,9 @@ message .row-reverse .message-bubble {
 	width: 40px;
     border-radius: 50%;
 }
+.avatar.small {
+	width: 35px;
+}
 
 .row-reverse {
 	flex-direction: row-reverse !important;
