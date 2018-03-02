@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const requestIp = require('request-ip');
 const MongoStore = require('connect-mongo')(session);
 const server = require('http').Server(app);
 const io = require('socket.io').listen(server);
@@ -28,6 +29,7 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.static(__dirname + '/public'));
+app.use(requestIp.mw());
 
 const mongoStore = new MongoStore({url: keys.database.url()});
 const sessionMiddleware = session({

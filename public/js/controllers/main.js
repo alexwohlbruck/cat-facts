@@ -12,6 +12,8 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
 		}
 	};
 	
+	$scope.ApiService = ApiService;
+	
 	$rootScope.showToast = function(message) {
 		return $mdToast.show(
 			$mdToast.simple()

@@ -9,5 +9,6 @@ module.exports = {
     recipient: {
         exists: "That person is already being facted."
     },
-    invalidNumber: "That phone number is invalid!"
+    invalidNumber: "That phone number is invalid!",
+    userPhotoUrl: "https://cat-fact.herokuapp.com/img/res/avatars/user-face.png"
 };

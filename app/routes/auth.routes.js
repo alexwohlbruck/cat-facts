@@ -74,4 +74,9 @@ router.get('/google/contacts/callback', (req, res, next) => {
 	});
 });
 
+router.get('/signout', (req, res) => {
+	req.logout();
+	res.status(200).send();
+});
+
 module.exports = router;
