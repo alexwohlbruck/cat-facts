@@ -13,6 +13,11 @@ md-toolbar md-nav-bar .md-button.md-accent {
 	color: #fff;
 }
 
+.sign-out-button {
+	padding: 0 !important;
+	margin-right: 10px !important;
+}
+
 .md-icon-button-small {
 	transform: scale(.8);
 }
