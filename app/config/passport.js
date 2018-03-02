@@ -41,7 +41,7 @@ module.exports = passport => {
 				accessToken: User.encryptAccessToken(accessToken),
 				refreshToken
 			},
-			ip = req.connection.remoteAddress;
+			ip = req.clientIp;
 			
 			if (err) return done(err);
 			
