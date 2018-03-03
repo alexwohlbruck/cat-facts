@@ -20,7 +20,6 @@ app.config(['$stateProvider', '$urlRouterProvider',
 			templateUrl: '/views/home.html',
 			controller: 'HomeCtrl',
 			data: {
-				restricted: false,
 				showInNavigation: false
 			}
 		})
@@ -40,7 +39,6 @@ app.config(['$stateProvider', '$urlRouterProvider',
 			templateUrl: '/views/facts.html',
 			controller: 'FactsCtrl',
 			data: {
-				restricted: false,
 				showInNavigation: true
 			}
 		})
