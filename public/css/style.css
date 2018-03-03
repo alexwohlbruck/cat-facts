@@ -52,6 +52,7 @@ message .row-reverse .message-bubble {
 .padding-0 { padding: 0px !important; }
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
+.padding-top-0 { padding-top: 0px !important; }
 .padding-top-15 { padding-top: 15px !important; }
 .padding-20 { padding: 20px !important; }
 .padding-30 { padding: 30px !important; }
@@ -96,7 +97,7 @@ message .row-reverse .message-bubble {
 }
 
 md-input-container.no-space {
-	margin: 10px 0px;
+	margin: 12px 0px;
 }
 md-input-container.no-space .md-errors-spacer {
 	display: none;

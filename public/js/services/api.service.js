@@ -13,6 +13,14 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.put('/users/me/settings', data).then(data => console.log(data), err => console.log(err));
     };
     
+    this.verifyPhone = function(phone) {
+        return $http.post('/users/me/profile/phone/verification-code', {phone});
+    };
+    
+    this.updatePhone = function(verificationCode) {
+        return $http.put('/users/me/profile/phone', {verificationCode});
+    };
+    
     this.signOut = function() {
         return $http.get('/auth/signout').then(() => {
             $rootScope.authenticatedUser = null;
