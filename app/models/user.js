@@ -10,7 +10,8 @@ var UserSchema = new Schema({
         first:  {type: String, required: true},
         last:   {type: String, required: true}
     },
-    email:      {type: String, required: true, unique: true},
+    email:      {type: String, unique: true, sparse: true},
+    phone:      {type: String, unique: true, sparse: true},
     photo:      {type: String, default: strings.userPhotoUrl},
     google: {
         id:           {type: String},
@@ -45,4 +46,4 @@ UserSchema.statics.decryptAccessToken = function(cipher) {
 
 var User = mongoose.model('User', UserSchema);
 
-module.exports = User; 
+module.exports = User;

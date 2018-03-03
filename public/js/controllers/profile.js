@@ -25,10 +25,10 @@ app.controller('ProfileCtrl', ['$scope', '$rootScope', 'ApiService', function($s
                 
             case 'verify':
                 ApiService.updatePhone($scope.verificationCode).then(updatedUser => {
-                    $rootScope.authenticatedUser = updatedUser;
-                    $scope.newPhone = updatedUser.phone;
-                    $scope.editField = null;
-                    $scope.editStep = null;
+                    $rootScope.authenticatedUser = updatedUser.data;
+                    $scope.newPhone = updatedUser.data.phone;
+                    $scope.editField = $scope.editStep = null;
+                    $scope.newPhone = $scope.verificationCode = '';
                     $rootScope.toast({message: "New phone number saved"});
                 }, err => {
                     $rootScope.toast({message: err.message || "Couldn't update phone number, try again later."});
