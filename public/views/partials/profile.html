@@ -34,32 +34,38 @@
         
         <md-subheader>Details</md-subheader>
         
-        <md-list-item class="md-2-line">
-            <md-icon class="material-icons">phone</md-icon>
-            
-            <div class="md-list-item-text">
-                <div ng-show="editField == 'phone'">
-                    <md-input-container class="no-space" ng-hide="editStep == 'verify'">
-                        <label>Phone number</label>
-                        <input ng-model="newPhone"/>
-                    </md-input-container>
+        <form name="newPhoneField" ng-submit="updatePhone(editStep)">
+            <md-list-item class="md-2-line">
+                <md-icon class="material-icons">phone</md-icon>
+                
+                <div class="md-list-item-text">
+                    <div ng-show="editField == 'phone'">
+                        <md-input-container class="no-space" ng-hide="editStep == 'verify'">
+                            <label>Phone number</label>
+                            <input ng-model="newPhone"/>
+                        </md-input-container>
+                        
+                        <md-input-container class="no-space" ng-show="editStep == 'verify'">
+                            <label>Enter verification code</label>
+                            <input ng-model="verificationCode" ng-minlength="7" ng-maxlength="14"/>
+                        </md-input-container>
+                    </div>
                     
-                    <md-input-container class="no-space" ng-show="editStep == 'verify'">
-                        <label>Enter verification code</label>
-                        <input ng-model="verificationCode" ng-minlength="7" ng-maxlength="14"/>
-                    </md-input-container>
+                    <div ng-hide="editField == 'phone'">
+                        <h3>Phone number</h3>
+                        <p>{{authenticatedUser.phone || 'Link your phone number to your account'}}</p>
+                    </div>
                 </div>
                 
-                <div ng-hide="editField == 'phone'">
-                    <h3>Phone number</h3>
-                    <p>{{authenticatedUser.phone || 'Link your phone number to your account'}}</p>
-                </div>
-            </div>
-            
-            <md-button class="md-secondary" ng-click="updatePhone(editStep)">
-                {{editField == 'phone' ? (editStep == 'edit' ? 'Verify number' : 'Save') : (authenticatedUser.phone ? 'Change' : 'Link')}}
-            </md-button>
-        </md-list-item>
+                <md-button
+                    class="md-secondary"
+                    type="submit"
+                    ng-disabled="newPhoneField.$invalid">
+                    
+                    {{editField == 'phone' ? (editStep == 'edit' ? 'Verify number' : 'Save') : (authenticatedUser.phone ? 'Change' : 'Link')}}
+                </md-button>
+            </md-list-item>
+        </form>
         
         <md-subheader>
             <md-icon class="material-icons" ng-style="{color: '#F44336'}">warning</md-icon>

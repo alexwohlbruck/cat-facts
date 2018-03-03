@@ -62,15 +62,14 @@ router.put('/me/profile/phone', async (req, res) => {
     
     if (!verificationCode) return res.status(404).json({message: strings.invalidVerificationCode});
     
-    console.log(verificationCode.data)
-    // FIXME: Phone number isn't updating
     const updatedUser = await User.findByIdAndUpdate(req.user._id, {$set: {
         phone: verificationCode.data
     }}, {
         new: true
     });
     
-    console.log(updatedUser)
+    await VerificationCode.findByIdAndRemove(verificationCode._id);
+    
     return res.status(200).json(updatedUser);
 });
 
