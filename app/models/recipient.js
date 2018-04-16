@@ -4,7 +4,8 @@ const strings = require.main.require('./app/config/strings');
 const mongooseDelete = require('mongoose-delete');
 
 const RecipientSchema = new Schema({
-    name: String,
+    name: { type: String, default: undefined },
+    notes: { type: String, default: undefined },
     number: {
         type: String,
         required: true,
@@ -15,7 +16,7 @@ const RecipientSchema = new Schema({
             }
         ]
     },
-    addedBy: {type: Schema.Types.ObjectId, ref: 'User'}
+    addedBy: {type: Schema.Types.ObjectId, ref: 'User'},
 }, {
     timestamps: true
 });
@@ -35,4 +36,4 @@ RecipientSchema.plugin(mongooseDelete, {overrideMethods: true});
 
 const Recipient = mongoose.model('Recipient', RecipientSchema);
 
-module.exports = Recipient; 
+module.exports = Recipient;
