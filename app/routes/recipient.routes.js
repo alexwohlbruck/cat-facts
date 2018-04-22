@@ -128,24 +128,24 @@ router.delete('/', async (req, res) => {
 
 // Get a recipient's catversation
 router.get('/:number/conversation', async (req, res) => {
-    if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-    
-    try {
-	    const results = await Promise.all([
-	        Recipient.findOne({addedBy: req.user._id, number: req.params.number}),
-	        Message.find({number: req.params.number})
-	    ]);
-	    
-	    if (results[0]) {
-		    return res.status(200).json(results[1]);
+	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+	
+	try {
+		const results = await Promise.all([
+			Recipient.findOne({addedBy: req.user._id, number: req.params.number}),
+			Message.find({number: req.params.number})
+		]);
+		
+		if (results[0]) {
+			return res.status(200).json(results[1]);
 		} else {
-		    return res.status(403).json({message: "You aren't facting this person"});
+			return res.status(403).json({message: "You aren't facting this person"});
 		}
-    }
-    
-    catch (err) {
-    	return res.status(400).json(err);
-    }
+	}
+	
+	catch (err) {
+		return res.status(400).json(err);
+	}
 });
 
 module.exports = router;
