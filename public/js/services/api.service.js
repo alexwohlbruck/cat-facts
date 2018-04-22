@@ -9,6 +9,10 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.get('/users/me');
     };
     
+    this.deleteAccount = function({verificationEmail}) {
+        return $http.delete('/users/me', {params: {verificationEmail}});
+    };
+    
     this.updateUserSettings = function(data) {
         return $http.put('/users/me/settings', data).then(data => console.log(data), err => console.log(err));
     };
