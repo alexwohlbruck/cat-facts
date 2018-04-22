@@ -11,10 +11,11 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
     
     getMyRecipients();
     
-    $scope.validatePhone = (number, returnNumber = false) => {
+    // TODO: Refactor phone validation into it's own directive for reuse
+    /*$scope.validatePhone = (number, returnNumber = false) => {
         const trim = number.replace(/[^0-9]/gi, '').trim();
         return returnNumber ? trim : trim.length == 10;
-    };
+    };*/
     
     $scope.validatePhoneNgPattern = (function() {
         return {

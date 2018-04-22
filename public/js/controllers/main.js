@@ -1,15 +1,21 @@
 /* global angular, rekt */
 var app = angular.module('catfacts');
 
-app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$mdDialog', '$mdBottomSheet', 'ApiService', 'hotkeys',
-	function($scope, $rootScope, $mdSidenav, $mdToast, $mdDialog, $mdBottomSheet, ApiService, hotkeys) {
-
+app.controller('MainCtrl', ['$scope', '$rootScope', '$window', '$mdSidenav', '$mdToast', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'ApiService', 'hotkeys',
+	function($scope, $rootScope, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, hotkeys) {
+	
 	$scope.sideNav = {
 		left: {
 			toggle: function() {
 				$mdSidenav('left').toggle();
 			}
 		}
+	};
+	
+	$scope.ApiService = ApiService;
+	
+	$rootScope.goBack = function() {
+		$window.history.back();
 	};
 	
 	$rootScope.showToast = function(message) {
@@ -79,6 +85,19 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$mdSidenav', '$mdToast', '$
 			speech.pitch = 1.8;
 			
 			synth.speak(speech);
+		});
+	};
+	
+	$scope.openProfile = function(event) {
+		$mdDialog.show({
+			templateUrl: '/views/partials/profile.html',
+			controller: 'ProfileCtrl',
+			parent: angular.element(document.body),
+			targetEvent: event,
+			clickOutsideToClose: true,
+			fullscreen: $mdMedia('xs'),
+			scope: $scope,
+			preserveScope: true
 		});
 	};
 	

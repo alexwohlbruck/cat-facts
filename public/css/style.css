@@ -13,8 +13,17 @@ md-toolbar md-nav-bar .md-button.md-accent {
 	color: #fff;
 }
 
+.sign-out-button {
+	padding: 0 !important;
+	margin-right: 10px !important;
+}
+
 .md-icon-button-small {
 	transform: scale(.8);
+}
+
+md-list-item.md-2-line > md-icon {
+    margin: 22px 24px 6px 8px !important;
 }
 
 message {
@@ -43,6 +52,7 @@ message .row-reverse .message-bubble {
 .padding-0 { padding: 0px !important; }
 .padding-10-5 { padding: 10px 5px !important; }
 .padding-11-15 { padding: 11px 15px !important; }
+.padding-top-0 { padding-top: 0px !important; }
 .padding-top-15 { padding-top: 15px !important; }
 .padding-20 { padding: 20px !important; }
 .padding-30 { padding: 30px !important; }
@@ -61,6 +71,9 @@ message .row-reverse .message-bubble {
 .avatar {
 	width: 40px;
     border-radius: 50%;
+}
+.avatar.small {
+	width: 35px;
 }
 
 .row-reverse {
@@ -84,7 +97,7 @@ message .row-reverse .message-bubble {
 }
 
 md-input-container.no-space {
-	margin: 10px 0px;
+	margin: 12px 0px;
 }
 md-input-container.no-space .md-errors-spacer {
 	display: none;
