@@ -1,0 +1,25 @@
+<md-dialog flex-gt-xs="40">
+    <md-dialog-content class="md-dialog-content">
+        <h2 class="md-title">
+            Permanently delete your account?
+        </h2>
+        
+        <p class="md-subtitle">This action cannot be undone</p>
+        
+        <md-input-container class="md-block">
+            <label>Enter your email to confirm</label>
+            <input type="text" ng-model="email"/>
+        </md-input-container>
+    </md-dialog-content>
+    
+    <md-dialog-actions>
+        <md-button ng-click="cancel()">Cancel</md-button>
+        <md-button
+            ng-click="deleteAccount()"
+            class="md-warn"
+            ng-disabled="email != authenticatedUser.email">
+            
+            Delete
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
