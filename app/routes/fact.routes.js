@@ -79,7 +79,7 @@ router.get('/:factID', async (req, res) => {
 });
 
 // Submit a fact
-router.post('/', async (req, res) => {
+router.post('/submitted', async (req, res) => {
     if (!req.user) {
     	return res.status(401).json({message: strings.unauthenticated});
     }

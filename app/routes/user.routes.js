@@ -12,25 +12,6 @@ router.get('/me', (req, res) => {
 	return res.status(401).json(false);
 });
 
-router.delete('/me', async (req, res) => {
-    // Confirm intention to delete by checking inputted email
-    if (!req.user)
-        return res.status(401).json({message: strings.unauthenticated});
-    
-    if (req.user.email !== req.query.verificationEmail)
-        return res.status(403).json({message: 'Email addresses do not match'});
-    
-    
-    try {
-        await User.delete({_id: req.user._id});
-        return res.status(200).json({message: 'Account deleted'});
-    }
-    catch (err) {
-        return res.status(200).json({message: err.message || 'Failed to delete account', err});
-    }
-        
-});
-
 router.put('/me/settings', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
@@ -74,7 +55,7 @@ router.post('/me/profile/phone/verification-code', async (req, res) => {
 
 router.put('/me/profile/phone', async (req, res) => {
     if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-    if (!req.body.verificationCode) return res.status(403).json({message: strings.noVerificationCode});
+    if (!req.body.verificationCode) return res.status(401).json({message: strings.noVerificationCode});
     
     const submittedCode = req.body.verificationCode.trim();
     const verificationCode = await VerificationCode.findOne({code: submittedCode});

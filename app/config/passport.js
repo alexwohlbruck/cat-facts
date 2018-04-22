@@ -25,28 +25,28 @@ module.exports = passport => {
 	},
 	(req, accessToken, refreshToken, profile, done) => {
 		
-		const name = {
-			first: profile.name.givenName,
-			last: profile.name.familyName
-		},
-		email = profile.emails[0].value,
-		photo = profile.photos[0] && !profile._json.image.isDefault
-				? profile.photos[0].value.replace("?sz=50", "?sz=200")
-				: strings.userPhotoUrl,
-				
-		google = {
-			id: profile.id,
-			accessToken: User.encryptAccessToken(accessToken),
-			refreshToken
-		},
-		ip = req.clientIp;
-		
-		User.findOne({'email': email}, (err, user) => {
+		User.findOne({'google.id': profile.id}, (err, user) => {
+			
+			const name = {
+				first: profile.name.givenName,
+				last: profile.name.familyName
+			},
+			email = profile.emails[0].value,
+			photo = profile.photos[0] && !profile._json.image.isDefault
+					? profile.photos[0].value.replace("?sz=50", "?sz=200")
+					: strings.userPhotoUrl,
+					
+			google = {
+				id: profile.id,
+				accessToken: User.encryptAccessToken(accessToken),
+				refreshToken
+			},
+			ip = req.clientIp;
 			
 			if (err) return done(err);
 			
 			if (!user) {
-				console.log('did not find user creating new')
+				
 				user = new User({name, photo, email, google, ip});
 				user.save(err => {
 					if (err) console.log(err);
@@ -54,7 +54,7 @@ module.exports = passport => {
 				});
 				
 			} else {
-				console.log('user already exists')
+				
 				User.findByIdAndUpdate(user._id, {
 					'google.accessToken': User.encryptAccessToken(accessToken),
 					'google.refreshToken': refreshToken,

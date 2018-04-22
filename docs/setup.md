@@ -110,9 +110,7 @@
         4. Send SMS
             - Number: `%RECIPIENT`
             - Message: `%DAILYFACT`
-        5. Wait
-            - Seconds: 2
-        6. End For
+        5. End For
     6. Go back to the Profiles tab and create an event based profile for "Recieved Text Any"
     7. Create a task for this profile called "CatBot Single"
     8. This task will include these actions:
