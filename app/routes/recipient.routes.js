@@ -139,7 +139,7 @@ router.get('/:number/conversation', async (req, res) => {
 	    if (results[0]) {
 		    return res.status(200).json(results[1]);
 		} else {
-		    return res.status(401).json({message: "You aren't facting this person"});
+		    return res.status(403).json({message: "You aren't facting this person"});
 		}
     }
     
