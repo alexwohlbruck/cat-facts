@@ -32,7 +32,7 @@ app.controller('ProfileCtrl', ['$scope', '$rootScope', 'ApiService', '$state', '
                     $scope.newPhone = $scope.verificationCode = '';
                     $rootScope.toast({message: "New phone number saved"});
                 }, err => {
-                    $rootScope.toast({message: err.message || "Couldn't update phone number, try again later"});
+                    $rootScope.toast({message: err.data.message || "Couldn't update phone number, try again later"});
                 });
                 
                 break;
