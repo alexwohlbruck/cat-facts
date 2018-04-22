@@ -1,12 +1,34 @@
 const express = require('express');
 const router = express.Router();
 
+const IFTTTService = require.main.require('./app/services/ifttt.service.js');
+
 const User = require.main.require('./app/models/user');
+const VerificationCode = require.main.require('./app/models/verification-code');
 const strings = require.main.require('./app/config/strings.js');
 
 router.get('/me', (req, res) => {
 	if (req.user) return res.status(200).json(req.user);
 	return res.status(401).json(false);
+});
+
+router.delete('/me', async (req, res) => {
+    // Confirm intention to delete by checking inputted email
+    if (!req.user)
+        return res.status(401).json({message: strings.unauthenticated});
+    
+    if (req.user.email !== req.query.verificationEmail)
+        return res.status(403).json({message: 'Email addresses do not match'});
+    
+    
+    try {
+        await User.delete({_id: req.user._id});
+        return res.status(200).json({message: 'Account deleted'});
+    }
+    catch (err) {
+        return res.status(200).json({message: err.message || 'Failed to delete account', err});
+    }
+        
 });
 
 router.put('/me/settings', async (req, res) => {
@@ -20,6 +42,54 @@ router.put('/me/settings', async (req, res) => {
 	} catch (err) {
 	    return res.status(400).json(err);
 	}
+});
+
+router.post('/me/profile/phone/verification-code', async (req, res) => {
+    if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+    
+    const inputData = {
+        user: req.user._id,
+        type: 'phone',
+        data: req.body.phone
+    };
+    const verificationCode = new VerificationCode(inputData);
+    
+    try {
+        const result = await verificationCode.save();
+        
+    	IFTTTService.sendSingleMessage({
+    	    number: req.body.phone,
+    	    message: `${result.code} is your Cat Facts verification code.`
+    	});
+        
+        return res.status(200).json({
+            message: "Created verification code",
+            ...inputData
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(400).json(err);
+    }
+});
+
+router.put('/me/profile/phone', async (req, res) => {
+    if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+    if (!req.body.verificationCode) return res.status(403).json({message: strings.noVerificationCode});
+    
+    const submittedCode = req.body.verificationCode.trim();
+    const verificationCode = await VerificationCode.findOne({code: submittedCode});
+    
+    if (!verificationCode) return res.status(404).json({message: strings.invalidVerificationCode});
+    
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, {$set: {
+        phone: verificationCode.data
+    }}, {
+        new: true
+    });
+    
+    await VerificationCode.findByIdAndRemove(verificationCode._id);
+    
+    return res.status(200).json(updatedUser);
 });
 
 module.exports = router;

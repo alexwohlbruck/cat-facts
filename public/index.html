@@ -24,7 +24,19 @@
 <body ng-controller="MainCtrl" layout="column" ng-cloak md-theme="{{authenticatedUser.settings.theme}}">
 	<md-toolbar class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
-			<img src="img/logo/launcher-icon-1x.png" ui-sref="home" ng-hide="!$state.current.data.showInNavigation" class="width-40 margin-10 pointer">
+			<img
+				src="img/logo/launcher-icon-1x.png"
+				ui-sref="home"
+				ng-hide="$state.current.name == 'home' || $state.current.data.showBackButton"
+				class="width-40 margin-10 pointer"/>
+			
+			<md-button
+				class="md-icon-button"
+				ng-click="goBack()"
+				ng-show="$state.current.data.showBackButton">
+				
+				<md-icon class="material-icons">arrow_back</md-icon>
+			</md-button>
 			
 			<h3>
 				<span>Cat Facts</span>
@@ -53,6 +65,34 @@
 				<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
 				<md-icon class="material-icons grey">info</md-icon>
 			</md-button>
+			
+			<md-menu md-position-mode="target-right target" ng-if="authenticatedUser">
+				<md-button ng-click="$mdOpenMenu($event)" aria-label="Profile" class="md-icon-button sign-out-button">
+					<md-tooltip md-direction="bottom">Profile</md-tooltip>
+					
+					<img
+						ng-src="{{authenticatedUser.photo}}"
+						class="avatar small md-whiteframe-1dp"
+						alt="{{authenticatedUser.email}}"
+					/>
+				</md-button>
+				
+				<md-menu-content>
+					<md-menu-item>
+						<md-button ng-click="openProfile($event)">
+							My profile
+						</md-button>
+					</md-menu-item>
+					
+					<md-menu-item>
+						<md-button ng-click="ApiService.signOut()">
+							Sign out
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+			
+			
 		</div>
 		
 		<md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation">
@@ -112,6 +152,7 @@
 	<script src="js/controllers/home.js"></script>
 	<script src="js/controllers/recipients.js"></script>
 	<script src="js/controllers/facts.js"></script>
+	<script src="js/controllers/profile.js"></script>
 	<script src="js/controllers/console.js"></script>
 	<script src="js/controllers/conversation.js"></script>
 	

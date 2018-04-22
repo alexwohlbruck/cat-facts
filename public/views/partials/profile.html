@@ -1,0 +1,89 @@
+<md-dialog flex-gt-xs="40">
+    <md-toolbar md-whiteframe="1">
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" ng-click="$mdDialog.hide()">
+                <md-icon class="material-icons">arrow_back</md-icon>
+            </md-button>
+            
+            <h2>Profile & settings</h2>
+        </div>
+    </md-toolbar>
+    
+    <md-list flex class="padding-top-0">
+        <md-subheader>Google profile</md-subheader>
+        
+        <md-list-item
+            class="md-2-line"
+            ng-href="https://plus.google.com/u/0/{{authenticatedUser.google.id}}"
+            target="_blank">
+            
+            <img
+                class="md-avatar"
+                ng-src="{{authenticatedUser.photo}}"
+                alt="{{authenticatedUser.email}}"/>
+            
+            <div class="md-list-item-text">
+                <h3>{{authenticatedUser.name.first}} {{authenticatedUser.name.last}}</h3>
+                <p>{{authenticatedUser.email}}</p>
+            </div>
+            
+            <md-button class="md-secondary md-icon-button">
+                <md-icon class="material-icons">open_in_new</md-icon>
+            </md-button>
+        </md-list-item>
+        
+        <md-subheader>Details</md-subheader>
+        
+        <form name="newPhoneField" ng-submit="updatePhone(editStep)">
+            <md-list-item class="md-2-line">
+                <md-icon class="material-icons">phone</md-icon>
+                
+                <div class="md-list-item-text">
+                    <div ng-show="editField == 'phone'">
+                        <md-input-container class="no-space" ng-hide="editStep == 'verify'">
+                            <label>Phone number</label>
+                            <input ng-model="newPhone"/>
+                        </md-input-container>
+                        
+                        <md-input-container class="no-space" ng-show="editStep == 'verify'">
+                            <label>Enter verification code</label>
+                            <input ng-model="verificationCode" ng-minlength="7" ng-maxlength="14"/>
+                        </md-input-container>
+                    </div>
+                    
+                    <div ng-hide="editField == 'phone'">
+                        <h3>Phone number</h3>
+                        <p>{{authenticatedUser.phone || 'Link your phone number to your account'}}</p>
+                    </div>
+                </div>
+                
+                <md-button
+                    class="md-secondary"
+                    type="submit"
+                    ng-disabled="newPhoneField.$invalid">
+                    
+                    {{editField == 'phone' ? (editStep == 'edit' ? 'Verify number' : 'Save') : (authenticatedUser.phone ? 'Change' : 'Link')}}
+                </md-button>
+            </md-list-item>
+        </form>
+        
+        <md-subheader>
+            <md-icon class="material-icons" ng-style="{color: '#F44336'}">warning</md-icon>
+            <span class="margin-sides-10">Danger zone</span>
+        </md-subheader>
+        
+        <md-list-item class="md-2-line">
+            <md-icon class="material-icons">delete</md-icon>
+            
+            <div class="md-list-item-text">
+                <h3>Delete account</h3>
+                <p>Remove your account from Cat Facts</p>
+            </div>
+            
+            <md-button class="md-secondary md-warn" ng-click="openDeleteAccountDialog($event)">
+                Delete account
+            </md-button>
+        </md-list-item>
+        
+    </md-list>
+</md-dialog>

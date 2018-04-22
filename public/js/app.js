@@ -20,7 +20,6 @@ app.config(['$stateProvider', '$urlRouterProvider',
 			templateUrl: '/views/home.html',
 			controller: 'HomeCtrl',
 			data: {
-				restricted: false,
 				showInNavigation: false
 			}
 		})
@@ -40,7 +39,6 @@ app.config(['$stateProvider', '$urlRouterProvider',
 			templateUrl: '/views/facts.html',
 			controller: 'FactsCtrl',
 			data: {
-				restricted: false,
 				showInNavigation: true
 			}
 		})
@@ -88,8 +86,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.alwaysWatchTheme(true);
 }]);
 
-app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', '$mdMedia',
-	function($rootScope, $state, $window, $location, $mdToast, ApiService, $mdMedia) {
+app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', 'AuthService', '$mdMedia',
+	function($rootScope, $state, $window, $location, $mdToast, ApiService, AuthService, $mdMedia) {
 	
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
