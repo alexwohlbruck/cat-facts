@@ -44,6 +44,10 @@ message .row-reverse .message-bubble {
 	color: #fff;
 }
 
+recipients tr.deleted {
+	opacity: .5;
+}
+
 .quick-fact .fact {
     max-height: 55vh !important;
     overflow-y: auto;

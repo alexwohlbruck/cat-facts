@@ -25,7 +25,7 @@ router.get('/me', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
 	try {
-		const recipients = await Recipient.find({addedBy: req.user._id}).sort('name');
+		const recipients = await Recipient.findWithDeleted({addedBy: req.user._id}).sort('name');
 		return res.status(200).json(recipients);
 	} catch (err) {
 		return res.status(400).json(err);
