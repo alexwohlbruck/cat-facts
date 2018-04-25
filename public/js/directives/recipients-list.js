@@ -31,11 +31,12 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.editRecipient = function(recipient, ev) {
+            $scope.editRecipient = function({recipient}, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipient = recipient;
                         $scope.cancel = $mdDialog.hide;
+                        
                         $scope.save = function() {
                             ApiService.editRecipient($scope.recipient).then(function(recipient) {
                                 $mdDialog.hide(recipient);
@@ -59,11 +60,12 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.deleteRecipients = function(recipients, ev) {
+            $scope.deleteRecipients = function({recipients, showPermanentDeleteOption}, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipients = recipients;
                         $scope.permanent = false;
+                        $scope.showPermanentDeleteOption = $rootScope.authenticatedUser.isAdmin;
                         
                         $scope.delete = function() {
                             $mdDialog.hide({
