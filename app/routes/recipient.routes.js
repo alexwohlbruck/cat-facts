@@ -93,6 +93,8 @@ router.post('/', async (req, res) => {
 router.patch('/:recipientId', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	
+	// TODO: only allow to edit recipient if user isAdmin or is addedBy them
+	
 	try {
 		const recipient = await Recipient.update({_id: req.params.recipientId}, {
 			$set: {
@@ -112,6 +114,8 @@ router.patch('/:recipientId', async (req, res) => {
 router.delete('/', async (req, res) => {
 	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
 	if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
+	
+	// TODO: only allow to delete recipient if user is addedBy them
 	
 	const query = {_id: {$in: req.query.recipients}};
 	

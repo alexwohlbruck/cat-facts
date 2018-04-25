@@ -6,7 +6,7 @@
         
         <p>{{recipients.length == 1 ? 'This person' : 'These people'}} will no longer recieve facts</p>
         
-        <md-checkbox ng-model="permanent" aria-label="Checkbox 1">
+        <md-checkbox ng-model="permanent" aria-label="Checkbox 1" ng-if="showPermanentDeleteOption">
             Delete permanently
         </md-checkbox>
     </md-dialog-content>
