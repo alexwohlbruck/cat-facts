@@ -66,8 +66,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 			'hue-2': '600',
 			'hue-3': 'A100'
 		})
-		.accentPalette('teal', {
-			'default': 'A400'
+		.accentPalette('amber', {
+			'default': '400'
 		});
 		
 	$mdThemingProvider.theme('dark')
@@ -77,8 +77,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 			'hue-2': '600',
 			'hue-3': 'A100'
 		})
-		.accentPalette('teal', {
-			'default': 'A400'
+		.accentPalette('amber', {
+			'default': '400'
 		})
 		.dark();
 	
