@@ -9,9 +9,9 @@ Retrieve one or more cat facts.
 
 ##### Query parameters
 
-| Parameter | Default | Description |
-| --------- | ------- | ----------- |
-| amount    | 1       | Number of cats to retrieve. If set to one, response will be a fact object. If many, response will be an array of facts. |
+| Parameter | Default | Limit | Description |
+| --------- | ------- | ----- | ----------- |
+| amount    | 1       | 100   | Number of cats to retrieve. If set to one, response will be a fact object. If many, response will be an array of facts. |
 
 ##### Example request
 `GET /facts/random?amount=2`
