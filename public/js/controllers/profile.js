@@ -5,7 +5,7 @@ app.controller('ProfileCtrl', ['$scope', '$rootScope', 'ApiService', '$state', '
     function($scope, $rootScope, ApiService, $state, $mdDialog, $mdMedia) {
     
     $scope.newPhone = $rootScope.authenticatedUser ? $rootScope.authenticatedUser.phone : undefined;
-    
+    $scope.$mdDialog = $mdDialog;
     $scope.editField = $scope.editStep = null;
     
     $scope.updatePhone = editStep => {

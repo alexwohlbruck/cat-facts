@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
+const strings = require.main.require('./app/config/strings.js');
+const { isAuthenticated } = require('../middleware');
+
 const Fact = require.main.require('./app/models/fact');
 const User = require.main.require('./app/models/user');
 const Upvote = require.main.require('./app/models/upvote');
 
-const strings = require.main.require('./app/config/strings.js');
 
 // Get submitted facts
 router.get('/', async (req, res) => {
@@ -85,10 +87,7 @@ router.get('/:factID', async (req, res) => {
 });
 
 // Submit a fact
-router.post('/', async (req, res) => {
-    if (!req.user) {
-    	return res.status(401).json({message: strings.unauthenticated});
-    }
+router.post('/', isAuthenticated, async (req, res) => {
     
     if (!req.body.text) {
     	return res.status(400).json({message: "Provide a cat fact"});
@@ -121,10 +120,7 @@ router.post('/', async (req, res) => {
 });
 
 // Upvote a fact
-router.post('/:factID/upvote', async (req, res) => {
-    if (!req.user) {
-    	return res.status(401).json({message: strings.unauthenticated});
-    }
+router.post('/:factID/upvote', isAuthenticated, async (req, res) => {
     
     if (!req.params.factID) {
     	return res.status(400).json({message: "Provide a fact ID"});
@@ -161,10 +157,7 @@ router.post('/:factID/upvote', async (req, res) => {
 });
 
 // Unvote (un-upvote) a fact
-router.delete('/:factID/upvote', async (req, res) => {
-	if (!req.user) {
-		return res.status(401).json({message: strings.unauthenticated});
-	}
+router.delete('/:factID/upvote', isAuthenticated, async (req, res) => {
 	
     if (!req.params.factID) {
     	return res.status(400).json({message: "Provide a fact ID"});

@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
+const { isAuthenticated, isAdmin } = require('../middleware');
+const strings = require.main.require('./app/config/strings.js');
+const IFTTTService = require.main.require('./app/services/ifttt.service.js');
+
 const Recipient = require.main.require('./app/models/recipient');
 const Message = require.main.require('./app/models/message');
 
-const strings = require.main.require('./app/config/strings.js');
-const IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 // Get all recipients
 router.get('/', async (req, res) => {
@@ -21,9 +23,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get user's recipients
-router.get('/me', async (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	
+router.get('/me', isAuthenticated, async (req, res) => {
 	try {
 		const recipients = await Recipient.findWithDeleted({addedBy: req.user._id}).sort('name');
 		return res.status(200).json(recipients);
@@ -33,9 +33,7 @@ router.get('/me', async (req, res) => {
 });
 
 // Add new recipient(s)
-router.post('/', async (req, res) => {
-	
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+router.post('/', isAuthenticated, async (req, res) => {
 	
 	var io = req.app.get('socketio');
 	
@@ -90,9 +88,8 @@ router.post('/', async (req, res) => {
 	}
 });
 
-router.patch('/:recipientId', async (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	
+router.patch('/:recipientId', isAuthenticated, async (req, res) => {
+
 	// TODO: only allow to edit recipient if user isAdmin or is addedBy them
 	
 	try {
@@ -111,10 +108,8 @@ router.patch('/:recipientId', async (req, res) => {
 	}
 });
 
-router.delete('/', async (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
-	
+router.delete('/', isAuthenticated, isAdmin, async (req, res) => {
+
 	// TODO: only allow to delete recipient if user is addedBy them
 	
 	const query = {_id: {$in: req.query.recipients}};
@@ -131,8 +126,7 @@ router.delete('/', async (req, res) => {
 });
 
 // Get a recipient's catversation
-router.get('/:number/conversation', async (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+router.get('/:number/conversation', isAuthenticated, async (req, res) => {
 	
 	try {
 		const results = await Promise.all([
