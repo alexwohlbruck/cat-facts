@@ -5,6 +5,14 @@ body {
 	max-width: 1200px;
 	margin: 0 auto;
 }
+
+h1, h2, .md-title, .title, .md-headline {
+	font-family: 'Raleway', sans-serif !important;
+}
+p, span, button {
+	font-family: 'Roboto', sans-serif;
+}
+
 .input-button-inline {
 	transform: translateY(-12px);
 }
