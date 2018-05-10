@@ -1,7 +1,15 @@
 <div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
 	<div layout="column" layout-align="start center">
-		<timer class="md-headline bold center-text" countdown="seconds" finish-callback="countdownFinished()" max-time-unit="'hour'" interval="1000">
-			{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
+		<timer
+			class="md-headline bold center-text"
+			countdown="seconds"
+			finish-callback="countdownFinished()"
+			max-time-unit="'hour'"
+			interval="1000">
+			
+			<span class="title">
+				{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
+			</span>
 		</timer>
 		
 		<span class="md-subhead">until next fact is sent</span>
