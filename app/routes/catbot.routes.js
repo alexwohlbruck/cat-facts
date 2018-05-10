@@ -182,7 +182,7 @@ router.post('/message', (req, res) => {
 	}
 	
 	function computeTypingDelay(string) {
-		var delay = 0;
+		let delay = 0;
 		delay += (string.length / 2);
 		delay += Math.round(Math.random() * 10) * (Math.random() < 0.05 ? -1 : 1);
 		return Math.abs(delay) + 2;
