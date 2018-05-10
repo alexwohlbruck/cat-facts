@@ -1,17 +1,15 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const google = require('googleapis');
+const googleConfig = require.main.require('./app/config/google');
+const googleContacts = google.people('v1');
 
-var User = require.main.require('./app/models/user');
-var Recipient = require.main.require('./app/models/recipient');
+const { isAuthenticated } = require('../middleware');
 
-var strings = require.main.require('./app/config/strings.js');
+const User = require.main.require('./app/models/user');
+const Recipient = require.main.require('./app/models/recipient');
 
-var google = require('googleapis');
-var googleConfig = require.main.require('./app/config/google');
-var googleContacts = google.people('v1');
-
-router.get('/', (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
+router.get('/', isAuthenticated, (req, res) => {
 	
 	const oauth2Client = googleConfig.newOauth2Client({
 		accessToken: User.decryptAccessToken(req.user.google.accessToken),

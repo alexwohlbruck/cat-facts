@@ -2,20 +2,18 @@ const express = require('express');
 const router = express.Router();
 
 const IFTTTService = require.main.require('./app/services/ifttt.service.js');
+const { isAuthenticated } = require('../middleware');
 
 const User = require.main.require('./app/models/user');
 const VerificationCode = require.main.require('./app/models/verification-code');
 const strings = require.main.require('./app/config/strings.js');
 
-router.get('/me', (req, res) => {
-	if (req.user) return res.status(200).json(req.user);
-	return res.status(401).json(false);
+router.get('/me', isAuthenticated, (req, res) => {
+	return res.status(200).json(req.user);
 });
 
-router.delete('/me', async (req, res) => {
+router.delete('/me', isAuthenticated, async (req, res) => {
     // Confirm intention to delete by checking inputted email
-    if (!req.user)
-        return res.status(401).json({message: strings.unauthenticated});
     
     if (req.user.email !== req.query.verificationEmail)
         return res.status(403).json({message: 'Email addresses do not match'});
@@ -31,9 +29,8 @@ router.delete('/me', async (req, res) => {
         
 });
 
-router.put('/me/settings', async (req, res) => {
-	if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	
+router.put('/me/settings', isAuthenticated, async (req, res) => {
+
 	const query = prefixObjectKeys(req.body, 'settings.');
 	
 	try {
@@ -44,9 +41,8 @@ router.put('/me/settings', async (req, res) => {
 	}
 });
 
-router.post('/me/profile/phone/verification-code', async (req, res) => {
-    if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-    
+router.post('/me/profile/phone/verification-code', isAuthenticated, async (req, res) => {
+
     const inputData = {
         user: req.user._id,
         type: 'phone',
@@ -72,9 +68,13 @@ router.post('/me/profile/phone/verification-code', async (req, res) => {
     }
 });
 
-router.put('/me/profile/phone', async (req, res) => {
-    if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-    if (!req.body.verificationCode) return res.status(403).json({message: strings.noVerificationCode});
+router.put('/me/profile/phone', isAuthenticated, async (req, res) => {
+    
+    if (!req.body.verificationCode) {
+        return res.status(403).json({
+            message: strings.noVerificationCode
+        });
+    }
     
     const submittedCode = req.body.verificationCode.trim();
     const verificationCode = await VerificationCode.findOne({code: submittedCode});

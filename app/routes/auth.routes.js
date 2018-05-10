@@ -1,14 +1,13 @@
-var express = require('express');
-var router = express.Router();
-var passport = require.main.require('passport');
-var strings = require.main.require('./app/config/strings.js');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const googleConfig = require('../config/google');
+const { isAuthenticated } = require('../middleware');
 
-var User = require.main.require('./app/models/user');
+const User = require.main.require('./app/models/user');
 
-var google = require('googleapis');
-var googleConfig = require.main.require('./app/config/google');
 
-var baseScopes = [
+const baseScopes = [
 	'https://www.googleapis.com/auth/userinfo.email',
 	'https://www.googleapis.com/auth/plus.login'
 ],
@@ -28,8 +27,7 @@ router.get('/google/callback', passport.authenticate('google', {
 	res.redirect('/#/facts');
 });
 
-router.get('/google/contacts', (req, res) => {
-	if (!req.user) return res.status(400).json({message: strings.unauthenticated});
+router.get('/google/contacts', isAuthenticated, (req, res) => {
 	
 	var oauth2Client = googleConfig.newOauth2Client({
 		accessToken: User.decryptAccessToken(req.user.google.accessToken),
