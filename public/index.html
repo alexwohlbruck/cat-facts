@@ -57,20 +57,22 @@
 				</md-switch>
 			</span>
 			
-			<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
-				<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
-				<md-icon class="material-icons grey">bug_report</md-icon>
-			</md-button>
+			<span ng-show="$mdMedia('gt-xs')">
+				<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
+					<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
+					<md-icon class="material-icons grey">bug_report</md-icon>
+				</md-button>
 			
-			<md-button class="md-icon-button" aria-label="developers" ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
-				<md-tooltip md-direction="button">Start devleoping</md-tooltip>
-				<md-icon class="material-icon grey">code</md-icon>
-			</md-button>
-			
-			<md-button class="md-icon-button" aria-label="about" ng-click="openAbout($event)">
-				<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
-				<md-icon class="material-icons grey">info</md-icon>
-			</md-button>
+				<md-button class="md-icon-button" aria-label="developers" ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
+					<md-tooltip md-direction="button">Developers</md-tooltip>
+					<md-icon class="material-icon grey">code</md-icon>
+				</md-button>
+				
+				<md-button class="md-icon-button" aria-label="about" ng-click="openAbout($event)">
+					<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
+					<md-icon class="material-icons grey">info</md-icon>
+				</md-button>
+			</span>
 			
 			<md-menu md-position-mode="target-right target" ng-if="authenticatedUser">
 				<md-button ng-click="$mdOpenMenu($event)" aria-label="Profile" class="md-icon-button sign-out-button">
