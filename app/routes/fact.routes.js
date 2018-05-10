@@ -55,8 +55,14 @@ router.get('/', async (req, res) => {
 
 // Get a random fact
 router.get('/random', async (req, res) => {
+	const amount = req.query.amount;
+	
+	if (amount > 100) {
+		return res.status(405).json({message: 'Limited to 100 facts at a time'});
+	}
+	
 	try {
-		const facts = await Fact.getFact({amount: req.query.amount});
+		const facts = await Fact.getFact({amount});
 		return res.status(200).json(facts);
 	} catch (err) {
 		return res.status(err).json(err);
