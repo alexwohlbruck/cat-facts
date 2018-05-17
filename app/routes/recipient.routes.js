@@ -114,7 +114,7 @@ router.delete('/', isAuthenticated, isAdmin, async (req, res) => {
 	
 	const query = {_id: {$in: req.query.recipients}};
 	
-	const action = req.query.permanent == 'true' ? 'remove' : 'delete';
+	const action = req.query.soft == 'false' ? 'remove' : 'delete';
 	
 	try {
 		const data = await Recipient[action](query);

@@ -60,6 +60,23 @@ app.directive('recipients', function() {
                 });
             };
             
+            $scope.restoreRecipient = function(event, recipient) {
+                $mdDialog.confirm()
+                    .title(`Restore ${recipient.name}?`)
+                    .textContent('This person will start recieving cat facts again.')
+                    .ariaLabel(`Restoring ${recipient.name}`)
+                    .targetEvent(event)
+                    .ok(`Get 'em`)
+                    .cancel(`Nevermind`)
+                    .clickOutsideToClose(true);
+                    
+                $mdDialog.show(confirm).then(function() {
+                    $scope.status = 'You decided to get rid of your debt.';
+                }, function() {
+                    $scope.status = 'You decided to keep your debt.';
+                });
+            };
+            
             $scope.deleteRecipients = function({recipients, showPermanentDeleteOption}, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
@@ -70,7 +87,7 @@ app.directive('recipients', function() {
                         $scope.delete = function() {
                             $mdDialog.hide({
                                 recipients: recipients.map(o => o._id),
-                                permanent: $scope.permanent
+                                soft: !$scope.permanent
                             });
                         };
                         
@@ -84,17 +101,17 @@ app.directive('recipients', function() {
                     clickOutsideToClose: true,
                     fullscreen: $mdMedia('xs')
                 })
-                .then(function(data) {
-                    ApiService.deleteRecipients(data).then(function(response) {
+                .then(data => {
+                    ApiService.deleteRecipients(data).then(response => {
                         
-                        $scope.recipients = $scope.recipients.filter(function(recipient) {
+                        $scope.recipients = $scope.recipients.filter(recipient => {
                             return !data.recipients.includes(recipient._id);
                         });
                         
                         $scope.selected = [];
                         $rootScope.toast({message: "Recipients deleted"});
                         
-                    }, function(err) {
+                    }, err => {
                         $rootScope.toast({message: err.message});
                     });
                 });
