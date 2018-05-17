@@ -116,8 +116,7 @@ md-input-container.no-space .md-errors-spacer {
 }
 
 .md-row[disabled=disabled] > td {
-	color: grey !important;
-	color: rgba(0,0,0,0.54) !important;
+	background-color: rgba(255,0,0,.1);
 }
 
 .md-dark-theme .md-table th,
