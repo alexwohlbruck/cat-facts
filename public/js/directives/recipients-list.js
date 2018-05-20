@@ -61,7 +61,7 @@ app.directive('recipients', function() {
             };
             
             $scope.restoreRecipient = function(event, recipient) {
-                $mdDialog.confirm()
+                const restoreDialog = $mdDialog.confirm()
                     .title(`Restore ${recipient.name}?`)
                     .textContent('This person will start recieving cat facts again.')
                     .ariaLabel(`Restoring ${recipient.name}`)
@@ -70,7 +70,7 @@ app.directive('recipients', function() {
                     .cancel(`Nevermind`)
                     .clickOutsideToClose(true);
                     
-                $mdDialog.show(confirm).then(function() {
+                $mdDialog.show(restoreDialog).then(function() {
                     $scope.status = 'You decided to get rid of your debt.';
                 }, function() {
                     $scope.status = 'You decided to keep your debt.';

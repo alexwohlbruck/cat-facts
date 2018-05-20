@@ -108,13 +108,17 @@ router.patch('/:recipientId', isAuthenticated, async (req, res) => {
 	}
 });
 
-router.delete('/', isAuthenticated, isAdmin, async (req, res) => {
-
-	// TODO: only allow to delete recipient if user is addedBy them
+router.delete('/', isAuthenticated, async (req, res) => {
 	
 	const query = {_id: {$in: req.query.recipients}};
 	
 	const action = req.query.soft == 'false' ? 'remove' : 'delete';
+	
+	if (!req.user.isAdmin && action == 'remove') {
+		return res.status(403).json({message: strings.unauthorized});
+	}
+
+	// TODO: only allow to delete recipient if user is addedBy them
 	
 	try {
 		const data = await Recipient[action](query);
