@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 // Get user's recipients
 router.get('/me', isAuthenticated, async (req, res) => {
 	try {
-		const recipients = await Recipient.findWithDeleted({addedBy: req.user._id}).sort('name');
+		const recipients = await Recipient.find({addedBy: req.user._id}).sort('name');
 		return res.status(200).json(recipients);
 	} catch (err) {
 		return res.status(400).json(err);
@@ -110,18 +110,20 @@ router.patch('/:recipientId', isAuthenticated, async (req, res) => {
 
 router.delete('/', isAuthenticated, async (req, res) => {
 	
-	const query = {_id: {$in: req.query.recipients}};
-	
 	const action = req.query.soft == 'false' ? 'remove' : 'delete';
 	
 	if (!req.user.isAdmin && action == 'remove') {
 		return res.status(403).json({message: strings.unauthorized});
 	}
 
-	// TODO: only allow to delete recipient if user is addedBy them
+	const recipientsToDelete = Recipient.find({_id: {$in: req.query.recipients}});
+	
+	const allowedRecipientsToDelete = recipientsToDelete.filter(r =>
+		r.addedBy == req.user._id
+	).map(r => r._id);
 	
 	try {
-		const data = await Recipient[action](query);
+		const data = await Recipient[action]({_id: {$in: allowedRecipientsToDelete}});
 		return res.status(200).json(data);
 	}
 	catch (err) {

@@ -34,13 +34,11 @@
 		
 		<tbody md-body>
 			<tr md-row
-				ng-repeat="recipient in recipients | orderBy: ['deleted', orderBy] | limitTo: limitTo"
-				ng-click="recipient.deleted ? restoreRecipient($event, recipient) : openConversation($event, recipient)"
+				ng-repeat="recipient in recipients | orderBy: orderBy | limitTo: limitTo"
+				ng-click="openConversation($event, recipient)"
 				ng-style="{'cursor': 'pointer'}"
 				md-select="recipient"
-				md-select-id="_id"
-				ng-disabled="recipient.deleted"
-				ng-class="{'deleted': recipient.deleted}">
+				md-select-id="_id">
 				
 				<td md-cell>{{recipient.name || 'No name'}}</td>
 				<td md-cell ng-if="options.addedBy">{{recipient.addedBy.name.first}} {{recipient.addedBy.name.last}}</td>
