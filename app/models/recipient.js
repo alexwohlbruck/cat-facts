@@ -5,7 +5,7 @@ const mongooseDelete = require('mongoose-delete');
 
 const RecipientSchema = new Schema({
     name: { type: String, default: undefined },
-    notes: { type: String, default: undefined },
+    notes: { type: String, default: undefined, select: false },
     number: {
         type: String,
         required: true,

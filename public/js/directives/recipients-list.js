@@ -60,23 +60,6 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.restoreRecipient = function(event, recipient) {
-                const restoreDialog = $mdDialog.confirm()
-                    .title(`Restore ${recipient.name}?`)
-                    .textContent('This person will start recieving cat facts again.')
-                    .ariaLabel(`Restoring ${recipient.name}`)
-                    .targetEvent(event)
-                    .ok(`Get 'em`)
-                    .cancel(`Nevermind`)
-                    .clickOutsideToClose(true);
-                    
-                $mdDialog.show(restoreDialog).then(function() {
-                    $scope.status = 'You decided to get rid of your debt.';
-                }, function() {
-                    $scope.status = 'You decided to keep your debt.';
-                });
-            };
-            
             $scope.deleteRecipients = function({recipients, showPermanentDeleteOption}, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {

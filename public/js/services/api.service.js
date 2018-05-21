@@ -92,6 +92,10 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         });
     };
     
+    this.restoreRecipient = function(recipient) {
+        return $http.patch('/recipients/' + recipient._id);
+    };
+    
     this.getGoogleContacts = function() {
         return $http.get('/contacts'); 
     };
