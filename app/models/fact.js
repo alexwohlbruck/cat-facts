@@ -8,7 +8,8 @@ const FactSchema = new Schema({
     text: {type: String, required: true, unique: true},
     sendDate: {type: Date},
     used: {type: Boolean, default: false},
-    source: {type: String, enum: ['user', 'api'], default: 'user'}
+    source: {type: String, enum: ['user', 'api'], default: 'user'},
+    type: {type: String, enum: ['cat', 'dog', 'snail', 'horse'], default: 'cat'}
 }, {
     timestamps: true
 });
