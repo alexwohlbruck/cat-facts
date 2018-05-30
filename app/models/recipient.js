@@ -17,6 +17,10 @@ const RecipientSchema = new Schema({
         ]
     },
     addedBy: {type: Schema.Types.ObjectId, ref: 'User'},
+    subscriptions: [{
+        type: String,
+        enum: ['cat', 'dog', 'snail', 'horse']
+    }]
 }, {
     timestamps: true
 });
