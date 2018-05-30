@@ -22,11 +22,16 @@
 	<link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css"/>
 </head>
 
-<body ng-controller="MainCtrl" layout="column" ng-cloak md-theme="{{authenticatedUser.settings.theme}}">
+<body
+	ng-controller="MainCtrl"
+	layout="column"
+	ng-cloak md-theme="{{$state.params.animal}}-{{authenticatedUser.settings.theme}}">
+	
 	<md-toolbar class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
 			<img
-				src="img/logo/launcher-icon-1x.png"
+				ng-if="$state.params.animal"
+				ng-src="{{'img/logo/animals/' + $state.params.animal + '.png'}}"
 				ui-sref="home"
 				ng-hide="$state.current.name == 'home' || $state.current.data.showBackButton"
 				class="width-40 margin-10 pointer"/>
@@ -39,9 +44,25 @@
 				<md-icon class="material-icons">arrow_back</md-icon>
 			</md-button>
 			
-			<h3>
-				<span class="title">Cat Facts</span>
-			</h3>
+			<md-menu md-position-mode="target-left target" ng-if="authenticatedUser">
+				<span
+					class="title"
+					ng-click="$mdOpenMenu($event)"
+					aria-label="Switch site">
+					
+					{{$state.params.animal | capitalize}} Facts
+				</span>
+				
+				<md-menu-content>
+					<md-menu-item ng-repeat="animal in animals">
+						<md-button
+							ui-sref="facts({animal: animal.name})"
+							ng-class="{'md-primary bold': animal.name == $state.params.animal}">
+							{{animal.name | capitalize}} Facts
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
 			
 			<span flex></span>
 			
@@ -53,7 +74,7 @@
 					ng-model="authenticatedUser.settings.theme"
 					ng-true-value="'dark'"
 					ng-false-value="'light'"
-					ng-change="toggleDarkTheme(authenticatedUser.settings.theme)">
+					ng-change="toggleDarkTheme($state.params.animal + '-' + authenticatedUser.settings.theme)">
 				</md-switch>
 			</span>
 			
