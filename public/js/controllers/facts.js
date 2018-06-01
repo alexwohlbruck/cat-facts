@@ -2,8 +2,8 @@
 var app = angular.module('catfacts');
 
 
-app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
-	function($scope, $rootScope, ApiService, socket) {
+app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'socket',
+	function($scope, $rootScope, $state, ApiService, socket) {
 	
 	getFacts();
 	setTimer();
@@ -44,7 +44,11 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
 	};
 	
 	function getFacts() {
-		$scope.promise = ApiService.getSubmittedFacts().then(function(response) {
+		$scope.promise = ApiService.getSubmittedFacts({
+			animalType: $state.params.animal
+		})
+		.then(function(response) {
+			
 			$scope.facts = response.data;
 			$scope.facts.all = $scope.facts.all.map(function(fact) {
 				fact.upvoted = userUpvoted(fact);

@@ -12,9 +12,13 @@ const Upvote = require.main.require('./app/models/upvote');
 // Get submitted facts
 router.get('/', async (req, res) => {
 	
+	const animalTypes = req.query.animal_types ? req.query.animal_types.split(',') : ['cat'];
+	
+	console.log(animalTypes)
+	
 	// Define states of pipeline
-	var matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}}},
-		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query'}},
+	const matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}, type: {$in: animalTypes}}},
+		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query', type: {$in: animalTypes}}},
 		lookupUsers = {$lookup: {
 			from: 'users',
 			localField: 'user',

@@ -30,8 +30,12 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         
     // Fact
     
-    this.getSubmittedFacts = function() {
-        return $http.get('/facts');
+    this.getSubmittedFacts = function({animalType}) {
+        console.log(animalType);
+        
+        return $http.get('/facts', {params: {
+            animal_types: animalType
+        }});
     };
     
     this.submitFact = function(fact) {
