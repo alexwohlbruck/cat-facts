@@ -46,7 +46,7 @@ app.config(['$stateProvider', '$urlRouterProvider', 'animalProvider',
 
 	$stateProvider
 		.state('home', {
-			url: '/:animal',
+			url: '/',
 			templateUrl: '/views/home.html',
 			controller: 'HomeCtrl',
 			data: {
@@ -88,16 +88,16 @@ app.config(['$stateProvider', '$urlRouterProvider', 'animalProvider',
 }]);
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
+	
+	// TODO: DRY with animalProvider list loop
 		
-	$mdThemingProvider.theme('cat-light').primaryPalette('blue').accentPalette('amber', {'default': '400'});
-	$mdThemingProvider.theme('cat-dark').primaryPalette('blue').accentPalette('amber', {'default': '400'}).dark();
+	$mdThemingProvider.theme('cat').primaryPalette('blue').accentPalette('amber', {'default': '400'});
+	$mdThemingProvider.theme('dog').primaryPalette('deep-purple').accentPalette('green', {'default': '400'});
 	
-	$mdThemingProvider.theme('dog-light').primaryPalette('deep-purple').accentPalette('green', {'default': '400'});
-	$mdThemingProvider.theme('dog-dark').primaryPalette('deep-purple').accentPalette('green', {'default': '400'}).dark();
-	
-	$mdThemingProvider.setDefaultTheme('dog-light');
+	$mdThemingProvider.setDefaultTheme('cat');
 	
 	$mdThemingProvider.alwaysWatchTheme(true);
+	$mdThemingProvider.enableBrowserColor();
 }]);
 
 app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', 'AuthService', '$mdMedia',

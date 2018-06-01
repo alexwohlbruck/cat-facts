@@ -1,8 +1,8 @@
 /* global angular, rekt */
 var app = angular.module('catfacts');
 
-app.controller('MainCtrl', ['$scope', '$rootScope', '$window', '$mdSidenav', '$mdToast', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'ApiService', 'animal', 'hotkeys',
-	function($scope, $rootScope, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, animal, hotkeys) {
+app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSidenav', '$mdToast', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'ApiService', 'animal', 'hotkeys',
+	function($scope, $rootScope, $state, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, animal, hotkeys) {
 	
 	$scope.sideNav = {
 		left: {
