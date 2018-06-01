@@ -24,12 +24,12 @@ router.get('/', async (req, res) => {
 
 // Get user's recipients
 router.get('/me', isAuthenticated, async (req, res) => {
-	const animalTypes = req.query.animal_types;
+	const animalType = req.query.animal_type;
 	
 	try {
 		const recipients = await Recipient.findWithDeleted({
 			addedBy: req.user._id,
-			subscriptions: animalTypes ? { $in: animalTypes.split(',') } : { $exists: true }
+			subscriptions: animalType ? { $in: animalType.split(',') } : { $exists: true }
 		}).sort('name');
 		
 		return res.status(200).json(recipients);

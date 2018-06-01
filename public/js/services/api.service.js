@@ -9,8 +9,8 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.get('/users/me');
     };
     
-    this.deleteAccount = function({verificationEmail}) {
-        return $http.delete('/users/me', {params: {verificationEmail}});
+    this.deleteAccount = function({ verificationEmail }) {
+        return $http.delete('/users/me', {params: { verificationEmail }});
     };
     
     this.verifyPhone = function(phone) {
@@ -18,7 +18,7 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     };
     
     this.updatePhone = function(verificationCode) {
-        return $http.put('/users/me/profile/phone', {verificationCode});
+        return $http.put('/users/me/profile/phone', { verificationCode });
     };
     
     this.signOut = function() {
@@ -30,11 +30,9 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         
     // Fact
     
-    this.getSubmittedFacts = function({animalType}) {
-        console.log(animalType);
-        
+    this.getSubmittedFacts = function({ animalType }) {
         return $http.get('/facts', {params: {
-            animal_types: animalType
+            animal_type: animalType
         }});
     };
     
@@ -50,9 +48,9 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.delete('/facts/' + factID + '/upvote');
     };
     
-    this.getFact = function(amount) {
+    this.getFact = function({ animalType, amount }) {
         return $http.get('/facts/random', {
-            params: { amount }
+            params: { animal_type: animalType, amount }
         });
     };
     
@@ -62,9 +60,9 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.get('/recipients');
     };
     
-    this.getMyRecipients = function({animalType}) {
+    this.getMyRecipients = function({ animalType }) {
         return $http.get('/recipients/me', {params: {
-            animal_types: animalType
+            animal_type: animalType
         }});
     };
     
