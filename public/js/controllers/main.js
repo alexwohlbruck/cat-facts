@@ -62,7 +62,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSid
 				
 	$scope.showCatFact = function() {
 		
-		ApiService.getFact().then(function(response) {
+		ApiService.getFact({animalType: $state.params.animal}).then(function(response) {
 			
 			var fact = response.data.text;
 			

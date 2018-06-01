@@ -21,9 +21,14 @@ const FactSchema = new Schema({
 FactSchema.plugin(mongooseDelete, {overrideMethods: true});
 FactSchema.plugin(random);
 
-FactSchema.statics.getFact = function ({amount = 1, filter = {}}) {
+FactSchema.statics.getFact = function ({amount = 1, filter = {}, animalType = ['cat']}) {
+    const query = {
+        ...filter,
+        type: { $in: animalType }
+    };
+    
 	return new Promise((resolve, reject) => {
-		this.findRandom(filter, {}, {limit: amount}, (err, facts) => {
+		this.findRandom(query, {}, {limit: amount}, (err, facts) => {
 			if (err) return reject(err);
 			facts = facts || [];
 			

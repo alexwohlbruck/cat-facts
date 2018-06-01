@@ -12,7 +12,7 @@ Retrieve one or more `Facts`.
 | Parameter   | Type                   | Default | Limit | Description |
 | ----------- | ---------------------- | ------- | ----- | ----------- |
 | animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe |
-| amount      | Number                 | 1       | 100   | Number of `Facts` to retrieve. If set to one, response will be a fact object. If many, response will be an array of `Fact`s |
+| amount      | Number                 | 1       | 500   | Number of `Facts` to retrieve. If set to one, response will be a fact object. If many, response will be an array of `Fact`s |
 
 ##### Example request
 `GET /facts/random?animal=cat&amount=2`

@@ -12,13 +12,13 @@ const Upvote = require.main.require('./app/models/upvote');
 // Get submitted facts
 router.get('/', async (req, res) => {
 	
-	const animalTypes = req.query.animal_types ? req.query.animal_types.split(',') : ['cat'];
+	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 	
-	console.log(animalTypes)
+	console.log(animalType)
 	
 	// Define states of pipeline
-	const matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}, type: {$in: animalTypes}}},
-		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query', type: {$in: animalTypes}}},
+	const matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}, type: {$in: animalType}}},
+		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query', type: {$in: animalType}}},
 		lookupUsers = {$lookup: {
 			from: 'users',
 			localField: 'user',
@@ -61,14 +61,16 @@ router.get('/', async (req, res) => {
 
 // Get a random fact
 router.get('/random', async (req, res) => {
+	
+	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 	const amount = req.query.amount;
 	
-	if (amount > 1000000) {
-		return res.status(405).json({message: 'Limited to 100 facts at a time'});
+	if (amount > 500) {
+		return res.status(405).json({message: 'Limited to 500 facts at a time'});
 	}
 	
 	try {
-		const facts = await Fact.getFact({amount});
+		const facts = await Fact.getFact({amount, animalType});
 		return res.status(200).json(facts);
 	} catch (err) {
 		return res.status(err).json(err);
