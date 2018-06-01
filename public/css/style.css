@@ -99,6 +99,10 @@ recipients tr.deleted {
 .black { color: #1e1e1e; }
 .translucent { opacity: .5; }
 
+md-nav-bar.transparent-bg .md-nav-bar {
+	background-color: transparent !important;
+}
+
 .bold { font-weight: 500 !important; }
 .center-text { 	text-align: center; }
 .pointer { cursor: pointer; }

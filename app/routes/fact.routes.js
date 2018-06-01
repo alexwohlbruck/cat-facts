@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
 router.get('/random', async (req, res) => {
 	const amount = req.query.amount;
 	
-	if (amount > 100) {
+	if (amount > 1000000) {
 		return res.status(405).json({message: 'Limited to 100 facts at a time'});
 	}
 	

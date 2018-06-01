@@ -13,10 +13,6 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.delete('/users/me', {params: {verificationEmail}});
     };
     
-    this.updateUserSettings = function(data) {
-        return $http.put('/users/me/settings', data).then(data => console.log(data), err => console.log(err));
-    };
-    
     this.verifyPhone = function(phone) {
         return $http.post('/users/me/profile/phone/verification-code', {phone});
     };

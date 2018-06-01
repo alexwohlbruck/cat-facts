@@ -29,18 +29,6 @@ router.delete('/me', isAuthenticated, async (req, res) => {
         
 });
 
-router.put('/me/settings', isAuthenticated, async (req, res) => {
-
-	const query = prefixObjectKeys(req.body, 'settings.');
-	
-	try {
-    	const user = await User.update({_id: req.user._id}, {$set: query});
-	    return res.status(200).json(user);
-	} catch (err) {
-	    return res.status(400).json(err);
-	}
-});
-
 router.post('/me/profile/phone/verification-code', isAuthenticated, async (req, res) => {
 
     const inputData = {
