@@ -4,7 +4,7 @@
 
 ### Get current user
 
-Returns the data of the currently logged in user.
+Returns the data of the currently logged in `User`.
 
 ##### Endpoint
 `GET /users/me`
