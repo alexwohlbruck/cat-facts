@@ -18,7 +18,7 @@
 		
 		<form ng-submit="submitFact()" ng-show="authenticatedUser">
 			<md-input-container>
-				<label>Submit a fact</label>
+				<label>Submit a {{$state.params.animal}} fact</label>
 				<input ng-model="form.newFact">
 			</md-input-container>
 			
@@ -39,7 +39,7 @@
 						
 						<span class="text">
 							<h3 class="white md-headline margin-0 bold center-text">
-								There aren't any new cat facts!
+								There aren't any new {{$state.params.animal}} facts!
 							</h3>
 							
 							<h4 class="white md-body-2 accent-links margin-0 center-text">

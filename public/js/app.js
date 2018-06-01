@@ -92,7 +92,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	// TODO: DRY with animalProvider list loop
 		
 	$mdThemingProvider.theme('cat').primaryPalette('blue').accentPalette('amber', {'default': '400'});
-	$mdThemingProvider.theme('dog').primaryPalette('deep-purple').accentPalette('green', {'default': '400'});
+	$mdThemingProvider.theme('dog').primaryPalette('deep-purple').accentPalette('blue-grey', {'default': '700'});
+	$mdThemingProvider.theme('snail').primaryPalette('pink', {'default': '300'}).accentPalette('blue');
+	$mdThemingProvider.theme('horse').primaryPalette('light-green', {'default': '500'}).accentPalette('amber', {'default': '400'});
 	
 	$mdThemingProvider.setDefaultTheme('cat');
 	
