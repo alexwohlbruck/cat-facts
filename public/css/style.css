@@ -56,6 +56,13 @@ recipients tr.deleted {
 	opacity: .5;
 }
 
+.subscription-icon {
+	margin: 0 !important;
+}
+.subscription-icon img {
+	width: 30px;
+}
+
 .quick-fact .fact {
     max-height: 55vh !important;
     overflow-y: auto;

@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthService', '$mdDialog', '$mdMedia',
-    function($scope, $rootScope, ApiService, AuthService, $mdDialog, $mdMedia) {
+app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'AuthService', '$mdDialog', '$mdMedia',
+    function($scope, $rootScope, $state, ApiService, AuthService, $mdDialog, $mdMedia) {
     
     $scope.recipients = [];
     $scope.AuthService = AuthService;
@@ -96,7 +96,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
     };
     
     function getMyRecipients() {
-        $scope.promise = ApiService.getMyRecipients().then(response => {
+        $scope.promise = ApiService.getMyRecipients({animalType: $state.params.animal}).then(response => {
             $scope.recipients = response.data;
         }, err => {
             $rootScope.toast({message: err.data.message});

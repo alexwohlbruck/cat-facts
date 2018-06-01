@@ -62,8 +62,10 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.get('/recipients');
     };
     
-    this.getMyRecipients = function() {
-        return $http.get('/recipients/me');
+    this.getMyRecipients = function({animalType}) {
+        return $http.get('/recipients/me', {params: {
+            animal_types: animalType
+        }});
     };
     
     this.addRecipient = function(recipient) {
