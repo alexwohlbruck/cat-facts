@@ -1,20 +1,21 @@
 ## `Fact` endpoints
 
-### Get some cat facts
+### Get some facts
 
-Retrieve one or more cat facts.
+Retrieve one or more `Facts`.
 
 ##### Endpoint
 `GET /facts/random`
 
 ##### Query parameters
 
-| Parameter | Default | Limit | Description |
-| --------- | ------- | ----- | ----------- |
-| amount    | 1       | 100   | Number of cats to retrieve. If set to one, response will be a fact object. If many, response will be an array of facts. |
+| Parameter   | Type                   | Default | Limit | Description |
+| ----------- | ---------------------- | ------- | ----- | ----------- |
+| animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe |
+| amount      | Number                 | 1       | 100   | Number of `Facts` to retrieve. If set to one, response will be a fact object. If many, response will be an array of `Fact`s |
 
 ##### Example request
-`GET /facts/random?amount=2`
+`GET /facts/random?animal=cat&amount=2`
 
 ##### Example response
 ```
@@ -42,7 +43,7 @@ Retrieve one or more cat facts.
 
 ---
 
-### Get fact by ID
+### Get fact by its ID
 
 ### Endpoint
 `GET /facts/:factID`
@@ -65,16 +66,24 @@ Retrieve one or more cat facts.
 
 ---
 
-### Get pending facts
+### Get queued facts
 
-These are user-submitted facts that are waiting to be sent
+These are user-submitted `Facts` that are waiting to be sent
 
 ##### Endpoint
 `GET /facts`
 
+##### Query parameters
+
+| Parameter   | Type                   | Default | Limit | Description |
+| ----------- | ---------------------- | ------- | ----- | ----------- |
+| animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe |
 
 ##### Returns
-An object containing an array of the pending facts, as well as an array of facts that the authenticated user submitted.
+An object containing an array of the pending `Facts`, as well as an array of `Facts` that the authenticated user submitted.
+
+##### Example request
+`GET /facts?animal_type=cat,horse`
 
 ##### Example response
 
@@ -112,9 +121,9 @@ An object containing an array of the pending facts, as well as an array of facts
   ],
   "me": [
 	{
-      "_id": "590b9d90229d260020af0b06",
-      "text": "Evidence suggests domesticated cats have been around since 3600 B.C., 2,000 years before Egypt's pharaohs.",
-      "used": false,
+      "_id": "5b1186a73bc85f0b2eb98c25",
+      "text": "Horses cannot get cavities.",
+      "used": true,
       "upvotes": [
         {
           "user": "587288f6e6f85e64ae1c7ef7"
