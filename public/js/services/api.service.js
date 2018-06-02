@@ -36,8 +36,8 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         }});
     };
     
-    this.submitFact = function(fact) {
-        return $http.post('/facts', fact);
+    this.submitFact = function({factText, animalType}) {
+        return $http.post('/facts', {factText, animalType});
     };
     
     this.upvoteFact = function(factID) {

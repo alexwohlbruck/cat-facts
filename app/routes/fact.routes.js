@@ -95,15 +95,19 @@ router.get('/:factID', async (req, res) => {
 // Submit a fact
 router.post('/', isAuthenticated, async (req, res) => {
     
-    if (!req.body.text) {
-    	return res.status(400).json({message: "Provide a cat fact"});
+    if (!req.body.factText) {
+    	return res.status(400).json({message: "Missing body paramter: factText"});
+    }
+    if (!req.body.animalType) {
+    	return res.status(400).json({message: "Missing body parameter: animalType"});
     }
     
     const io = req.app.get('socketio');
     
     const fact = new Fact({
         user: req.user._id,
-        text: req.body.text
+        text: req.body.factText,
+        type: req.body.animalType
     });
 	    
 	try {
