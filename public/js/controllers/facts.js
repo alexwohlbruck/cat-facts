@@ -8,17 +8,18 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	getFacts();
 	setTimer();
 	
-	var endTime = {
+	// TODO: Repurpose this
+	const endTime = {
 		// Define time for next cat fact to be sent
 		hours: 13,
 		minutes: 55
 	};
 	
 	$scope.submitFact = function() {
-		var fact = $scope.form.newFact;
+		const factText = $scope.form.newFact;
 		
-		if (fact && fact.trim().length != 0) {
-			ApiService.submitFact({text: fact});
+		if (factText && factText.trim().length != 0) {
+			ApiService.submitFact({factText, animalType: $state.params.animal});
 			$scope.form.newFact = '';
 		} else {
 			$scope.showToast("Type in a fact");
@@ -31,7 +32,6 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	
 	// http://stackoverflow.com/questions/30861304/angular-ng-repeat-filter-passing-wrong-index
 	$scope.upvoteFact = function(fact) {
-		var index = getIndexOfFact(fact);
 		if (userUpvoted(fact)) {
 			ApiService.unvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
