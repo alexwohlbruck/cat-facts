@@ -1,6 +1,6 @@
 ## `Fact` Model
 
-A single cat fact, (nearly) guaranteed to be genuine and factual.
+A single animal fact, (nearly) guaranteed to be genuine and factual.
 
 | Key       | Type          | Description |
 | --------- | ------------- | ----------- |

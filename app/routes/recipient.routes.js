@@ -10,12 +10,24 @@ const Message = require.main.require('./app/models/message');
 
 
 // Get all recipients
-router.get('/', async (req, res) => {
-	// if (!req.user) return res.status(401).json({message: strings.unauthenticated});
-	// if (!req.user.isAdmin) return res.status(403).json({message: strings.unauthorized});
+router.get('/', isAuthenticated, isAdmin, async (req, res) => {
 	
 	try {
-		const recipients = await Recipient.find().sort('-createdAt').populate({path: 'addedBy', select: 'name'});
+		const animalTypeFilter = req.query.animal_type ? {
+				$in: req.query.animal_type.split(',')
+		} : {
+				$exists: true
+		};
+		
+		const recipients = await Recipient.find({
+			subscriptions: animalTypeFilter
+		})
+		.sort('-createdAt')
+		.populate({
+			path: 'addedBy',
+			select: 'name'
+		});
+		
 		return res.status(200).json(recipients);
 	} catch (err) {
 		return res.status(400).json(err);
