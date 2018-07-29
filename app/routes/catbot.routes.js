@@ -152,6 +152,7 @@ router.post('/message', (req, res) => {
 				response = result.catFact.text;
 			}
 		} else {
+			// TODO: Pass animalTypes param
 			response = strings.welcomeMessage;
 		}
 		

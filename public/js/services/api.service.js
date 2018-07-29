@@ -68,14 +68,14 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     
     this.addRecipient = function(recipient) {
         if (recipient.name && recipient.number) {
-            return $http.post('/recipients', recipient);
+            return $http.post('/recipients', {recipient});
         } else {
             $rootScope.toast({message: "Provide a name and phone number"});
         }
     };
     
     this.addRecipients = function(recipients) {
-        return $http.post('/recipients', recipients);
+        return $http.post('/recipients', {recipients});
     };
     
     this.editRecipient = function(recipient) {

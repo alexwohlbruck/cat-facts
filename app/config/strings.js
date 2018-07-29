@@ -1,5 +1,13 @@
+const semanticJoin = require('../config/functions/semantic-join');
+
 module.exports = {
-    welcomeMessage: "Thanks for signing up for Cat Facts! You will now receive fun facts about CATS every day! =^.^=",
+    welcomeMessage: animalTypes => {
+        animalTypes = animalTypes.map(animal => {
+            return (animal + 's').toUpperCase();
+        });
+        
+        return `Thanks for signing up for Cat Facts! You will now receive fun facts about ${semanticJoin(animalTypes)} every day! =^.^=`;
+    },
     unauthenticated: "Sign in first",
     unauthorized: "You aren't allowed to do that!",
     noVerificationCode: "Please provide a verification code",
