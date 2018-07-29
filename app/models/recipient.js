@@ -5,12 +5,7 @@ const mongooseDelete = require('mongoose-delete');
 
 const IFTTTService = require('../services/ifttt.service.js');
 const { semanticJoin } = require('../config/functions');
-const { validatePhoneNumber } = require('../config/functions');
-
-IFTTTService.sendSingleMessage({
-    number: '7045599636',
-    message: 'test'
-});
+const { validatePhoneNumber, cleanPhoneNumber } = require('../config/functions');
 
 const RecipientSchema = new Schema({
     name: { type: String, default: undefined },
@@ -29,93 +24,147 @@ const RecipientSchema = new Schema({
 }, {
     timestamps: true
 });
+        
 
-Recipient.statics.addRecipients = async ({authenticatedUser, recipients}) => {
+RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requestedRecipients, requestedSubscriptions}) {
     // TODO: Create reusable recipient add function that handles sms and io messages
     // This algo will handle a single recipient, need to adapt for many at a time
     // There ARE async operations in here, simply wrapping in a loop will not suffice
-        
-    let responseMessage = '',
-        smsMessage = '',
-        abortSms = false;
-        
-    const recipient = await this.findOne({number});
     
-    if (recipient) {
-        // Figure out which new animals to subscribe user to
+    // TODO: Create user account for people who add recipients over SMS, attach phone number to user account and
+    // attach user ID to recipient document as 'addedBy'
+    
+    /* Params:
+     * [{
+     *   name,
+     *   phoneNumber
+     * }],
+     * animalTypes (requestedSubscriptions)
+     */
         
-        const existingSubscriptions = recipient.subscriptions;
-        
-        const subscriptionsToAdd = requestedSubscriptions.filter(a => !existingSubscriptions.includes(a));
-        const subscriptionsToIgnore = requestedSubscriptions.filter(a => existingSubscriptions.includes(a));
-        
-        
-        // Build response message
-        const alreadySubscribedMessage = `${name} is already subscribed to ${semanticJoin(subscriptionsToIgnore)} facts`;
-        
-        const alreadySubscribed = !!subscriptionsToIgnore.length,
-              moreToAdd = !!subscriptionsToAdd.length;
-        
-        if (alreadySubscribed) {
-            responseMessage += alreadySubscribedMessage;
-        }
-        if (alreadySubscribed && moreToAdd) {
-            responseMessage += `, but `;
-        }
-        if (moreToAdd) {
-            responseMessage += `I've added ${alreadySubscribed ? 'them' : name} to ${semanticJoin(subscriptionsToAdd)} facts`;
-        } else {
-            abortSms = true;
-        }
-        responseMessage += '.';
-        
-        // Build recipient's text message
-        smsMessage += `Surprise! You've also been added to ${semanticJoin(subscriptionsToAdd)} facts. Have a nice day!`;
-        
-        
-        await Recipient.findByIdAndUpdate(recipient._id, {
-            $addToSet: {
-                subscriptions: {
-                    $each: subscriptionsToAdd
-                }
-            }
-        }, {
-            'new': true
+    let existingRecipients = await this.find({number: {$in: requestedRecipients.map(r => r.number)}}),
+        newRequestedRecipients = requestedRecipients.filter(requestedRecipient => {
+            return !existingRecipients.find(existingRecipient => {
+                return requestedRecipient.number == existingRecipient.number;
+            });
         });
-        
-        resolve({message: responseMessage});
     
-    } else {
+    const addNewRecipients = async recipients => {
         // This is a new recipient
         
-        const recipient = new Recipient({
-            name: name,
-            number: number,
-            subscriptions: requestedSubscriptions
+        recipients = recipients.map(recipient => {
+            return {
+                name: recipient.name,
+                number: cleanPhoneNumber(recipient.number),
+                addedBy: authenticatedUser ? authenticatedUser._id : undefined,
+                subscriptions: requestedSubscriptions
+            };
         });
         
-        responseMessage += `Okay, I've added ${name} to ${semanticJoin(requestedSubscriptions)} facts!`;
-        // TODO: pass animals to welcome message for custom response
-        smsMessage += strings.welcomeMessage(requestedSubscriptions);
-        
-        try {
-            await recipient.save();
-            resolve({message: responseMessage});
-        }
-        
-        catch (err) {
-            reject(err);
-        }
-    }
+        return await Recipient.create(recipients);
+    },
+    addSubscriptionsToExistingRecipients = async recipients => {
     
-    // Send SMS to recipient
-    if (!abortSms) {
-        IFTTTService.sendSingleMessage({
-            number: number,
-            message: smsMessage
+        const existingRecipientPromises = recipients.map(recipient => {
+            return Recipient.findByIdAndUpdate(recipient._id, {
+                $addToSet: {
+                    subscriptions: {
+                        $each: requestedSubscriptions
+                    }
+                }
+            }, {
+                'new': true
+            });
         });
+    
+        return await Promise.all(existingRecipientPromises);
+    },
+    
+    buildMessagesForNewRecipients = ({recipients}) => {
+        return {
+            responseMessage: `Okay, I've added ${semanticJoin(recipients.map(r => r.name))} to ${semanticJoin(requestedSubscriptions)} facts!`,
+            smsMessage: strings.welcomeMessage(requestedSubscriptions)
+        };
+    },
+    
+    buildMessagesForExistingRecipients = ({recipients}) => {
+          
+        let responseMessage = '',
+            smsMessage = '',
+            abortSms = false;
+    
+        if (recipients.length > 1) {
+            responseMessage += `Okay, I've added ${semanticJoin(recipients.map(r => r.name))} to ${semanticJoin(requestedSubscriptions)} facts!`;
+              smsMessage += strings.welcomeMessage(requestedSubscriptions);
+        } else {
+         
+            const recipient = recipients[0];
+              
+            // Figure out which new animals to subscribe user to
+            const existingSubscriptions = recipient.subscriptions;
+            const subscriptionsToAdd = requestedSubscriptions.filter(a => !existingSubscriptions.includes(a));
+            const subscriptionsToIgnore = requestedSubscriptions.filter(a => existingSubscriptions.includes(a));
+              
+            // Build response message
+            const alreadySubscribedMessage = `${recipient.name} is already subscribed to ${semanticJoin(subscriptionsToIgnore)} facts`;
+              
+            const alreadySubscribed = !!subscriptionsToIgnore.length,
+                  moreToAdd = !!subscriptionsToAdd.length;
+              
+            if (alreadySubscribed) {
+                responseMessage += alreadySubscribedMessage;
+            }
+            if (alreadySubscribed && moreToAdd) {
+                responseMessage += `, but `;
+            }
+            if (moreToAdd) {
+                responseMessage += `I've added ${alreadySubscribed ? 'them' : recipient.name} to ${semanticJoin(subscriptionsToAdd)} facts`;
+            } else {
+                abortSms = true;
+            }
+            responseMessage += '.';
+              
+            // Build SMS message
+            smsMessage += `Surprise! You've also been added to ${semanticJoin(subscriptionsToAdd)} facts. Have a nice day!`;
+        }
+          
+        return {
+            responseMessage,
+            smsMessage: abortSms ? undefined : smsMessage,
+            abortSms
+        };
+    },
+    
+    sendMessages = ({recipients, message}) => {
+        // TODO: also send message app using websocket
+        // io.emit()
+          
+        // Send SMS to recipient
+        IFTTTService.sendBatchMessages(recipients.map(recipient => {
+            return {
+                number: recipient.number,
+                message
+            };
+        }));
+    },
+
+    newRecipients = await addNewRecipients(newRequestedRecipients),
+    updatedRecipients = await addSubscriptionsToExistingRecipients(existingRecipients);
+    
+    if (newRecipients && newRecipients.length) {
+        var { smsMessage: newSmsMessage, responseMessage: newResponseMessage, abortSms } = buildMessagesForNewRecipients({recipients: newRequestedRecipients});
+        if (!abortSms) sendMessages({recipients: newRecipients, message: newSmsMessage});
     }
     
+    if (updatedRecipients && updatedRecipients.length) {
+        var { smsMessage: updatedSmsMessage, responseMessage: updatedResponseMessage, abortSms } = buildMessagesForExistingRecipients({recipients: existingRecipients});
+        if (!abortSms) sendMessages({ recipients: updatedRecipients, message: updatedSmsMessage });
+    }
+    
+    return {
+        // TODO: Merge these messages into one
+        message: newResponseMessage || updatedResponseMessage
+    };
 };
 
 RecipientSchema.path('number').validate(function(number, done) {

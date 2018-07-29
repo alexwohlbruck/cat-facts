@@ -50,7 +50,18 @@ router.get('/me', isAuthenticated, async (req, res) => {
 // Add new recipient(s)
 router.post('/', isAuthenticated, async (req, res) => {
 	
-	const io = req.app.get('socketio');
+	/*Recipient.addRecipients({
+	    authenticatedUser: req.user,
+	    requestedRecipients: [{
+	        name: 'Alex Wohlbruck',
+	        number: '7045599636'
+	    }],
+	    requestedSubscriptions: ['cat', 'snail']
+	});*/
+	
+	//////////////////////////////////////////////////
+	
+	/*const io = req.app.get('socketio');
 	const animalTypes = req.query.animalType ? req.query.animalType.split(',') : ['cat'];
 	
 	// TODO: If recipient is already in DB then append new subscriptions in existing doc
@@ -84,7 +95,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 	}
 	catch (err) {
 		return res.status(err.statusCode || 400);
-	}
+	}*/
 });
 
 router.patch('/:recipientId', isAuthenticated, async (req, res) => {
