@@ -50,52 +50,22 @@ router.get('/me', isAuthenticated, async (req, res) => {
 // Add new recipient(s)
 router.post('/', isAuthenticated, async (req, res) => {
 	
-	/*Recipient.addRecipients({
+	// const io = req.app.get('socketio');
+	
+	const requestedRecipients = req.body.recipients || [req.body.recipient];
+	const animalTypes = req.body.animalTypes;
+	
+	if (!requestedRecipients.length) {
+		return res.status(400).json({message: `No recipients provided`});
+	}
+	
+	const results = await Recipient.addRecipients({
 	    authenticatedUser: req.user,
-	    requestedRecipients: [{
-	        name: 'Alex Wohlbruck',
-	        number: '7045599636'
-	    }],
-	    requestedSubscriptions: ['cat', 'snail']
-	});*/
-	
-	//////////////////////////////////////////////////
-	
-	/*const io = req.app.get('socketio');
-	const animalTypes = req.query.animalType ? req.query.animalType.split(',') : ['cat'];
-	
-	// TODO: If recipient is already in DB then append new subscriptions in existing doc
-	// TODO: This has already been implemented??? Create addRecipients method on data model for resuability
-	
-	const requestedRecipients = (req.body.recipients || [req.body.recipient]).map(recipient => {
-		return {
-			name: recipient.name,
-			number: recipient.number.replace(/\D/g,'').replace(/^1+/, ''),
-			addedBy: req.user._id
-		};
+	    requestedRecipients,
+	    requestedSubscriptions: animalTypes
 	});
 	
-	try {
-		const recipients = await Recipient.create(requestedRecipients);
-		
-		recipients.forEach(recipient => {
-			const message = strings.welcomeMessage(animalTypes);
-			
-			io.emit('message', {message, recipient});
-			
-			IFTTTService.sendSingleMessage({
-				number: recipient.number,
-				message
-			});
-		});
-		
-		return res.status(200).json({
-			addedRecipients: recipients
-		});
-	}
-	catch (err) {
-		return res.status(err.statusCode || 400);
-	}*/
+	return res.status(200).json(results);
 });
 
 router.patch('/:recipientId', isAuthenticated, async (req, res) => {
