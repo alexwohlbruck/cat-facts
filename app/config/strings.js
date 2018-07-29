@@ -1,7 +1,7 @@
-const semanticJoin = require('../config/functions/semantic-join');
+const { semanticJoin } = require('../config/functions');
 
 module.exports = {
-    welcomeMessage: animalTypes => {
+    welcomeMessage: (animalTypes = ['cat']) => {
         animalTypes = animalTypes.map(animal => {
             return (animal + 's').toUpperCase();
         });
