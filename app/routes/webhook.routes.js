@@ -6,8 +6,7 @@ const UnsubscribeDate = require('../models/unsubscribe-date');
 const Recipient = require('../models/recipient');
 const Fact = require('../models/fact');
 const strings = require('../config/strings');
-const IFTTTService = require('../services/ifttt.service.js');
-const { semanticJoin } = require('../config/functions');
+
 
 const keys = require('../config/keys');
 const apiai = require('apiai-promise');
@@ -38,7 +37,15 @@ const processWebhook = req => {
                       number = parameters['phone-number'].replace(/\D/g,'').replace(/^1+/, ''),
                       requestedSubscriptions = parameters['animals'];
                     
-                // TODO: Use code from recipient statics add function
+                const message = Recipient.addRecipients({
+                    requestedRecipients: [{
+                        name,
+                        number
+                    }],
+                    requestedSubscriptions
+                });
+                
+                resolve({message});
             break;
             
             case 'recipient.unsubscribe':

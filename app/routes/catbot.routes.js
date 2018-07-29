@@ -3,15 +3,15 @@ const router = express.Router();
 const Promise = require('bluebird');
 
 const apiai = require('apiai-promise');
-const keys = require.main.require('./app/config/keys');
+const keys = require('../config/keys');
 const catbot = apiai(keys.apiai.accessToken);
-const strings = require.main.require('./app/config/strings.js');
-const twitter = require.main.require('./app/services/twitter.service');
+const strings = require('../config/strings.js');
+const twitter = require('../services/twitter.service');
 
-const Fact = require.main.require('./app/models/fact');
-const Message = require.main.require('./app/models/message');
-const Recipient = require.main.require('./app/models/recipient');
-const Upvote = require.main.require('./app/models/upvote');
+const Fact = require('../models/fact');
+const Message = require('../models/message');
+const Recipient = require('../models/recipient');
+const Upvote = require('../models/upvote');
 
 // Get all recipients and a fact to be sent out each day
 router.get('/daily', async (req, res) => {
