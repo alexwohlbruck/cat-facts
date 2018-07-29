@@ -7,7 +7,7 @@ var Message = require.main.require('./app/models/message');
 // https://github.com/alexwhitman/node-pushbullet-api
 
 module.exports = {
-    sendSingleMessage: data => {
+    sendSingleMessage: (data) => {
         return new Promise(async (resolve, reject) => {
             
             try {
@@ -29,6 +29,7 @@ module.exports = {
                 try {
                     await message.save(message);
                     resolve(message);
+                    console.log(`Message sent to ${data.number}: ${data.message}`);
                 }
                 
                 catch (err) {

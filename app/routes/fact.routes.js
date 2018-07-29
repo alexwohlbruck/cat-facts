@@ -14,8 +14,6 @@ router.get('/', async (req, res) => {
 	
 	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 	
-	console.log(animalType)
-	
 	// Define states of pipeline
 	const matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}, type: {$in: animalType}}},
 		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query', type: {$in: animalType}}},

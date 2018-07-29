@@ -13,11 +13,7 @@ const Message = require.main.require('./app/models/message');
 router.get('/', isAuthenticated, isAdmin, async (req, res) => {
 	
 	try {
-		const animalTypeFilter = req.query.animal_type ? {
-				$in: req.query.animal_type.split(',')
-		} : {
-				$exists: true
-		};
+		const animalTypeFilter = req.query.animal_type ? { $in: req.query.animal_type.split(',') } : { $exists: true };
 		
 		const recipients = await Recipient.find({
 			subscriptions: animalTypeFilter
@@ -36,7 +32,8 @@ router.get('/', isAuthenticated, isAdmin, async (req, res) => {
 
 // Get user's recipients
 router.get('/me', isAuthenticated, async (req, res) => {
-	const animalType = req.query.animal_type;
+	
+	const animalType = req.query.animalType ? req.query.animalType.split(',') : 'cat';
 	
 	try {
 		const recipients = await Recipient.findWithDeleted({
@@ -53,13 +50,16 @@ router.get('/me', isAuthenticated, async (req, res) => {
 // Add new recipient(s)
 router.post('/', isAuthenticated, async (req, res) => {
 	
-	var io = req.app.get('socketio');
+	const io = req.app.get('socketio');
+	const animalType = req.query.animalType ? req.query.animalType.split(',') : 'cat';
+		
+	// TODO: If recipient is already in DB then append new subscriptions in existing doc
 	
-	if (Array.isArray(req.body)) {
+	if (req.body.recipients) {
 		
 		// Submit multiple recipients
 		
-		var contacts = req.body.map(o => {
+		const contacts = req.body.recipients.map(o => {
 			o.addedBy = req.user._id;
 			return o;
 		});
@@ -68,6 +68,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 			const recipients = await Recipient.create(contacts);
 			
 			for (var i = 0; i < recipients.length; i++) {
+				// TODO: pass animalTypes param
 				io.emit('message', {message: strings.welcomeMessage, recipient: recipients[i]});
 				IFTTTService.sendSingleMessage({number: recipients[i].number, message: strings.welcomeMessage});
 			}
@@ -82,18 +83,21 @@ router.post('/', isAuthenticated, async (req, res) => {
 			return res.status(400).json(err);
 		}
 		
-	} else {
+	} else if (req.body.recipient) {
 		// Submit one recipient
 		
-		var newRecipient = new Recipient({
-			name: req.body.name,
-			number: req.body.number.replace(/\D/g,'').replace(/^1+/, ''),
+		let newRecipient = req.body.recipient;
+		
+		newRecipient = new Recipient({
+			name: newRecipient.name,
+			number: newRecipient.number.replace(/\D/g,'').replace(/^1+/, ''),
 			addedBy: req.user._id
 		});
 		
 		try {
 			const recipient = await newRecipient.save();
 			
+			// TODO: pass animalTypes param
 			io.emit('message', {message: strings.welcomeMessage, recipient: recipient});
 			IFTTTService.sendSingleMessage({number: recipient.number, message: strings.welcomeMessage});
 			
@@ -103,6 +107,8 @@ router.post('/', isAuthenticated, async (req, res) => {
 		catch (err) {
 			return res.status(400).json(err);
 		}
+	} else {
+		return res.status(400).json({message: "No recipients provided"});
 	}
 });
 
