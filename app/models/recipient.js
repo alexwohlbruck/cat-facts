@@ -27,20 +27,9 @@ const RecipientSchema = new Schema({
         
 
 RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requestedRecipients, requestedSubscriptions}) {
-    // TODO: Create reusable recipient add function that handles sms and io messages
-    // This algo will handle a single recipient, need to adapt for many at a time
-    // There ARE async operations in here, simply wrapping in a loop will not suffice
     
     // TODO: Create user account for people who add recipients over SMS, attach phone number to user account and
     // attach user ID to recipient document as 'addedBy'
-    
-    /* Params:
-     * [{
-     *   name,
-     *   phoneNumber
-     * }],
-     * animalTypes (requestedSubscriptions)
-     */
         
     let existingRecipients = await this.find({number: {$in: requestedRecipients.map(r => r.number)}}),
         newRequestedRecipients = requestedRecipients.filter(requestedRecipient => {
@@ -86,7 +75,6 @@ RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requ
             smsMessage: strings.welcomeMessage(requestedSubscriptions)
         };
     },
-    
     buildMessagesForExistingRecipients = ({recipients}) => {
           
         let responseMessage = '',
@@ -137,7 +125,7 @@ RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requ
     
     sendMessages = ({recipients, message}) => {
         // TODO: also send message app using websocket
-        // io.emit()
+        // io.emit('message', {message, recipient});
           
         // Send SMS to recipient
         IFTTTService.sendBatchMessages(recipients.map(recipient => {
@@ -146,11 +134,17 @@ RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requ
                 message
             };
         }));
-    },
+    };
 
-    newRecipients = await addNewRecipients(newRequestedRecipients),
-    updatedRecipients = await addSubscriptionsToExistingRecipients(existingRecipients);
+    try {
+        var newRecipients = await addNewRecipients(newRequestedRecipients);
+        var updatedRecipients = await addSubscriptionsToExistingRecipients(existingRecipients);
+    }
+    catch (err) {
+        throw err;
+    }
     
+    // TODO: DRY these
     if (newRecipients && newRecipients.length) {
         var { smsMessage: newSmsMessage, responseMessage: newResponseMessage, abortSms } = buildMessagesForNewRecipients({recipients: newRequestedRecipients});
         if (!abortSms) sendMessages({recipients: newRecipients, message: newSmsMessage});
@@ -162,6 +156,8 @@ RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requ
     }
     
     return {
+        newRecipients,
+        updatedRecipients,
         // TODO: Merge these messages into one
         message: newResponseMessage || updatedResponseMessage
     };

@@ -12,10 +12,10 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
     getMyRecipients();
     
     // TODO: Refactor phone validation into it's own directive for reuse
-    /*$scope.validatePhone = (number, returnNumber = false) => {
+    $scope.validatePhone = (number, returnNumber = false) => {
         const trim = number.replace(/[^0-9]/gi, '').trim();
         return returnNumber ? trim : trim.length == 10;
-    };*/
+    };
     
     $scope.validatePhoneNgPattern = (function() {
         return {
@@ -24,19 +24,26 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
     })();
     
     $scope.addRecipient = () => {
-        var name = $scope.form.name, number = $scope.form.number;
+        const name = $scope.form.name,
+              number = $scope.form.number;
         
         if (name && number && $scope.validatePhone(number)) {
             
             ApiService.addRecipient({
-                name: name,
-                number: $scope.validatePhone(number, true)
-            }).then(response => {
-                $scope.recipients.push(response.data);
-                $rootScope.toast({message: "Recipient added!"});
+                recipient: {
+                    name,
+                    number: $scope.validatePhone(number, true)
+                },
+                animalTypes: [$state.params.animal]
+            })
+            
+            .then(response => {
+                
+                $scope.recipients = $scope.recipients.concat(response.data.newRecipients);
+                $rootScope.toast({message: response.data.message});
                 $scope.form = null;
             }, err => {
-                console.log(err);
+                console.error(err);
                 $rootScope.toast({message: err.data.errors[Object.keys(err.data.errors)[0]].message || err.data.message});
             });
             
@@ -83,7 +90,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
         })
         .then(recipients => {
             
-            ApiService.addRecipients(recipients).then(response => {
+            ApiService.addRecipients({recipients, animalTypes: [$state.params.animal]}).then(response => {
                 $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort((a, b) => {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });

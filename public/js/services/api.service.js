@@ -66,16 +66,25 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         }});
     };
     
-    this.addRecipient = function(recipient) {
-        if (recipient.name && recipient.number) {
-            return $http.post('/recipients', {recipient});
-        } else {
+    this.addRecipient = function({ recipient, animalTypes }) {
+        if (!recipient.name || !recipient.number) {
             $rootScope.toast({message: "Provide a name and phone number"});
         }
+        if (!animalTypes) {
+            
+        }
+        
+        return $http.post('/recipients', {
+            recipient,
+            animalTypes
+        });
     };
     
-    this.addRecipients = function(recipients) {
-        return $http.post('/recipients', {recipients});
+    this.addRecipients = function({ recipients, animalTypes }) {
+        return $http.post('/recipients', {
+            recipients,
+            animalTypes
+        });
     };
     
     this.editRecipient = function(recipient) {
