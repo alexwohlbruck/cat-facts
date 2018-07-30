@@ -71,7 +71,7 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
             $rootScope.toast({message: "Provide a name and phone number"});
         }
         if (!animalTypes) {
-            
+            $rootScope.toast({message: "Provide an animal type"});
         }
         
         return $http.post('/recipients', {
@@ -105,8 +105,10 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.patch('/recipients/' + recipient._id);
     };
     
-    this.getGoogleContacts = function() {
-        return $http.get('/contacts'); 
+    this.getGoogleContacts = function({ animalType }) {
+        return $http.get('/contacts', { params: {
+            animal_type: animalType
+        }}); 
     };
     
     // Conversation

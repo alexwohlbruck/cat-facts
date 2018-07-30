@@ -13,10 +13,10 @@ const Message = require.main.require('./app/models/message');
 router.get('/', isAuthenticated, isAdmin, async (req, res) => {
 	
 	try {
-		const animalTypeFilter = req.query.animal_type ? { $in: req.query.animal_type.split(',') } : { $exists: true };
+		const animalType = req.query.animal_type ? { $in: req.query.animal_type.split(',') } : { $exists: true };
 		
 		const recipients = await Recipient.find({
-			subscriptions: animalTypeFilter
+			subscriptions: animalType
 		})
 		.sort('-createdAt')
 		.populate({
@@ -33,16 +33,17 @@ router.get('/', isAuthenticated, isAdmin, async (req, res) => {
 // Get user's recipients
 router.get('/me', isAuthenticated, async (req, res) => {
 	
-	const animalType = req.query.animalType ? req.query.animalType.split(',') : 'cat';
+	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : undefined;
 	
 	try {
 		const recipients = await Recipient.findWithDeleted({
 			addedBy: req.user._id,
-			subscriptions: animalType ? { $in: animalType.split(',') } : { $exists: true }
+			subscriptions: animalType ? { $in: animalType } : { $exists: true }
 		}).sort('name');
 		
 		return res.status(200).json(recipients);
 	} catch (err) {
+		console.error(err);
 		return res.status(400).json(err);
 	}
 });
