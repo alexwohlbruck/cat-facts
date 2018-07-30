@@ -39,7 +39,14 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
             
             .then(response => {
                 
-                $scope.recipients = $scope.recipients.concat(response.data.newRecipients);
+                $scope.recipients = [
+                    ...$scope.recipients,
+                    ...response.data.newRecipients,
+                    ...response.data.updatedRecipients
+                ].sort((a, b) => {
+                    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+                });
+                
                 $rootScope.toast({message: response.data.message});
                 $scope.form = null;
             }, err => {
@@ -68,7 +75,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
                 };
                 
                 $scope.checkScopesAndGetContacts = () => {
-                    $scope.promise = ApiService.getGoogleContacts().then(response => {
+                    $scope.promise = ApiService.getGoogleContacts({animalType: $state.params.animal}).then(response => {
                         $scope.contacts = response.data;
                     }, err => {
                         if (err.status == 403 || err.status == 401) AuthService.openOAuth();
@@ -91,11 +98,20 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
         .then(recipients => {
             
             ApiService.addRecipients({recipients, animalTypes: [$state.params.animal]}).then(response => {
-                $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort((a, b) => {
+                
+                console.log(response.data);
+                
+                $scope.recipients = [
+                    ...$scope.recipients,
+                    ...response.data.newRecipients,
+                    ...response.data.updatedRecipients
+                ].sort((a, b) => {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
                 
-                $rootScope.toast({message: "Added " + response.data.addedRecipients.length + " recipients"});
+                console.log($scope.recipients);
+                
+                $rootScope.toast({message: response.data.message});
             }, err => {
                 $rootScope.toast({message: err.data.message || "Error adding recipients"});
             });

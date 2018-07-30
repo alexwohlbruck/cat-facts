@@ -156,8 +156,8 @@ RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requ
     }
     
     return {
-        newRecipients,
-        updatedRecipients,
+        newRecipients: newRecipients || [],
+        updatedRecipients: updatedRecipients || [],
         // TODO: Merge these messages into one
         message: newResponseMessage || updatedResponseMessage
     };

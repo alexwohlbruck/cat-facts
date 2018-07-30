@@ -15,6 +15,7 @@ router.get('/', isAuthenticated, (req, res) => {
 		accessToken: User.decryptAccessToken(req.user.google.accessToken),
 		refreshToken: req.user.google.refreshToken
 	});
+    const animalType = req.query.animal_type;
 	
     googleContacts.people.connections.list({
         auth: oauth2Client,
@@ -50,7 +51,9 @@ router.get('/', isAuthenticated, (req, res) => {
             
             Recipient.find({number: {$in: contacts.map(o => o.number)}}).then(function(recipients) {
                 contacts = contacts.map(contact => {
-                    contact.added = !!recipients.find(recipients => recipients.number == contact.number);
+                    contact.added = !!recipients.find(recipient => {
+                        return recipient.number == contact.number && recipient.subscriptions.includes(animalType);
+                    });
                     return contact;
                 });
                 

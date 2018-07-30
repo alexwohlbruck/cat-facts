@@ -85,10 +85,18 @@ app.directive('recipients', function() {
                     fullscreen: $mdMedia('xs')
                 })
                 .then(data => {
+                    
                     ApiService.deleteRecipients(data).then(response => {
                         
-                        $scope.recipients = $scope.recipients.filter(recipient => {
-                            return !data.recipients.includes(recipient._id);
+                        // FIXME: When trying to re-add a deleted recipient, DB throws dup index error
+                        
+                        // TODO: If permanent delete is selected, remove recipient from list
+                        
+                        $scope.recipients = $scope.recipients.map(recipient => {
+                            if (data.recipients.includes(recipient._id)) {
+                                recipient.deleted = true;
+                            }
+                            return recipient;
                         });
                         
                         $scope.selected = [];
