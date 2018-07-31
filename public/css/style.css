@@ -102,7 +102,7 @@ recipients tr.deleted {
 
 .white { color: white; }
 .grey { color: rgba(0,0,0,0.54) !important; }
-.blue { color: #2196f3; }
+.blue { color: #2196f3 !important; }
 .black { color: #1e1e1e; }
 .translucent { opacity: .5; }
 

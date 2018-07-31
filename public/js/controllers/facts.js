@@ -30,7 +30,6 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 		setTimer();
 	};
 	
-	// http://stackoverflow.com/questions/30861304/angular-ng-repeat-filter-passing-wrong-index
 	$scope.upvoteFact = function(fact) {
 		if (userUpvoted(fact)) {
 			ApiService.unvoteFact(fact._id).catch(function(err) {
@@ -79,24 +78,23 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 		$scope.$broadcast('timer-start');
 	}
 	
-	function getIndexOfUpvote(upvotes, user) {
-		upvotes.map(function(o) { return o.user; }).indexOf(user);
-	}
-	
 	socket.on('fact', function(data) {
 		data.upvotes = [];
 		$scope.facts.all.push(data);
 	});
 	
 	socket.on('fact:upvote', function(data) {
+		
 		var factIndex = getIndexOfFact(data.fact._id);
 		$scope.facts.all[factIndex].upvotes.push({user: data.user._id});
 		$scope.facts.all[factIndex].upvoted = true;
+		
+		console.log($scope.facts.all, data);
 	});
 	
 	socket.on('fact:unvote', function(data) {
 		var factIndex = getIndexOfFact(data.fact._id);
-		$scope.facts.all[factIndex].upvotes.splice($scope.facts[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
+		$scope.facts.all[factIndex].upvotes.splice($scope.facts.all[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
 		$scope.facts.all[factIndex].upvoted = false;
 	});
 	
