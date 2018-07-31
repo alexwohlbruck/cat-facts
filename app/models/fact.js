@@ -8,7 +8,8 @@ const FactSchema = new Schema({
     text: {type: String, required: true, unique: true},
     sendDate: {type: Date},
     used: {type: Boolean, default: false},
-    source: {type: String, enum: ['user', 'api'], default: 'user'}
+    source: {type: String, enum: ['user', 'api'], default: 'user'},
+    type: {type: String, enum: ['cat', 'dog', 'snail', 'horse'], default: 'cat'}
 }, {
     timestamps: true
 });
@@ -20,9 +21,19 @@ const FactSchema = new Schema({
 FactSchema.plugin(mongooseDelete, {overrideMethods: true});
 FactSchema.plugin(random);
 
-FactSchema.statics.getFact = function ({amount = 1, filter = {}}) {
+FactSchema.statics.getFact = function ({amount = 1, filter = {}, animalType = 'cat'}) {
+    
+    if (typeof animalType === 'string') {
+        animalType = [animalType];
+    }
+    
+    const query = {
+        ...filter,
+        type: { $in: animalType }
+    };
+    
 	return new Promise((resolve, reject) => {
-		this.findRandom(filter, {}, {limit: amount}, (err, facts) => {
+		this.findRandom(query, {}, {limit: amount}, (err, facts) => {
 			if (err) return reject(err);
 			facts = facts || [];
 			

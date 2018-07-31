@@ -7,7 +7,7 @@ Base URL for all endpoints
 
 ## Endpoints
 [`/facts`](endpoints/facts.md)
-Retrieve and query cat facts
+Retrieve and query facts
 
 [`/users`](endpoints/users.md)*
 Get user data
@@ -16,7 +16,7 @@ Get user data
 
 ## Models
 [`Fact`](models/fact.md)
-A cat fact
+An animal fact
 
 [`User`](models/user.md)
 A user of the Cat Facts site

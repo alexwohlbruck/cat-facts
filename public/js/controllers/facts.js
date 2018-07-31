@@ -2,23 +2,24 @@
 var app = angular.module('catfacts');
 
 
-app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
-	function($scope, $rootScope, ApiService, socket) {
+app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'socket',
+	function($scope, $rootScope, $state, ApiService, socket) {
 	
 	getFacts();
 	setTimer();
 	
-	var endTime = {
+	// TODO: Repurpose this
+	const endTime = {
 		// Define time for next cat fact to be sent
 		hours: 13,
 		minutes: 55
 	};
 	
 	$scope.submitFact = function() {
-		var fact = $scope.form.newFact;
+		const factText = $scope.form.newFact;
 		
-		if (fact && fact.trim().length != 0) {
-			ApiService.submitFact({text: fact});
+		if (factText && factText.trim().length != 0) {
+			ApiService.submitFact({factText, animalType: $state.params.animal});
 			$scope.form.newFact = '';
 		} else {
 			$scope.showToast("Type in a fact");
@@ -29,9 +30,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
 		setTimer();
 	};
 	
-	// http://stackoverflow.com/questions/30861304/angular-ng-repeat-filter-passing-wrong-index
 	$scope.upvoteFact = function(fact) {
-		var index = getIndexOfFact(fact);
 		if (userUpvoted(fact)) {
 			ApiService.unvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
@@ -44,7 +43,11 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
 	};
 	
 	function getFacts() {
-		$scope.promise = ApiService.getSubmittedFacts().then(function(response) {
+		$scope.promise = ApiService.getSubmittedFacts({
+			animalType: $state.params.animal
+		})
+		.then(function(response) {
+			
 			$scope.facts = response.data;
 			$scope.facts.all = $scope.facts.all.map(function(fact) {
 				fact.upvoted = userUpvoted(fact);
@@ -75,24 +78,23 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', 'ApiService', 'socket',
 		$scope.$broadcast('timer-start');
 	}
 	
-	function getIndexOfUpvote(upvotes, user) {
-		upvotes.map(function(o) { return o.user; }).indexOf(user);
-	}
-	
 	socket.on('fact', function(data) {
 		data.upvotes = [];
 		$scope.facts.all.push(data);
 	});
 	
 	socket.on('fact:upvote', function(data) {
+		
 		var factIndex = getIndexOfFact(data.fact._id);
 		$scope.facts.all[factIndex].upvotes.push({user: data.user._id});
 		$scope.facts.all[factIndex].upvoted = true;
+		
+		console.log($scope.facts.all, data);
 	});
 	
 	socket.on('fact:unvote', function(data) {
 		var factIndex = getIndexOfFact(data.fact._id);
-		$scope.facts.all[factIndex].upvotes.splice($scope.facts[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
+		$scope.facts.all[factIndex].upvotes.splice($scope.facts.all[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
 		$scope.facts.all[factIndex].upvoted = false;
 	});
 	

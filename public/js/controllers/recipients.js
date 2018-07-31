@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthService', '$mdDialog', '$mdMedia',
-    function($scope, $rootScope, ApiService, AuthService, $mdDialog, $mdMedia) {
+app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'AuthService', '$mdDialog', '$mdMedia',
+    function($scope, $rootScope, $state, ApiService, AuthService, $mdDialog, $mdMedia) {
     
     $scope.recipients = [];
     $scope.AuthService = AuthService;
@@ -12,10 +12,10 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
     getMyRecipients();
     
     // TODO: Refactor phone validation into it's own directive for reuse
-    /*$scope.validatePhone = (number, returnNumber = false) => {
+    $scope.validatePhone = (number, returnNumber = false) => {
         const trim = number.replace(/[^0-9]/gi, '').trim();
         return returnNumber ? trim : trim.length == 10;
-    };*/
+    };
     
     $scope.validatePhoneNgPattern = (function() {
         return {
@@ -24,19 +24,33 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
     })();
     
     $scope.addRecipient = () => {
-        var name = $scope.form.name, number = $scope.form.number;
+        const name = $scope.form.name,
+              number = $scope.form.number;
         
         if (name && number && $scope.validatePhone(number)) {
             
             ApiService.addRecipient({
-                name: name,
-                number: $scope.validatePhone(number, true)
-            }).then(response => {
-                $scope.recipients.push(response.data);
-                $rootScope.toast({message: "Recipient added!"});
+                recipient: {
+                    name,
+                    number: $scope.validatePhone(number, true)
+                },
+                animalTypes: [$state.params.animal]
+            })
+            
+            .then(response => {
+                
+                $scope.recipients = [
+                    ...$scope.recipients,
+                    ...response.data.newRecipients,
+                    ...response.data.updatedRecipients
+                ].sort((a, b) => {
+                    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+                });
+                
+                $rootScope.toast({message: response.data.message});
                 $scope.form = null;
             }, err => {
-                console.log(err);
+                console.error(err);
                 $rootScope.toast({message: err.data.errors[Object.keys(err.data.errors)[0]].message || err.data.message});
             });
             
@@ -61,7 +75,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
                 };
                 
                 $scope.checkScopesAndGetContacts = () => {
-                    $scope.promise = ApiService.getGoogleContacts().then(response => {
+                    $scope.promise = ApiService.getGoogleContacts({animalType: $state.params.animal}).then(response => {
                         $scope.contacts = response.data;
                     }, err => {
                         if (err.status == 403 || err.status == 401) AuthService.openOAuth();
@@ -83,12 +97,21 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
         })
         .then(recipients => {
             
-            ApiService.addRecipients(recipients).then(response => {
-                $scope.recipients = response.data.addedRecipients.concat($scope.recipients).sort((a, b) => {
+            ApiService.addRecipients({recipients, animalTypes: [$state.params.animal]}).then(response => {
+                
+                console.log(response.data);
+                
+                $scope.recipients = [
+                    ...$scope.recipients,
+                    ...response.data.newRecipients,
+                    ...response.data.updatedRecipients
+                ].sort((a, b) => {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
                 
-                $rootScope.toast({message: "Added " + response.data.addedRecipients.length + " recipients"});
+                console.log($scope.recipients);
+                
+                $rootScope.toast({message: response.data.message});
             }, err => {
                 $rootScope.toast({message: err.data.message || "Error adding recipients"});
             });
@@ -96,7 +119,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', 'ApiService', 'AuthSer
     };
     
     function getMyRecipients() {
-        $scope.promise = ApiService.getMyRecipients().then(response => {
+        $scope.promise = ApiService.getMyRecipients({animalType: $state.params.animal}).then(response => {
             $scope.recipients = response.data;
         }, err => {
             $rootScope.toast({message: err.data.message});
