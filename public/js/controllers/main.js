@@ -1,8 +1,8 @@
 /* global angular, rekt */
 var app = angular.module('catfacts');
 
-app.controller('MainCtrl', ['$scope', '$rootScope', '$window', '$mdSidenav', '$mdToast', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'ApiService', 'hotkeys',
-	function($scope, $rootScope, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, hotkeys) {
+app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSidenav', '$mdToast', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'ApiService', 'animal', 'hotkeys',
+	function($scope, $rootScope, $state, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, animal, hotkeys) {
 	
 	$scope.sideNav = {
 		left: {
@@ -13,6 +13,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$window', '$mdSidenav', '$m
 	};
 	
 	$scope.ApiService = ApiService;
+	$scope.animals = animal;
 	
 	$rootScope.goBack = function() {
 		$window.history.back();
@@ -61,7 +62,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$window', '$mdSidenav', '$m
 				
 	$scope.showCatFact = function() {
 		
-		ApiService.getFact().then(function(response) {
+		ApiService.getFact({animalType: $state.params.animal}).then(function(response) {
 			
 			var fact = response.data.text;
 			
@@ -108,12 +109,6 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$window', '$mdSidenav', '$m
 			targetEvent: event,
 			clickOutsideToClose: true,
 			fullscreen: false
-		});
-	};
-	
-	$scope.toggleDarkTheme = function(newTheme) {
-		ApiService.updateUserSettings({
-			theme: newTheme
 		});
 	};
 	

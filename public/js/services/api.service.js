@@ -9,12 +9,8 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.get('/users/me');
     };
     
-    this.deleteAccount = function({verificationEmail}) {
-        return $http.delete('/users/me', {params: {verificationEmail}});
-    };
-    
-    this.updateUserSettings = function(data) {
-        return $http.put('/users/me/settings', data).then(data => console.log(data), err => console.log(err));
+    this.deleteAccount = function({ verificationEmail }) {
+        return $http.delete('/users/me', {params: { verificationEmail }});
     };
     
     this.verifyPhone = function(phone) {
@@ -22,7 +18,7 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     };
     
     this.updatePhone = function(verificationCode) {
-        return $http.put('/users/me/profile/phone', {verificationCode});
+        return $http.put('/users/me/profile/phone', { verificationCode });
     };
     
     this.signOut = function() {
@@ -34,12 +30,14 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         
     // Fact
     
-    this.getSubmittedFacts = function() {
-        return $http.get('/facts');
+    this.getSubmittedFacts = function({ animalType }) {
+        return $http.get('/facts', {params: {
+            animal_type: animalType
+        }});
     };
     
-    this.submitFact = function(fact) {
-        return $http.post('/facts', fact);
+    this.submitFact = function({factText, animalType}) {
+        return $http.post('/facts', {factText, animalType});
     };
     
     this.upvoteFact = function(factID) {
@@ -50,9 +48,9 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.delete('/facts/' + factID + '/upvote');
     };
     
-    this.getFact = function(amount) {
+    this.getFact = function({ animalType, amount }) {
         return $http.get('/facts/random', {
-            params: { amount }
+            params: { animal_type: animalType, amount }
         });
     };
     
@@ -62,20 +60,31 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.get('/recipients');
     };
     
-    this.getMyRecipients = function() {
-        return $http.get('/recipients/me');
+    this.getMyRecipients = function({ animalType }) {
+        return $http.get('/recipients/me', {params: {
+            animal_type: animalType
+        }});
     };
     
-    this.addRecipient = function(recipient) {
-        if (recipient.name && recipient.number) {
-            return $http.post('/recipients', recipient);
-        } else {
+    this.addRecipient = function({ recipient, animalTypes }) {
+        if (!recipient.name || !recipient.number) {
             $rootScope.toast({message: "Provide a name and phone number"});
         }
+        if (!animalTypes) {
+            $rootScope.toast({message: "Provide an animal type"});
+        }
+        
+        return $http.post('/recipients', {
+            recipient,
+            animalTypes
+        });
     };
     
-    this.addRecipients = function(recipients) {
-        return $http.post('/recipients', recipients);
+    this.addRecipients = function({ recipients, animalTypes }) {
+        return $http.post('/recipients', {
+            recipients,
+            animalTypes
+        });
     };
     
     this.editRecipient = function(recipient) {
@@ -92,8 +101,14 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         });
     };
     
-    this.getGoogleContacts = function() {
-        return $http.get('/contacts'); 
+    this.restoreRecipient = function(recipient) {
+        return $http.patch('/recipients/' + recipient._id);
+    };
+    
+    this.getGoogleContacts = function({ animalType }) {
+        return $http.get('/contacts', { params: {
+            animal_type: animalType
+        }}); 
     };
     
     // Conversation

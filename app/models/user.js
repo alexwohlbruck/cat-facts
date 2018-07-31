@@ -28,14 +28,6 @@ const UserSchema = new Schema({
         refreshToken: {type: String}
     },
     isAdmin: {type: Boolean, default: false},
-    settings: {
-        theme: {
-            type: String,
-            required: true,
-            enum: ['light', 'dark'],
-            default: 'light'
-        }
-    },
     ip: String
 }, {
     timestamps: true

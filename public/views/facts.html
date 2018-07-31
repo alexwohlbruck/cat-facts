@@ -1,7 +1,15 @@
 <div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
 	<div layout="column" layout-align="start center">
-		<timer class="md-headline bold center-text" countdown="seconds" finish-callback="countdownFinished()" max-time-unit="'hour'" interval="1000">
-			{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
+		<timer
+			class="md-headline bold center-text"
+			countdown="seconds"
+			finish-callback="countdownFinished()"
+			max-time-unit="'hour'"
+			interval="1000">
+			
+			<span class="title">
+				{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
+			</span>
 		</timer>
 		
 		<span class="md-subhead">until next fact is sent</span>
@@ -10,7 +18,7 @@
 		
 		<form ng-submit="submitFact()" ng-show="authenticatedUser">
 			<md-input-container>
-				<label>Submit a fact</label>
+				<label>Submit a {{$state.params.animal}} fact</label>
 				<input ng-model="form.newFact">
 			</md-input-container>
 			
@@ -31,7 +39,7 @@
 						
 						<span class="text">
 							<h3 class="white md-headline margin-0 bold center-text">
-								There aren't any new cat facts!
+								There aren't any new {{$state.params.animal}} facts!
 							</h3>
 							
 							<h4 class="white md-body-2 accent-links margin-0 center-text">

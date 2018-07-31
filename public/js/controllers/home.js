@@ -1,13 +1,23 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('HomeCtrl', function($scope, $http) {
+app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window',
+    function($scope, $rootScope, $http, $state, $window) {
+    
     $scope.carousel = {
         catImages: []
     };
     
     $scope.carousel.index++;
     $http.defaults.useXDomain = true;
+    
+    $scope.openApp = function() {
+        if ($rootScope.authenticatedUser) {
+            $state.go('facts');
+        } else {
+            $window.location.href = '/auth/google';
+        }
+    };
     
     // Get some cat facts for tagline
     $http({
@@ -33,4 +43,4 @@ app.controller('HomeCtrl', function($scope, $http) {
         console.log(error);
     });
     
-});
+}]);

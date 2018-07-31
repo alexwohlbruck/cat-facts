@@ -11,8 +11,38 @@ var app = angular.module('catfacts', [
 	'cfp.hotkeys'
 ]);
 
-app.config(['$stateProvider', '$urlRouterProvider', 
-	function($stateProvider, $urlRouterProvider) {
+app.provider('animal', function() {
+	this.animals = [
+		{
+			name: 'cat',
+			iconUrl: '/img/logo/animals/cat.png'
+		},
+		{
+			name: 'dog',
+			iconUrl: 'https://mi2.rightinthebox.com/images/50x50/201707/crrztg1500634869721.jpg'
+		},
+		{
+			name: 'snail',
+			iconUrl: 'https://emojipedia-us.s3.amazonaws.com/thumbs/160/lg/34/snail_1f40c.png'
+		},
+		{
+			name: 'horse',
+			iconUrl: ''
+		}
+	];
+	
+	this.animalsStruct = this.animals.reduce((obj, animal) => {
+		obj[animal.name] = animal;
+		return obj;
+	}, {});
+	
+	this.$get = function() {
+		return this.animals;
+	};
+});
+
+app.config(['$stateProvider', '$urlRouterProvider', 'animalProvider', 
+	function($stateProvider, $urlRouterProvider, animalProvider) {
 
 	$stateProvider
 		.state('home', {
@@ -25,7 +55,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
 		})
 
 		.state('recipients', {
-			url: '/recipients',
+			url: '/:animal/recipients',
 			templateUrl: '/views/recipients.html',
 			controller: 'RecipientsCtrl',
 			data: {
@@ -35,7 +65,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
 		})
 
 		.state('facts', {
-			url: '/facts',
+			url: '/:animal/facts',
 			templateUrl: '/views/facts.html',
 			controller: 'FactsCtrl',
 			data: {
@@ -44,7 +74,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
 		})
 		
 		.state('console', {
-			url: '/console',
+			url: '/:animal/console',
 			templateUrl: '/views/console.html',
 			controller: 'ConsoleCtrl',
 			data: {
@@ -58,32 +88,18 @@ app.config(['$stateProvider', '$urlRouterProvider',
 }]);
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
-		
-	$mdThemingProvider.theme('light')
-		.primaryPalette('blue', {
-			'default': '500',
-			'hue-1': '100',
-			'hue-2': '600',
-			'hue-3': 'A100'
-		})
-		.accentPalette('teal', {
-			'default': 'A400'
-		});
-		
-	$mdThemingProvider.theme('dark')
-		.primaryPalette('blue', {
-			'default': '500',
-			'hue-1': '100',
-			'hue-2': '600',
-			'hue-3': 'A100'
-		})
-		.accentPalette('teal', {
-			'default': 'A400'
-		})
-		.dark();
 	
-	$mdThemingProvider.setDefaultTheme('light');
+	// TODO: DRY with animalProvider list loop
+		
+	$mdThemingProvider.theme('cat').primaryPalette('blue').accentPalette('amber', {'default': '400'});
+	$mdThemingProvider.theme('dog').primaryPalette('deep-purple').accentPalette('blue-grey', {'default': '700'});
+	$mdThemingProvider.theme('snail').primaryPalette('pink', {'default': '300'}).accentPalette('blue');
+	$mdThemingProvider.theme('horse').primaryPalette('light-green', {'default': '500'}).accentPalette('amber', {'default': '400'});
+	
+	$mdThemingProvider.setDefaultTheme('cat');
+	
 	$mdThemingProvider.alwaysWatchTheme(true);
+	$mdThemingProvider.enableBrowserColor();
 }]);
 
 app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', 'AuthService', '$mdMedia',
@@ -96,6 +112,9 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService
 	$window.ga('create', 'UA-88600627-2', 'auto'); // Start Google Analytics
 	
 	$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+		
+		// Keep animal url params during state change, default cat
+		toParams.animal = toParams.animal || fromParams.animal || 'cat';
 		
 		if ($rootScope.authenticatedUser === null) {
 			
@@ -117,6 +136,7 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService
 	});
 	
 	$rootScope.$on('$stateChangeSuccess', function(event) {
+		
 		// Google Analytics page view
 		$window.ga('send', 'pageview', $location.path());
 	});

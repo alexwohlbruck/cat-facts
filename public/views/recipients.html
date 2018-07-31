@@ -12,7 +12,8 @@
 				
 				<md-input-container class="no-space">
 					<label>Phone Number</label>
-					<input ng-model="form.number" ng-pattern="validatePhoneNgPattern" aria-label="Recipient phone number">
+					<!-- Implement client validation -->
+					<input ng-model="form.number" aria-label="Recipient phone number">
 				</md-input-container>
 				
 				<div layout="column" layout-align="start center">
@@ -36,8 +37,11 @@
 	<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
 		<md-toolbar class="md-table-toolbar md-default">
 			<div class="md-toolbar-tools">
-				<span class="md-subhead bold">
-					My Recipients <span class="translucent">({{recipients.length}})</span>
+				<span class="md-subhead bold title">
+					My Recipients
+					<span class="translucent" ng-show="recipients.length > 0">
+						({{recipients.length}})
+					</span>
 				</span>
 				
 				<span flex></span>
@@ -48,7 +52,7 @@
 						aria-label="Sort table by last added"
 						ng-true-value="'-updatedAt'"
 						ng-false-value="'name'">
-					<span class="md-body-2">Sort by last added</span>
+					<span class="md-body-2 title">Sort by last added</span>
 				</span>
 			</div>
 		</md-toolbar>
@@ -57,7 +61,8 @@
 			recipients="recipients"
 			promise="promise"
 			order-by="{{orderBy}}"
-			options="{dateAdded: true}">
+			options="{dateAdded: true, editable: true}"
+			selected="[]">
 		</recipients>
 	</md-card>
 </div>

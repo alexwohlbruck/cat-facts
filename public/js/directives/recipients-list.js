@@ -31,11 +31,12 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.editRecipient = function(recipient, ev) {
+            $scope.editRecipient = function({recipient}, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipient = recipient;
                         $scope.cancel = $mdDialog.hide;
+                        
                         $scope.save = function() {
                             ApiService.editRecipient($scope.recipient).then(function(recipient) {
                                 $mdDialog.hide(recipient);
@@ -59,16 +60,17 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.deleteRecipients = function(recipients, ev) {
+            $scope.deleteRecipients = function({recipients, showPermanentDeleteOption}, ev) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipients = recipients;
                         $scope.permanent = false;
+                        $scope.showPermanentDeleteOption = $rootScope.authenticatedUser.isAdmin;
                         
                         $scope.delete = function() {
                             $mdDialog.hide({
                                 recipients: recipients.map(o => o._id),
-                                permanent: $scope.permanent
+                                soft: !$scope.permanent
                             });
                         };
                         
@@ -82,17 +84,25 @@ app.directive('recipients', function() {
                     clickOutsideToClose: true,
                     fullscreen: $mdMedia('xs')
                 })
-                .then(function(data) {
-                    ApiService.deleteRecipients(data).then(function(response) {
+                .then(data => {
+                    
+                    ApiService.deleteRecipients(data).then(response => {
                         
-                        $scope.recipients = $scope.recipients.filter(function(recipient) {
-                            return !data.recipients.includes(recipient._id);
+                        // FIXME: When trying to re-add a deleted recipient, DB throws dup index error
+                        
+                        // TODO: If permanent delete is selected, remove recipient from list
+                        
+                        $scope.recipients = $scope.recipients.map(recipient => {
+                            if (data.recipients.includes(recipient._id)) {
+                                recipient.deleted = true;
+                            }
+                            return recipient;
                         });
                         
                         $scope.selected = [];
                         $rootScope.toast({message: "Recipients deleted"});
                         
-                    }, function(err) {
+                    }, err => {
                         $rootScope.toast({message: err.message});
                     });
                 });

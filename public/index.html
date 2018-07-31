@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html ng-app="catfacts">
 <head>
-	<title>Cat Facts</title>
+	<title ng-bind-template="{{$state.params.animal | capitalize}} Facts"></title>
 	
 	<!-- Meta -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta name="mobile-web-app-capable" content="yes"/>
 	<meta name="apple-mobile-web-app-capable" content="yes"/>
-	<meta name="theme-color" content="#2196f3"/>
 	
 	<!-- Manifest -->
 	<link rel="manifest" href="config/manifest.json">
 	<link rel="icon" type="image/png" href="https://cat-fact.herokuapp.com/img/logo/favicon.ico"/>
 
 	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700">
+	<!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700">-->
+	<link href="https://fonts.googleapis.com/css?family=Raleway:700,800|Roboto:400,500,700" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.css"/>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.9/angular-material.css"/>
 	<link rel="stylesheet" href="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.css"/>
 	<link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css"/>
 </head>
 
-<body ng-controller="MainCtrl" layout="column" ng-cloak md-theme="{{authenticatedUser.settings.theme}}">
+<body
+	ng-controller="MainCtrl"
+	layout="column"
+	ng-cloak
+	md-theme="$state.params.animal">
+	
 	<md-toolbar class="md-whiteframe-2dp">
 		<div class="md-toolbar-tools">
 			<img
-				src="img/logo/launcher-icon-1x.png"
+				ng-if="$state.params.animal"
+				ng-src="{{'img/logo/animals/' + $state.params.animal + '.png'}}"
 				ui-sref="home"
 				ng-hide="$state.current.name == 'home' || $state.current.data.showBackButton"
 				class="width-40 margin-10 pointer"/>
@@ -38,33 +44,44 @@
 				<md-icon class="material-icons">arrow_back</md-icon>
 			</md-button>
 			
-			<h3>
-				<span>Cat Facts</span>
-			</h3>
+			<md-menu md-position-mode="target-left target" ng-if="authenticatedUser">
+				<span
+					class="title pointer"
+					ng-mouseover="$mdMenu.open()"
+					aria-label="Switch site">
+					
+					{{$state.params.animal | capitalize}} Facts
+				</span>
+				
+				<md-menu-content ng-mouseleave="$mdMenu.close()">
+					<md-menu-item ng-repeat="animal in animals">
+						<md-button
+							ng-click="$state.go($state.current.name, {animal: animal.name})"
+							ng-class="{'md-primary bold': animal.name == $state.params.animal}">
+							{{animal.name | capitalize}} Facts
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
 			
 			<span flex></span>
 			
-			<span layout="row" layout-align="center center" ng-hide="$state.current.name == 'home'">
-				<span class="md-body-2 grey margin-sides-10">Dark mode</span>
+			<span ng-show="$mdMedia('gt-xs')">
+				<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
+					<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
+					<md-icon class="material-icons grey">bug_report</md-icon>
+				</md-button>
+			
+				<md-button class="md-icon-button" aria-label="developers" ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
+					<md-tooltip md-direction="button">Developers</md-tooltip>
+					<md-icon class="material-icon grey">code</md-icon>
+				</md-button>
 				
-				<md-switch
-					aria-label="Toggle dark theme"
-					ng-model="authenticatedUser.settings.theme"
-					ng-true-value="'dark'"
-					ng-false-value="'light'"
-					ng-change="toggleDarkTheme(authenticatedUser.settings.theme)">
-				</md-switch>
+				<md-button class="md-icon-button" aria-label="about" ng-click="openAbout($event)">
+					<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
+					<md-icon class="material-icons grey">info</md-icon>
+				</md-button>
 			</span>
-			
-			<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
-				<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
-				<md-icon class="material-icons grey">bug_report</md-icon>
-			</md-button>
-			
-			<md-button class="md-icon-button" aria-label="about" ng-click="openAbout($event)">
-				<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
-				<md-icon class="material-icons grey">info</md-icon>
-			</md-button>
 			
 			<md-menu md-position-mode="target-right target" ng-if="authenticatedUser">
 				<md-button ng-click="$mdOpenMenu($event)" aria-label="Profile" class="md-icon-button sign-out-button">
@@ -95,7 +112,12 @@
 			
 		</div>
 		
-		<md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation">
+		<md-nav-bar
+			md-selected-nav-item="startingState"
+			nav-bar-aria-label="Navigation"
+			ng-if="$state.current.data.showInNavigation"
+			class="transparent-bg">
+		
 			<md-nav-item
 				ng-repeat="state in $state.get()"
 				md-nav-sref="{{state.name}}"
@@ -119,7 +141,7 @@
         
         <md-icon class="material-icons">message</md-icon>
         
-        <md-tooltip md-direction="left">Get a cat fact</md-tooltip>
+        <md-tooltip md-direction="left">Get a {{$state.params.animal}} fact</md-tooltip>
     </md-button>
 
 	<!-- AngularJS -->
@@ -130,7 +152,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-aria.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-messages.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.9/angular-material.js"></script>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-socket-io/0.7.0/socket.js"></script>

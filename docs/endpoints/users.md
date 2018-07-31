@@ -4,7 +4,7 @@
 
 ### Get current user
 
-Returns the data of the currently logged in user.
+Returns the data of the currently logged in `User`.
 
 ##### Endpoint
 `GET /users/me`
@@ -16,6 +16,7 @@ Returns the data of the currently logged in user.
   "updatedAt": "2018-01-04T02:41:45.729Z",
   "createdAt": "2017-04-30T05:22:13.595Z",
   "email": "johndoe@gmail.com",
+  "phone": "2025550111",
   "__v": 0,
   "settings": {
     "theme": "light"
