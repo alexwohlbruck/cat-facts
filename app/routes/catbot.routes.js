@@ -13,31 +13,53 @@ const Message = require('../models/message');
 const Recipient = require('../models/recipient');
 const Upvote = require('../models/upvote');
 
+
 // Get all recipients and a fact to be sent out each day
 router.get('/daily', async (req, res) => {
-	if (req.query && req.query.code == keys.generalAccessToken) {
-		var io = req.app.get('socketio');
-		
-		const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-		const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
-		
-		let {recipients, overrideFact, highestUpvotedFact, fact} = await Promise.props({
-			recipients: Recipient.find(),
-			overrideFact: Fact.findOne({sendDate: {$gte: todayStart, $lte: todayEnd}}),
+	
+	if (!req.query || req.query.code !== keys.generalAccessToken) {
+		return res.status(400).json({message: "Provide the code to recieve recipients"});
+	}
+	
+	const io = req.app.get('socketio');
+	
+	const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+	const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
+	
+	let getFactAndRecipients = async animalType => {
+		let { recipients, overrideFact, highestUpvotedFact, fact } = await Promise.props({
+			
+			recipients: Recipient.find({
+				subscriptions: animalType
+			}),
+			
+			// FIXME: I can't get this to work ~ever~ #72
+			overrideFact: Fact.findOne({
+				sendDate: {
+					$gte: todayStart,
+					$lte: todayEnd
+				},
+				type: animalType
+			}),
+			
 			highestUpvotedFact: Upvote.aggregate([
-				{$group: {_id: '$fact', upvotes: {$sum: 1}}},
-				{$sort: {upvotes: -1}},
-				{$lookup: {
+				{$group: {_id: '$fact', upvotes: {$sum: 1}}}, // Get all upvote sums
+				{$lookup: { // Retrieve associated facts
 			        from: 'facts',
 			        localField: '_id',
 			        foreignField: '_id',
 			        as: 'fact'
 			    }},
 				{$unwind: '$fact'},
-				{$match: {'fact.used': false}},
-				{$limit: 1}
+				{$match: {'fact.used': false, 'fact.type': animalType}}, // Only select used facts of a particular animal type
+				{$sort: {'upvotes': -1, 'fact.createdAt': 1}}, // Sort by upvote count, then by date submitted
+				{$limit: 1} // Only return one fact
 			]),
-			fact: Fact.getFact({filter: {used: false}})
+			
+			fact: Fact.getFact({
+				filter: {used: false},
+				animalType
+			})
 		});
 		
 		if (!fact) {
@@ -45,51 +67,67 @@ router.get('/daily', async (req, res) => {
 			await Fact.update({}, {$set: {used: false}}, {multi: true});
 		}
 		
+		if (overrideFact) {
+			await overrideFact.delete();
+		}
+		
 		highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
 		
-		try {
-			const response = await new Promise(async (resolve, reject) => {
+		return {
+			recipients: recipients,
+			fact: overrideFact || highestUpvotedFact || fact
+		};
+	};
 	
-				const factToSend = overrideFact || highestUpvotedFact || fact;
-				
-				const messages = recipients.map(r => {
-		
-					io.emit('message', {
-						message: factToSend.text, 
-						recipient: r
-					});
-		
-					return new Message({
-						text: factToSend.text,
-						number: r.number,
-						type: 'outgoing'
-					});
-				});
-				
-				await Message.create(messages);
-		
-				if (overrideFact) {
-					await overrideFact.delete();
-				}
-				
-				// .then() must be called for save to work
-				await Fact.findByIdAndUpdate(factToSend._id, {$set: {used: true}}).then();
+	// TODO: Define global list for animal types, use that to build this object
+	const facts = {
+		cat: getFactAndRecipients('cat'),
+		dog: getFactAndRecipients('dog'),
+		snail: getFactAndRecipients('snail'),
+		horse: getFactAndRecipients('horse')
+	};
 	
-				await twitter.tweet(factToSend.text);
+	const result = await Promise.props(facts),
+		  dbMessages = [];
+	
+	Object.keys(result).forEach(animal => {
 		
-				resolve({
-					fact: factToSend.text,
-					recipients: recipients.map(r => r.number)
-				});
+		result[animal].recipients.forEach(async recipient => {
+			
+			// Send messages to app
+			io.emit('message', {
+				message: result[animal].fact.text, 
+				recipient: recipient
 			});
+			
+			// Mark chosen fact as used
+			await Fact.findByIdAndUpdate(result[animal].fact._id, {
+				$set: {
+					used: true
+				}
+			});
+	
+			dbMessages.push(new Message({
+				text: result[animal].fact.text,
+				number: recipient.number,
+				type: 'outgoing'
+			}));
+		});
 		
-			return res.status(200).json(response);
-		} catch (err) {
-			return res.status(400).json(err);
-		}
-	} else {
-		return res.status(400).json({message: "Provide the code to recieve recipients"});
-	}
+		// Remove unnecessary data from results
+		result[animal] = {
+			recipients: result[animal].recipients.map(r => r.number),
+			fact: result[animal].fact.text
+		};
+	});
+	
+	// Save messages to database
+	await Message.create(dbMessages);
+	
+	// Tweet only the cat fact
+	twitter.tweet(result.cat.fact);
+
+	return res.status(200).json(result);
 });
 
 // Text was recieved from recipient, process it and respond
