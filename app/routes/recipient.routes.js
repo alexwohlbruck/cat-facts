@@ -35,11 +35,17 @@ router.get('/me', isAuthenticated, async (req, res) => {
 	
 	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : undefined;
 	
+	console.log(req.user._id, animalType);
+	
 	try {
 		const recipients = await Recipient.findWithDeleted({
 			addedBy: req.user._id,
-			subscriptions: animalType ? { $in: animalType } : { $exists: true }
+			subscriptions: {
+				$in: animalType
+			}
 		}).sort('name');
+		
+		console.log(recipients);
 		
 		return res.status(200).json(recipients);
 	} catch (err) {
@@ -51,8 +57,6 @@ router.get('/me', isAuthenticated, async (req, res) => {
 // Add new recipient(s)
 router.post('/', isAuthenticated, async (req, res) => {
 	
-	// const io = req.app.get('socketio');
-	
 	const requestedRecipients = req.body.recipients || [req.body.recipient];
 	const animalTypes = req.body.animalTypes;
 	
@@ -60,13 +64,18 @@ router.post('/', isAuthenticated, async (req, res) => {
 		return res.status(400).json({message: `No recipients provided`});
 	}
 	
-	const results = await Recipient.addRecipients({
-	    authenticatedUser: req.user,
-	    requestedRecipients,
-	    requestedSubscriptions: animalTypes
-	});
-	
-	return res.status(200).json(results);
+	try {
+		const results = await Recipient.addRecipients({
+		    authenticatedUser: req.user,
+		    requestedRecipients,
+		    requestedSubscriptions: animalTypes
+		});
+		
+		return res.status(200).json(results);
+	}
+	catch (err) {
+		return res.status(err.status || 400).json(err);
+	}
 });
 
 router.patch('/:recipientId', isAuthenticated, async (req, res) => {
