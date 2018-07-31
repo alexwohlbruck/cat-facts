@@ -21,7 +21,12 @@ const FactSchema = new Schema({
 FactSchema.plugin(mongooseDelete, {overrideMethods: true});
 FactSchema.plugin(random);
 
-FactSchema.statics.getFact = function ({amount = 1, filter = {}, animalType = ['cat']}) {
+FactSchema.statics.getFact = function ({amount = 1, filter = {}, animalType = 'cat'}) {
+    
+    if (typeof animalType === 'string') {
+        animalType = [animalType];
+    }
+    
     const query = {
         ...filter,
         type: { $in: animalType }
