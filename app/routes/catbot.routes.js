@@ -114,10 +114,10 @@ router.get('/daily', async (req, res) => {
 			}));
 		});
 		
-		// Remove unnecessary data from results
+		// Format data for response
 		result[animal] = {
 			recipients: result[animal].recipients.map(r => r.number),
-			fact: result[animal].fact.text
+			fact: result[animal].fact.text,
 		};
 	});
 	
