@@ -13,6 +13,10 @@ const Message = require('../models/message');
 const Recipient = require('../models/recipient');
 const Upvote = require('../models/upvote');
 
+	
+const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+const todayEnd	 = new Date(); todayEnd.setHours(23,59,59,999);
+
 
 // Get all recipients and a fact to be sent out each day
 router.get('/daily', async (req, res) => {
@@ -33,7 +37,6 @@ router.get('/daily', async (req, res) => {
 				subscriptions: animalType
 			}),
 			
-			// FIXME: I can't get this to work ~ever~ #72
 			overrideFact: Fact.findOne({
 				sendDate: {
 					$gte: todayStart,
@@ -51,7 +54,11 @@ router.get('/daily', async (req, res) => {
 			        as: 'fact'
 			    }},
 				{$unwind: '$fact'},
-				{$match: {'fact.used': false, 'fact.type': animalType}}, // Only select used facts of a particular animal type
+				{$match: {
+					'fact.used': false,
+					'fact.type': animalType,
+					'fact.sendDate': {$exists: false}
+				}}, // Only select used facts of a particular animal type
 				{$sort: {'upvotes': -1, 'fact.createdAt': 1}}, // Sort by upvote count, then by date submitted
 				{$limit: 1} // Only return one fact
 			]),

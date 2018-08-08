@@ -5,7 +5,7 @@ module.exports = {
         const animalsList = animalTypes.map(animal => {
             return `${animal[0].toUpperCase()}${animal.slice(1)}s`;
         });
-        const animalsListCapital = animalTypes.map(animal => {
+        const animalsListCapital = animalsList.map(animal => {
             return animal.toUpperCase();
         });
         
