@@ -1,6 +1,6 @@
 {
     "name": "ngclipboard",
-    "version": "1.1.1",
+    "version": "2.0.0",
     "description": "Angularjs directive for clipboard.js",
     "keywords": [
         "ngclipboard",
@@ -29,10 +29,13 @@
         "test": "grunt"
     },
     "dependencies": {
-        "clipboard": "~1.5.5",
-        "angular": ">=1.2.0"
+        "clipboard": "^2.0.0"
+    },
+    "peerDependencies": {
+        "angular": "^1.2.0"
     },
     "devDependencies": {
+        "angular": "^1.2.0",
         "grunt": "^0.4.5",
         "grunt-contrib-clean": "^0.6.0",
         "grunt-contrib-concat": "^0.5.0",
