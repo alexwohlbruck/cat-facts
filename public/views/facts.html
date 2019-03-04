@@ -62,13 +62,13 @@
 									md-row md-select="fact"
 									md-select-id="name"
 									md-auto-select
-									ng-repeat="fact in facts.all | orderBy:'-upvotes.length'"
+									ng-repeat="fact in facts.all | orderBy:'-upvotes'"
 									ng-animater="'animate'">
 									
 									<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
 									<td md-cell class="padding-20">"{{fact.text}}"</td>
 									<td md-cell>
-										<span>{{fact.upvotes.length}}</span>
+										<span>{{fact.upvotes}}</span>
 										<md-button
 											ng-click="upvoteFact(fact)"
 											ng-if="authenticatedUser"
@@ -79,7 +79,7 @@
 											
 											<md-icon
 												class="material-icons"
-												ng-class="{'blue': fact.upvoted}"
+												ng-class="{'blue': fact.userUpvoted}"
 												aria-label="Vote up">
 												thumb_up
 											<md-icon>
@@ -100,15 +100,20 @@
 						<table md-table ng-model="selected" md-progress="promise">
 							<thead md-head>
 								<tr md-row md-row-select="false">
-									<th md-column><span>Fact</span></th>
-									<th md-column md-numeric style="padding-right: 90px !important">Votes</th>
+									<th md-column>Fact</th>
+									<th md-column>Unused</th>
+									<th md-column md-numeric>Votes</th>
 								</tr>
 							</thead>
 							<tbody md-body>
 								<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
 									<td md-cell>"{{fact.text}}"</td>
 									<td md-cell>
-										<span>{{fact.upvotes.length}}</span>
+										<div style="width: 8px; height: 8px; border-radius: 50%; transform: translateX(15px)"
+											ng-style="{'background': fact.used ? 'red' : 'green'}"></div>
+									</td>
+									<td md-cell>
+										<span>{{fact.upvotes}}</span>
 									</td>
 								</tr>
 							</tbody>

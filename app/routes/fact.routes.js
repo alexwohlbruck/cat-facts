@@ -56,15 +56,40 @@ router.get('/', async (req, res) => {
 		user: { _id: 1, name: 1 },
 		upvotes: { user: 1 },
 		used: 1
-	}};
+	}},
+	countUpvotes = [
+		{ $unwind: "$upvotes" },
+		{ $group: {
+			_id: "$_id",
+			text: { $first: "$text" },
+			user: { $first: "$user" },
+			used: { $first: "$used" },
+			upvotes: { $push: "$upvotes" },
+			userUpvoted: { $max: { $eq: ["$upvotes.user", req.user._id]}},
+		}},
+		{ $addFields: {
+			upvotes: { $size: "$upvotes" }
+		}},
+		{$sort: {
+			upvotes: -1
+		}}
+	];
 	
 	try {
 		const data = await Promise.props({
 			all: Fact.aggregate([
-				matchAll, lookupUsers, projectUsers, lookupUpvotes, projectUpvotes
+				matchAll,
+				lookupUsers,
+				projectUsers,
+				lookupUpvotes,
+				projectUpvotes,
+				...countUpvotes
 			]),
 			me: Fact.aggregate([
-				matchMe, lookupUpvotes, projectUpvotes
+				matchMe,
+				lookupUpvotes,
+				projectUpvotes,
+				...countUpvotes
 			])
 		});
 		
