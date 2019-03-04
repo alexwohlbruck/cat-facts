@@ -8,8 +8,8 @@ const User = require.main.require('./app/models/user');
 
 
 const baseScopes = [
-	'https://www.googleapis.com/auth/userinfo.email',
-	'https://www.googleapis.com/auth/plus.login'
+	'email',
+	'profile'
 ],
 contactsScopes = [
 	'https://www.googleapis.com/auth/contacts.readonly'

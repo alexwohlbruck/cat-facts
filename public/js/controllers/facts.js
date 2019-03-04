@@ -47,6 +47,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 			animalType: $state.params.animal
 		})
 		.then(function(response) {
+			console.log(response.data);
 			
 			$scope.facts = response.data;
 			$scope.facts.all = $scope.facts.all.map(function(fact) {
