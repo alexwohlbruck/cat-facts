@@ -15,30 +15,48 @@ router.get('/', async (req, res) => {
 	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 	
 	// Define states of pipeline
-	const matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}, type: {$in: animalType}}},
-		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query', type: {$in: animalType}}},
-		lookupUsers = {$lookup: {
-			from: 'users',
-			localField: 'user',
-			foreignField: '_id',
-			as: 'user'
-		}},
-		projectUsers = {$project: {
-			text: 1,
-			user: { $arrayElemAt: ['$user', 0], }
-		}},
-		lookupUpvotes = {$lookup: {
-			from: 'upvotes',
-			localField: '_id',
-			foreignField: 'fact',
-			as: 'upvotes'
-		}},
-		projectUpvotes = {$project: {
-			text: 1,
-			user: { _id: 1, name: 1 },
-			upvotes: { user: 1 },
-			used: 1
-		}};
+	const matchAll = {
+		$match: {
+			used: false,
+			// source: 'user',
+			sendDate: {
+				$exists: false
+			},
+			type: {
+				$in: animalType
+			}
+		}
+	},
+	matchMe = {
+		$match: {
+			user: req.user ? req.user._id : 'Not authenticated - dummy query',
+			type: {
+				$in: animalType
+			}
+		}
+	},
+	lookupUsers = {$lookup: {
+		from: 'users',
+		localField: 'user',
+		foreignField: '_id',
+		as: 'user'
+	}},
+	projectUsers = {$project: {
+		text: 1,
+		user: { $arrayElemAt: ['$user', 0], }
+	}},
+	lookupUpvotes = {$lookup: {
+		from: 'upvotes',
+		localField: '_id',
+		foreignField: 'fact',
+		as: 'upvotes'
+	}},
+	projectUpvotes = {$project: {
+		text: 1,
+		user: { _id: 1, name: 1 },
+		upvotes: { user: 1 },
+		used: 1
+	}};
 	
 	try {
 		const data = await Promise.props({
