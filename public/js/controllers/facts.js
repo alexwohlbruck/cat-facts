@@ -31,7 +31,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	};
 	
 	$scope.upvoteFact = function(fact) {
-		if (userUpvoted(fact)) {
+		if (fact.userUpvoted) {
 			ApiService.unvoteFact(fact._id).catch(function(err) {
 				$rootScope.toast({message: err.data.message});
 			});
@@ -47,17 +47,10 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 			animalType: $state.params.animal
 		})
 		.then(function(response) {
+			console.log(response.data);
 			
 			$scope.facts = response.data;
-			$scope.facts.all = $scope.facts.all.map(function(fact) {
-				fact.upvoted = userUpvoted(fact);
-				return fact;
-			});
 		});
-	}
-	
-	function userUpvoted(fact) {
-		return !!fact.upvotes.find(function(o) { return o.user == $rootScope.authenticatedUser._id});
 	}
 	
 	function getIndexOfFact(factID) {
@@ -65,37 +58,40 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	}
 	
 	function setTimer() {
-		var now = new Date(),
-			endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 20, 0, 0);
+		const now = new Date(),
+			endTime = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 21, 20, 0, 0));
 			
 		if (endTime.getTime() - now.getTime() < 0) {
 			endTime.setDate(endTime.getDate() + 1);
 		}
 		
-		var seconds = (endTime.getTime() - now.getTime()) / 1000;
+		const seconds = (endTime.getTime() - now.getTime()) / 1000;
 		$scope.seconds = seconds;
 		$scope.$broadcast('timer-set-countdown-seconds', seconds);
 		$scope.$broadcast('timer-start');
 	}
 	
 	socket.on('fact', function(data) {
-		data.upvotes = [];
+		data.upvotes = 0;
 		$scope.facts.all.push(data);
 	});
 	
 	socket.on('fact:upvote', function(data) {
+		const factIndex = getIndexOfFact(data.fact._id);
+		$scope.facts.all[factIndex].upvotes++;
 		
-		var factIndex = getIndexOfFact(data.fact._id);
-		$scope.facts.all[factIndex].upvotes.push({user: data.user._id});
-		$scope.facts.all[factIndex].upvoted = true;
-		
-		console.log($scope.facts.all, data);
+		if (data.user._id == $rootScope.authenticatedUser._id) {
+			$scope.facts.all[factIndex].userUpvoted = true;
+		}
 	});
 	
 	socket.on('fact:unvote', function(data) {
-		var factIndex = getIndexOfFact(data.fact._id);
-		$scope.facts.all[factIndex].upvotes.splice($scope.facts.all[factIndex].upvotes.map(o => o.upvotes).indexOf(data.user._id), 1);
-		$scope.facts.all[factIndex].upvoted = false;
+		const factIndex = getIndexOfFact(data.fact._id);
+		$scope.facts.all[factIndex].upvotes--;
+		
+		if (data.user._id == $rootScope.authenticatedUser._id) {
+			$scope.facts.all[factIndex].userUpvoted = false;
+		}
 	});
 	
 }]);

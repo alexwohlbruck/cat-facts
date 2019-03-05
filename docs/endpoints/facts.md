@@ -15,7 +15,7 @@ Retrieve one or more `Facts`.
 | amount      | Number                 | 1       | 500   | Number of `Facts` to retrieve. If set to one, response will be a fact object. If many, response will be an array of `Fact`s |
 
 ##### Example request
-`GET /facts/random?animal=cat&amount=2`
+`GET /facts/random?animal_type=cat&amount=2`
 
 ##### Example response
 ```
@@ -93,18 +93,21 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
     {
       "_id": "5887e1d85c873e0011036889",
       "text": "Cats make about 100 different sounds. Dogs make only about 10.",
-      "upvotes": [
-        {
-          "user": "588e677c06ac2b00110e59ae"
-        },
-        {
-          "user": "588e6e8806ac2b00110e59c3"
+      type": "cat",
+      "user": {
+        "_id": "5c7da4bd70008708fb17c88f",
+        "name": {
+          "first": "Alex",
+          "last": "Wohlbruck"
         }
-      ]
+      },
+      "upvotes": 2,
+      "userUpvoted": true
     },
     {
       "_id": "5894af975cdc7400113ef7f9",
       "text": "The technical term for a cat’s hairball is a bezoar.",
+      "type": "cat",
       "user": {
         "_id": "587288f6e6f85e64ae1c7ef7",
         "name": {
@@ -112,17 +115,15 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
           "last": "Wohlbruck"
         }
       },
-      "upvotes": [
-        {
-          "user": "5872812829f7f43cacb0c4de"
-        }
-      ]
+      "upvotes": 1,
+      "userUpvoted": false
     }
   ],
   "me": [
 	{
       "_id": "5b1186a73bc85f0b2eb98c25",
       "text": "Horses cannot get cavities.",
+      "type": "cat",
       "used": true,
       "upvotes": [
         {

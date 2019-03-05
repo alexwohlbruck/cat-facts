@@ -2,11 +2,14 @@ const { semanticJoin } = require('../config/functions');
 
 module.exports = {
     welcomeMessage: (animalTypes = ['cat']) => {
-        animalTypes = animalTypes.map(animal => {
-            return (animal + 's').toUpperCase();
+        const animalsList = animalTypes.map(animal => {
+            return `${animal[0].toUpperCase()}${animal.slice(1)}s`;
+        });
+        const animalsListCapital = animalsList.map(animal => {
+            return animal.toUpperCase();
         });
         
-        return `Thanks for signing up for Cat Facts! You will now receive fun facts about ${semanticJoin(animalTypes)} every day! =^.^=`;
+        return `Thanks for signing up for ${semanticJoin(animalsList)} Facts! You will now receive fun facts about ${semanticJoin(animalsListCapital)} every day! =^.^=`;
     },
     unauthenticated: "Sign in first",
     unauthorized: "You aren't allowed to do that!",
