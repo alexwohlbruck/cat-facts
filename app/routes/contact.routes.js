@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const google = require('googleapis');
+const { google } = require('googleapis');
 const googleConfig = require.main.require('./app/config/google');
 const googleContacts = google.people('v1');
 
