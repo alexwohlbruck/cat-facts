@@ -141,9 +141,14 @@ router.post('/', isAuthenticated, async (req, res) => {
     
     const io = req.app.get('socketio');
     
+    let text = req.body.factText;
+    
+    text = text.charAt(0).toUpperCase() + text.slice(1); // Capitalize
+    text += text[text.length - 1] == "." ? "" : "."; // Add period to end
+    
     const fact = new Fact({
         user: req.user._id,
-        text: req.body.factText,
+        text,
         type: req.body.animalType
     });
 	    
