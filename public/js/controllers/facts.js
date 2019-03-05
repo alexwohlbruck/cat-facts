@@ -59,7 +59,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	
 	function setTimer() {
 		const now = new Date(),
-			endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 20, 0, 0);
+			endTime = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 21, 20, 0, 0));
 			
 		if (endTime.getTime() - now.getTime() < 0) {
 			endTime.setDate(endTime.getDate() + 1);
