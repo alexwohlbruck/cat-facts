@@ -43,6 +43,7 @@ router.get('/', async (req, res) => {
 	}},
 	projectUsers = {$project: {
 		text: 1,
+		type: 1,
 		user: { $arrayElemAt: ['$user', 0], }
 	}},
 	lookupUpvotes = {$lookup: {
@@ -55,20 +56,15 @@ router.get('/', async (req, res) => {
 		text: 1,
 		user: { _id: 1, name: 1 },
 		upvotes: { user: 1 },
-		used: 1
+		used: 1,
+		type: 1
 	}},
 	countUpvotes = [
-		{ $unwind: "$upvotes" },
-		{ $group: {
-			_id: "$_id",
-			text: { $first: "$text" },
-			user: { $first: "$user" },
-			used: { $first: "$used" },
-			upvotes: { $push: "$upvotes" },
-			userUpvoted: { $max: { $eq: ["$upvotes.user", req.user._id]}},
-		}},
-		{ $addFields: {
-			upvotes: { $size: "$upvotes" }
+		{$addFields: {
+			upvotes: { $size: "$upvotes" },
+			userUpvoted: {
+				$in: [ req.user._id, "$upvotes.user" ]
+			}
 		}},
 		{$sort: {
 			upvotes: -1
