@@ -1,6 +1,6 @@
 {
   "name": "cat-facts",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Daily cat facts!",
   "main": "server.js",
   "repository": "",
@@ -21,9 +21,9 @@
     "ejs": "^2.5.6",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
-    "googleapis": "^19.0.0",
+    "googleapis": "^37.2.0",
     "method-override": "^2.3.10",
-    "mongoose": "^4.13.11",
+    "mongoose": "^5.4.17",
     "mongoose-delete": "^0.4.0",
     "mongoose-simple-random": "^0.4.1",
     "morgan": "^1.9.1",
@@ -35,7 +35,7 @@
     "request-ip": "^2.0.2",
     "request-promise": "^4.2.2",
     "shortid": "^2.2.8",
-    "socket.io": "^1.4.8",
+    "socket.io": "^2.2.0",
     "twitter": "^1.7.1"
   },
   "devDependencies": {
