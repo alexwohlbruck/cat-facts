@@ -15,7 +15,7 @@ Retrieve one or more `Facts`.
 | amount      | Number                 | 1       | 500   | Number of `Facts` to retrieve. If set to one, response will be a fact object. If many, response will be an array of `Fact`s |
 
 ##### Example request
-`GET /facts/random?animal=cat&amount=2`
+`GET /facts/random?animal_type=cat&amount=2`
 
 ##### Example response
 ```
