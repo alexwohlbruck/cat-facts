@@ -72,7 +72,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	}
 	
 	socket.on('fact', function(data) {
-		data.upvotes = [];
+		data.upvotes = 0;
 		$scope.facts.all.push(data);
 	});
 	
