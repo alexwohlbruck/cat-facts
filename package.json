@@ -26,12 +26,12 @@
     "mongoose": "^4.13.11",
     "mongoose-delete": "^0.4.0",
     "mongoose-simple-random": "^0.4.1",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "node-ifttt-maker": "^0.1.2",
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "path": "^0.12.7",
-    "request": "^2.83.0",
+    "request": "^2.88.0",
     "request-ip": "^2.0.2",
     "request-promise": "^4.2.2",
     "shortid": "^2.2.8",
@@ -39,7 +39,7 @@
     "twitter": "^1.7.1"
   },
   "devDependencies": {
-    "nodemon": "^1.17.1",
-    "bower": "^1.8.2"
+    "bower": "^1.8.2",
+    "nodemon": "^1.18.10"
   }
 }

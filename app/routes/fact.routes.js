@@ -15,38 +15,77 @@ router.get('/', async (req, res) => {
 	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 	
 	// Define states of pipeline
-	const matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}, type: {$in: animalType}}},
-		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query', type: {$in: animalType}}},
-		lookupUsers = {$lookup: {
-			from: 'users',
-			localField: 'user',
-			foreignField: '_id',
-			as: 'user'
+	const matchAll = {
+		$match: {
+			used: false,
+			// source: 'user',
+			sendDate: {
+				$exists: false
+			},
+			type: {
+				$in: animalType
+			}
+		}
+	},
+	matchMe = {
+		$match: {
+			user: req.user ? req.user._id : 'Not authenticated - dummy query',
+			type: {
+				$in: animalType
+			}
+		}
+	},
+	lookupUsers = {$lookup: {
+		from: 'users',
+		localField: 'user',
+		foreignField: '_id',
+		as: 'user'
+	}},
+	projectUsers = {$project: {
+		text: 1,
+		type: 1,
+		user: { $arrayElemAt: ['$user', 0], }
+	}},
+	lookupUpvotes = {$lookup: {
+		from: 'upvotes',
+		localField: '_id',
+		foreignField: 'fact',
+		as: 'upvotes'
+	}},
+	projectUpvotes = {$project: {
+		text: 1,
+		user: { _id: 1, name: 1 },
+		upvotes: { user: 1 },
+		used: 1,
+		type: 1
+	}},
+	countUpvotes = [
+		{$addFields: {
+			upvotes: { $size: "$upvotes" },
+			userUpvoted: {
+				$in: [ req.user._id, "$upvotes.user" ]
+			}
 		}},
-		projectUsers = {$project: {
-			text: 1,
-			user: { $arrayElemAt: ['$user', 0], }
-		}},
-		lookupUpvotes = {$lookup: {
-			from: 'upvotes',
-			localField: '_id',
-			foreignField: 'fact',
-			as: 'upvotes'
-		}},
-		projectUpvotes = {$project: {
-			text: 1,
-			user: { _id: 1, name: 1 },
-			upvotes: { user: 1 },
-			used: 1
-		}};
+		{$sort: {
+			upvotes: -1
+		}}
+	];
 	
 	try {
 		const data = await Promise.props({
 			all: Fact.aggregate([
-				matchAll, lookupUsers, projectUsers, lookupUpvotes, projectUpvotes
+				matchAll,
+				lookupUsers,
+				projectUsers,
+				lookupUpvotes,
+				projectUpvotes,
+				...countUpvotes
 			]),
 			me: Fact.aggregate([
-				matchMe, lookupUpvotes, projectUpvotes
+				matchMe,
+				lookupUpvotes,
+				projectUpvotes,
+				...countUpvotes
 			])
 		});
 		
@@ -102,9 +141,14 @@ router.post('/', isAuthenticated, async (req, res) => {
     
     const io = req.app.get('socketio');
     
+    let text = req.body.factText;
+    
+    text = text.charAt(0).toUpperCase() + text.slice(1); // Capitalize
+    text += text[text.length - 1] == "." ? "" : "."; // Add period to end
+    
     const fact = new Fact({
         user: req.user._id,
-        text: req.body.factText,
+        text,
         type: req.body.animalType
     });
 	    

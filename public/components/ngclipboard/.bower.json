@@ -1,7 +1,8 @@
 {
   "name": "ngclipboard",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "homepage": "https://github.com/sachinchoolur/ngclipboard",
+  "license": "MIT",
   "authors": [
     "Sachin N <sachi77n@gmail.com>"
   ],
@@ -15,21 +16,21 @@
     "angularjs"
   ],
   "dependencies": {
-    "clipboard": "~1.5.5",
-    "angular": ">=1.2.0"
+    "clipboard": "^2.0.0",
+    "angular": "^1.2.0"
   },
   "ignore": [
     "README.md",
     "demo"
   ],
-  "_release": "1.1.1",
+  "_release": "2.0.0",
   "_resolution": {
     "type": "version",
-    "tag": "1.1.1",
-    "commit": "4870a07486c42be7cb0976a9a64005ef1f4dee60"
+    "tag": "2.0.0",
+    "commit": "cfe68908cbb62239e2c0eb5f483fc7ccfdac3fb7"
   },
   "_source": "https://github.com/sachinchoolur/ngclipboard.git",
-  "_target": "^1.1.1",
+  "_target": "^2.0.0",
   "_originalSource": "ngclipboard",
   "_direct": true
 }
