@@ -88,8 +88,14 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     };
     
     this.editRecipient = function(recipient) {
-        console.log(recipient);
         return $http.patch('/recipients/' + recipient._id, recipient);
+    };
+    
+    this.restoreRecipient = function(recipient, resubscriptions) {
+        console.log(resubscriptions);
+        return $http.patch('/recipients/' + recipient._id + '/restore', {
+            resubscriptions
+        });
     };
     
     this.deleteRecipients = function(options) {
@@ -99,10 +105,6 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
             method: 'DELETE',
             params: options
         });
-    };
-    
-    this.restoreRecipient = function(recipient) {
-        return $http.patch('/recipients/' + recipient._id);
     };
     
     this.getGoogleContacts = function({ animalType }) {

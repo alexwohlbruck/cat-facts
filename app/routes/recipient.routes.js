@@ -78,6 +78,30 @@ router.post('/', isAuthenticated, async (req, res) => {
 	}
 });
 
+// Restore recipient with new subscriptions
+router.patch('/:recipientId/restore', isAuthenticated, async (req, res) => {
+	
+	const resubscriptions = req.body.resubscriptions;
+	
+	try {
+		await Recipient.restore({_id: req.params.recipientId});
+		
+		const recipient = await Recipient.findOneAndUpdate({_id: req.params.recipientId}, {
+			$set: {
+				subscriptions: resubscriptions
+			}
+		}, {
+			new: true
+		});
+		console.log(recipient);
+		
+		return res.status(200).json(recipient);
+	}
+	catch (err) {
+		return res.status(err.status || 400).json(err);
+	}
+});
+
 router.patch('/:recipientId', isAuthenticated, async (req, res) => {
 
 	// TODO: only allow to edit recipient if user isAdmin or is addedBy them
