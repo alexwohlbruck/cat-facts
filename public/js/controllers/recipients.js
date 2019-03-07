@@ -44,6 +44,7 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
                     ...response.data.newRecipients,
                     ...response.data.updatedRecipients
                 ].sort((a, b) => {
+                    // Alphabetic sort
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
                 

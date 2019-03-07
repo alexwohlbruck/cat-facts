@@ -6,7 +6,7 @@
         
         <md-button
 	        class="md-icon-button"
-	        ng-click="editRecipient({recipient: selected[0]}, $event)"
+	        ng-click="editRecipient($event, selected[0])"
 	        ng-show="selected.length == 1">
         	
         	<md-icon class="material-icons">edit</md-icon>
@@ -14,7 +14,7 @@
         
         <md-button
 	        class="md-icon-button"
-	        ng-click="deleteRecipients({recipients: selected}, $event)">
+	        ng-click="deleteRecipients($event, selected)">
             
             <md-icon class="material-icons">delete</md-icon>
         </md-button>

@@ -31,7 +31,7 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.editRecipient = function({recipient}, ev) {
+            $scope.editRecipient = function(event, recipient) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipient = recipient;
@@ -47,7 +47,7 @@ app.directive('recipients', function() {
                     }],
                     templateUrl: 'views/partials/edit-recipient.html',
                     parent: angular.element(document.body),
-                    targetEvent: ev,
+                    targetEvent: event,
                     clickOutsideToClose: true,
                     fullscreen: $mdMedia('xs')
                 }).then(function(editedRecipient) {
@@ -60,7 +60,36 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.deleteRecipients = function({recipients, showPermanentDeleteOption}, ev) {
+            $scope.restoreRecipient = function(event, recipient) {
+                $mdDialog.show({
+                    controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
+                        $scope.recipient = recipient;
+                        $scope.resubscriptions = [];
+                        $scope.cancel = $mdDialog.hide;
+                        
+                        $scope.restore = function() {
+                            ApiService.restoreRecipient($scope.recipient, $scope.resubscriptions).then(function({data}) {
+                                $mdDialog.hide(data);
+                            }, function(err) {
+                                $mdDialog.cancel(err);
+                            });
+                        };
+                    }],
+                    templateUrl: 'views/partials/restore-recipient.html',
+                    parent: angular.element(document.body),
+                    targetEvent: event,
+                    clickOutsideToClose: true,
+                    fullscreen: $mdMedia('xs')
+                }).then(function(recipient) {
+                    const index = $scope.recipients.findIndex(r => r._id == recipient._id);
+                    $scope.recipients.splice(index, 1);
+                    $scope.recipients.push(recipient);
+                }, function(err) {
+                    $rootScope.toast(err);
+                });
+            };
+            
+            $scope.deleteRecipients = function(event, recipients) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipients = recipients;
@@ -80,7 +109,7 @@ app.directive('recipients', function() {
                     }],
                     templateUrl: 'views/partials/delete-recipients.html',
                     parent: angular.element(document.body),
-                    targetEvent: ev,
+                    targetEvent: event,
                     clickOutsideToClose: true,
                     fullscreen: $mdMedia('xs')
                 })
