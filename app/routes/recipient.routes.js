@@ -57,11 +57,31 @@ router.get('/me', isAuthenticated, async (req, res) => {
 // Add new recipient(s)
 router.post('/', isAuthenticated, async (req, res) => {
 	
+	// TODO: Sanitize phone number input on server side
+	
 	const requestedRecipients = req.body.recipients || [req.body.recipient];
 	const animalTypes = req.body.animalTypes;
 	
+	/* 
+	 * requestedRecipients: [{
+	 *     name: String,
+	 *     number: String
+	 * }],
+	 * animalTypes: [String<Animal>]
+	 */
+	
 	if (!requestedRecipients.length) {
 		return res.status(400).json({message: `No recipients provided`});
+	}
+	
+	// If recipient already exists but is 'deleted', restore recipient to
+	// the new user account
+	const existingRecipients = await Recipient.findDeleted({number: {
+		$in: requestedRecipients.map(r => r.number)
+	}});
+	
+	if (existingRecipients.length) {
+		existingRecipients.forEach(r => r.remove());
 	}
 	
 	try {
