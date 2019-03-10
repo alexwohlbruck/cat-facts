@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window',
-    function($scope, $rootScope, $http, $state, $window) {
+app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window', '$mdDialog', '$mdMedia',
+    function($scope, $rootScope, $http, $state, $window, $mdDialog, $mdMedia) {
     
     $scope.carousel = {
         catImages: []
@@ -17,6 +17,40 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
         } else {
             $window.location.href = '/auth/google';
         }
+    };
+    
+    $scope.openUnsubscribe = function() {
+        $mdDialog.show({
+            controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
+                
+                $scope.cancel = $mdDialog.hide;
+                $scope.$state = $state;
+                
+                $scope.unsubscribe = function() {
+                    // $scope.number
+                    
+                    // TODO: Validate number and send verification code
+            
+                    // TODO: Prompt user to enter verification code
+                    
+                    // TODO: Verify code
+                    
+                    $mdDialog.close();
+                };
+            }],
+            templateUrl: 'views/partials/unsubscribe.html',
+            parent: angular.element(document.body),
+            targetEvent: event,
+            clickOutsideToClose: true,
+            fullscreen: $mdMedia('xs')
+            
+        }).then(number => {
+            
+            $rootScope.toast("Succsesfully removed (***) ***-****");
+            
+        }, err => {
+            $rootScope.toast(err);
+        });
     };
     
     // Get some cat facts for tagline
