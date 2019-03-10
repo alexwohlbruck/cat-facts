@@ -101,12 +101,15 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Restore recipient with new subscriptions
 router.patch('/:recipientId/restore', isAuthenticated, async (req, res) => {
 	
+	const recipientId = req.params.recipientId;
 	const resubscriptions = req.body.resubscriptions;
 	
+	console.log(recipientId, resubscriptions);
+	
 	try {
-		await Recipient.restore({_id: req.params.recipientId});
+		await Recipient.restore({_id: recipientId});
 		
-		const recipient = await Recipient.findOneAndUpdate({_id: req.params.recipientId}, {
+		const recipient = await Recipient.findOneAndUpdate({_id: recipientId}, {
 			$set: {
 				subscriptions: resubscriptions
 			}
