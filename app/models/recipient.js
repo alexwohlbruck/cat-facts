@@ -19,7 +19,7 @@ const RecipientSchema = new Schema({
     addedBy: {type: Schema.Types.ObjectId, ref: 'User'},
     subscriptions: [{
         type: String,
-        enum: ['cat', 'dog', 'snail', 'horse'] // TODO: Move to constant definition
+        enum: strings.animalTypes // TODO: Move to constant definition
     }]
 }, {
     timestamps: true

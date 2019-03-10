@@ -86,13 +86,10 @@ router.get('/daily', async (req, res) => {
 		};
 	};
 	
-	// TODO: Define global list for animal types, use that to build this object
-	const facts = {
-		cat: getFactAndRecipients('cat'),
-		dog: getFactAndRecipients('dog'),
-		snail: getFactAndRecipients('snail'),
-		horse: getFactAndRecipients('horse')
-	};
+	const facts = {};
+	strings.animalTypes.forEach(animal => {
+		facts[animal] = getFactAndRecipients(animal);
+	});
 	
 	const result = await Promise.props(facts),
 		  dbMessages = [];

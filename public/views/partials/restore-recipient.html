@@ -9,8 +9,8 @@
         <md-input-container>
             <label>Animals</label>
             <md-select ng-model="resubscriptions" multiple>
-                <md-option ng-repeat="animal in ['cat', 'dog', 'snail', 'horse']" ng-value="animal">
-                    {{animal | capitalize}} facts
+                <md-option ng-repeat="animal in animals" ng-value="animal.name">
+                    {{animal.name | capitalize}} facts
                 </md-option>
             </md-select>
         </md-input-container>
