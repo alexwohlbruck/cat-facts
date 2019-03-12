@@ -5,7 +5,8 @@ app.directive('message', function() {
     return {
         restrict: 'E',
         scope: {
-            message: "="
+            message: "=",
+            stale: "="
         },
         templateUrl: '/views/directives/message.html'
     };

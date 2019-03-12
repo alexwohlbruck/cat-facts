@@ -5,4 +5,9 @@
             <span>{{message.text}}</span>
         </div>
     </div>
+    <span
+        class="message-timestamp"
+        am-time-ago="message.createdAt"
+        ng-if="stale">
+    </span>
 </div>

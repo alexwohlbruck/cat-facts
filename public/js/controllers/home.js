@@ -33,7 +33,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
             
                     // TODO: Prompt user to enter verification code
                     
-                    // TODO: Verify code
+                    // TODO: Verify code and phone to user profile
                     
                     $mdDialog.close();
                 };
@@ -59,7 +59,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
         url: 'https://cat-fact-alexwohlbruck.c9users.io/fact'
     }).then(function(response) {
         $scope.fact = response.data.text;
-    })
+    });
         
     // Get background images from Imgur
     $http({
