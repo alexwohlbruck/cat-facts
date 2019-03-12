@@ -51,6 +51,10 @@ message .row-reverse .message-bubble {
 	background-color: #2196f3 !important;
 	color: #fff;
 }
+message .message-timestamp {
+    margin-right: 60px;
+    margin-top: 5px;
+}
 
 recipients tr.deleted {
 	opacity: .5;

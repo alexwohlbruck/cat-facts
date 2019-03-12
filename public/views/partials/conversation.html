@@ -14,7 +14,11 @@
     
     <md-dialog-content class="padding-10-5 min-width-350" scroll-glue>
         <div flex layout="column" layout-align="end stretch" class="padding-10-5 overflow-scroll overflow-x-hidden">
-            <message ng-repeat="message in messages" message="message"></message>
+            <message
+                ng-repeat="(index, message) in messages | orderBy: 'createdAt'"
+                message="message"
+                stale="isStale(messages[index], messages[index - 1])">
+            </message>
             <p ng-if="messages.length == 0" layout="column" layout-align="start center">There aren't any messages yet :(</p>
         </div>
     </md-dialog-content>

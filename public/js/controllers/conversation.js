@@ -20,4 +20,32 @@ app.controller('ConversationCtrl', ['$scope', 'ApiService', 'data', 'socket', '$
     $scope.closeConversation = function() {
         $mdDialog.hide();
     };
+    
+    // Determine if the message was sent within a short period of the previous one
+    $scope.isStale = function(currentMessage, prevMessage) {
+        
+        if (!prevMessage) return true;
+        
+        const currentDate = new Date(currentMessage.createdAt);
+        const prevDate = new Date(prevMessage.createdAt);
+        
+        const deltaMillis = new Date() - currentDate;
+        let scale,
+            scaleMinutes = (1000 * 60),
+            scaleHours = scaleMinutes * 60,
+            scaleDays = scaleHours * 24,
+            scaleYears = scaleDays * 365;
+        
+        if (deltaMillis < scaleHours)
+            // less than an hour ago
+            scale = scaleMinutes;
+        else if (deltaMillis < scaleDays)
+            // less than a day ago
+            scale = scaleHours;
+        else if (deltaMillis < scaleYears)
+            // less than a year ago
+            scale = scaleDays;
+        
+        return ((currentDate - prevDate) / scale) < 1;
+    };
 }]);

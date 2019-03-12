@@ -1,4 +1,4 @@
-/* global angular */
+/* global angular, navigator */
 var app = angular.module('catfacts', [
 	'ngMaterial',
 	'ui.router',
@@ -8,7 +8,8 @@ var app = angular.module('catfacts', [
 	'btford.socket-io',
 	'luegg.directives',
 	'ngclipboard',
-	'cfp.hotkeys'
+	'cfp.hotkeys',
+	'angularMoment'
 ]);
 
 app.provider('animal', function() {
@@ -102,14 +103,16 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.enableBrowserColor();
 }]);
 
-app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', 'AuthService', '$mdMedia',
-	function($rootScope, $state, $window, $location, $mdToast, ApiService, AuthService, $mdMedia) {
+app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', 'AuthService', '$mdMedia', 'amMoment',
+	function($rootScope, $state, $window, $location, $mdToast, ApiService, AuthService, $mdMedia, amMoment) {
 	
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
 	$rootScope.$state = $state;
 	$window.name = 'cat-facts-base-window';
 	$window.ga('create', 'UA-88600627-2', 'auto'); // Start Google Analytics
+	
+	amMoment.changeLocale(navigator.languages ? navigator.languages[0] : navigator.language);
 	
 	$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 		
