@@ -2,7 +2,7 @@
 var app = angular.module('catfacts');
 
 app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSidenav', '$mdToast', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'ApiService', 'animal', 'hotkeys',
-	function($scope, $rootScope, $state, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, animal, hotkeys) {
+	function($scope, $rootScope, $state, $window, $mdSidenav, $mdToast, $mdDialog, $mdMedia, $mdBottomSheet, ApiService, animalProvider, hotkeys) {
 	
 	$scope.sideNav = {
 		left: {
@@ -13,7 +13,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSid
 	};
 	
 	$scope.ApiService = ApiService;
-	$scope.animals = animal;
+	$scope.animals = animalProvider;
 	
 	$rootScope.goBack = function() {
 		$window.history.back();

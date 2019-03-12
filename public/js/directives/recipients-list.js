@@ -13,11 +13,13 @@ app.directive('recipients', function() {
             selected: '='
         },
         templateUrl: '/views/directives/recipients-list.html',
-        controller: ['$scope', '$rootScope', '$mdDialog', '$mdMedia', 'ApiService',
-            function($scope, $rootScope, $mdDialog, $mdMedia, ApiService) {
+        controller: ['$scope', '$rootScope', '$mdDialog', '$mdMedia', 'ApiService', 'animal',
+            function($scope, $rootScope, $mdDialog, $mdMedia, ApiService, animalProvider) {
             
             $scope.$mdMedia = $mdMedia;
             $scope.selected = [];
+            
+            $scope.animals = animalProvider;
             
             $scope.openConversation = function(event, recipient) {
                 $mdDialog.show({

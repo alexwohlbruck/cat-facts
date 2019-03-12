@@ -66,6 +66,9 @@ recipients tr.deleted {
 .subscription-icon img {
 	width: 30px;
 }
+.subscription-icon.hidden {
+	visibility: hidden;
+}
 
 .quick-fact .fact {
     max-height: 55vh !important;
