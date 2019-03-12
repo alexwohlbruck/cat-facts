@@ -1,25 +1,56 @@
 <md-dialog aria-label="Conversation">
     <md-toolbar md-whiteframe="1">
-        <div class="md-toolbar-tools padding-11-15" layout="row">
-            <md-button class="md-icon-button" aria-label="Back" ng-click="closeConversation()">
+        <div
+            class="md-toolbar-tools padding-11-15"
+            layout="row">
+            
+            <md-button
+                class="md-icon-button"
+                aria-label="Back"
+                ng-click="closeConversation()">
+                
                 <md-icon class="material-icons">arrow_back</md-icon>
             </md-button>
             
             <div layout="column" layout-align="start left">
-                <h4 class="md-subhead margin-0">Catversation<span ng-if="data.recipient.name"> - {{data.recipient.name}}</span></h4>
-                <h5 class="md-caption margin-0 line-height-10">{{data.recipient.number | tel}}</h5>
+                <h4 class="md-subhead margin-0">
+                    Catversation<span ng-if="data.recipient.name"> - {{data.recipient.name}}</span>
+                </h4>
+                
+                <h5 class="md-caption margin-0 line-height-10">
+                    {{data.recipient.number | tel}}
+                </h5>
             </div>
         </div>
     </md-toolbar>
     
-    <md-dialog-content class="padding-10-5 min-width-350" scroll-glue>
-        <div flex layout="column" layout-align="end stretch" class="padding-10-5 overflow-scroll overflow-x-hidden">
+    <md-dialog-content
+        class="padding-10-5 min-width-350 max-width-850"
+        scroll-glue>
+        
+        <div
+            flex layout="column"
+            layout-align="end stretch"
+            class="padding-10-5 overflow-scroll overflow-x-hidden">
+            
+            <md-progress-circular
+                md-mode="indeterminate"
+                style="margin: 0 auto"
+                ng-if="loading">
+            </md-progress-circular>
+            
             <message
                 ng-repeat="(index, message) in messages | orderBy: 'createdAt'"
                 message="message"
                 stale="isStale(messages[index], messages[index - 1])">
             </message>
-            <p ng-if="messages.length == 0" layout="column" layout-align="start center">There aren't any messages yet :(</p>
+        
+            <p ng-if="messages.length == 0"
+               layout="column"
+               layout-align="start center">
+                
+                There aren't any messages yet :(
+            </p>
         </div>
     </md-dialog-content>
 </md-dialog>

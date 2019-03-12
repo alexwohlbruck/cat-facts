@@ -5,6 +5,7 @@ app.controller('ConversationCtrl', ['$scope', 'ApiService', 'data', 'socket', '$
     function($scope, ApiService, ConversationData, socket, $mdDialog) {
         
     $scope.data = ConversationData;
+    $scope.loading = true;
     
     socket.on('message', function(data) {
         console.log(data, ConversationData);
@@ -15,6 +16,7 @@ app.controller('ConversationCtrl', ['$scope', 'ApiService', 'data', 'socket', '$
         
     ApiService.getConversation(ConversationData.recipient.number).then(function(response) {
         $scope.messages = response.data;
+        $scope.loading = false;
     });
     
     $scope.closeConversation = function() {
@@ -46,6 +48,6 @@ app.controller('ConversationCtrl', ['$scope', 'ApiService', 'data', 'socket', '$
             // less than a year ago
             scale = scaleDays;
         
-        return ((currentDate - prevDate) / scale) < 1;
+        return ((currentDate - prevDate) / scale) >= 1;
     };
 }]);
