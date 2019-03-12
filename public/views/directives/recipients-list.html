@@ -49,11 +49,12 @@
 				<td md-cell>
 					<md-button
 						class="md-icon-button subscription-icon"
-						ng-repeat="animal in recipient.subscriptions">
+						ng-repeat="animal in animals"
+						ng-class="{'hidden': !recipient.subscriptions.includes(animal.name)}">
 						
-						<img ng-src="{{'/img/logo/animals/' + animal + '.png'}}"/>
+						<img ng-src="{{'/img/logo/animals/' + animal.name + '.png'}}"/>
 						
-						<md-tooltip>Subscribed to {{animal}} facts</md-tooltip>
+						<md-tooltip>Subscribed to {{animal.name}} facts</md-tooltip>
 					</md-button>
 				</td>
 				<td md-cell>{{recipient.number | tel}}</td>
