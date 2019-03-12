@@ -48,15 +48,16 @@ message .message-bubble {
     max-width: 70%;
 }
 message .row-reverse .message-bubble {
-	background-color: #2196f3 !important;
 	color: #fff;
 }
 message .message-timestamp {
-    margin-right: 60px;
+    width: 100%;
+    text-align: center;
     margin-top: 5px;
+    margin-bottom: 8px;
 }
 
-recipients tr.deleted {
+recipients .deleted {
 	opacity: .5;
 }
 
@@ -92,6 +93,7 @@ recipients tr.deleted {
 .margin-sides-0 { margin-left: 0px; margin-right: 0px; }
 .margin-sides-10 { margin-left: 10px; margin-right: 10px; }
 .min-width-350 { min-width: 350px !important; }
+.max-width-850 { max-width: 850px !important; }
 .width-40 { width: 40px; }
 
 .avatar {
