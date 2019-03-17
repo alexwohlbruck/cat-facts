@@ -23,7 +23,7 @@ app.controller('ConversationCtrl', ['$scope', 'ApiService', 'data', 'socket', '$
         $mdDialog.hide();
     };
     
-    // Determine if the message was sent within a short period of the previous one
+    // Determine if the message was sent within a relatively short period before the previous one
     $scope.isStale = function(currentMessage, prevMessage) {
         
         if (!prevMessage) return true;
