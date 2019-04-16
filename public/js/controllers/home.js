@@ -1,8 +1,8 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window', '$mdDialog', '$mdMedia',
-    function($scope, $rootScope, $http, $state, $window, $mdDialog, $mdMedia) {
+app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window', '$mdDialog', '$mdMedia', 'ApiService',
+    function($scope, $rootScope, $http, $state, $window, $mdDialog, $mdMedia, ApiService) {
     
     $scope.carousel = {
         catImages: []
@@ -25,17 +25,30 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
                 
                 $scope.cancel = $mdDialog.hide;
                 $scope.$state = $state;
+                $scope.showCodeEntry = false;
+                
+                $scope.verifyPhone = function() {
+                    
+                    ApiService.verifyPhone($scope.number).then(() => {
+                        $scope.showCodeEntry = true;
+                    }, err => {
+                        $rootScope.toast({
+                            message: err.data.message ||
+                                "Error sending verification code"
+                        });
+                    });
+                };
                 
                 $scope.unsubscribe = function() {
-                    // $scope.number
                     
-                    // TODO: Validate number and send verification code
-            
-                    // TODO: Prompt user to enter verification code
-                    
-                    // TODO: Verify code and phone to user profile
-                    
-                    $mdDialog.close();
+                    ApiService.unsubscribe($scope.code).then(res => {
+                        $rootScope.toast({message: res.data.message});
+                        $mdDialog.close();
+                    }, err => {
+                        $rootScope.toast({
+                            message: err.data.message || "Error unsubscribing"
+                        });
+                    });
                 };
             }],
             templateUrl: 'views/partials/unsubscribe.html',
@@ -43,13 +56,6 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
             targetEvent: event,
             clickOutsideToClose: true,
             fullscreen: $mdMedia('xs')
-            
-        }).then(number => {
-            
-            $rootScope.toast("Succsesfully removed (***) ***-****");
-            
-        }, err => {
-            $rootScope.toast(err);
         });
     };
     

@@ -4,16 +4,27 @@
             Unsubscribe from {{$state.params.animal}} facts
         </h2>
         
-        <p>Enter the phone number you'd like to remove.</p>
+        <p>
+            {{
+                showCodeEntry ?
+                "Okay, we've send a verification code to your phone" :
+                "Enter the phone number you'd like to remove."
+            }}
+        </p>
         
-        <md-input-container class="no-space">
+        <md-input-container class="no-space" ng-hide="showCodeEntry">
             <label>Phone number</label>
             <input ng-model="number">
+        </md-input-container>
+        
+        <md-input-container class="no-space" ng-show="showCodeEntry">
+            <label>Enter verification code</label>
+            <input ng-model="code">
         </md-input-container>
     </md-dialog-content>
     
     <md-dialog-actions>
         <md-button ng-click="cancel()">Cancel</md-button>
-        <md-button ng-click="unsubscribe()" class="md-primary">Unsubscribe</md-button>
+        <md-button ng-click="showCodeEntry ? unsubscribe() : verifyPhone()" class="md-primary">Unsubscribe</md-button>
     </md-dialog-actions>
 </md-dialog>
