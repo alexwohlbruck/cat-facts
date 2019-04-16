@@ -7,6 +7,7 @@ const IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 const Recipient = require.main.require('./app/models/recipient');
 const Message = require.main.require('./app/models/message');
+const VerificationCode = require.main.require('./app/models/verification-code');
 
 
 // Get all recipients
@@ -145,6 +146,36 @@ router.patch('/:recipientId', isAuthenticated, async (req, res) => {
 	}
 });
 
+// Unsubscribe
+router.delete('/me', isAuthenticated, async (req, res) => {
+	
+	if (!req.query.verificationCode) {
+        return res.status(403).json({
+            message: strings.noVerificationCode
+        });
+    }
+    
+    const submittedCode = req.query.verificationCode.trim();
+    const verificationCode = await VerificationCode.findOne({code: submittedCode});
+    const number = verificationCode.data;
+	
+    if (!verificationCode || !verificationCode.user.equals(req.user._id)) {
+        return res.status(403).json({
+            message: strings.invalidVerificationCode
+        });
+    }
+    
+    await Recipient.delete({ number });
+    await VerificationCode.findByIdAndRemove(verificationCode._id);
+    
+    const formattedPhone = `(${number.substr(0,3)}) ${number.substr(3,3)}-${number.substr(6,4)}`;
+    
+    return res.status(200).json({
+    	message: `Successfully unsubscribed ${formattedPhone}`
+    });	
+});
+
+// Remove one or more recipients
 router.delete('/', isAuthenticated, async (req, res) => {
 	
 	const query = {_id: {$in: req.query.recipients}};

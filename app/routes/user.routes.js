@@ -67,7 +67,11 @@ router.put('/me/profile/phone', isAuthenticated, async (req, res) => {
     const submittedCode = req.body.verificationCode.trim();
     const verificationCode = await VerificationCode.findOne({code: submittedCode});
     
-    if (!verificationCode) return res.status(403).json({message: strings.invalidVerificationCode});
+    if (!verificationCode || verificationCode.user != req.user._id) {
+        return res.status(403).json({
+            message: strings.invalidVerificationCode
+        });
+    }
     
     const updatedUser = await User.findByIdAndUpdate(req.user._id, {$set: {
         phone: verificationCode.data

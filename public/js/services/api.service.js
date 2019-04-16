@@ -14,7 +14,11 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     };
     
     this.verifyPhone = function(phone) {
-        return $http.post('/users/me/profile/phone/verification-code', {phone});
+        return $http.post('/users/me/profile/phone/verification-code', { phone });
+    };
+    
+    this.unsubscribe = function(verificationCode) {
+        return $http.delete('/recipients/me', {params: { verificationCode }});
     };
     
     this.updatePhone = function(verificationCode) {
@@ -100,6 +104,7 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     
     this.deleteRecipients = function(options) {
         // options: { recipients[], permanent (bool) }
+        
         return $http({
             url: '/recipients',
             method: 'DELETE',
