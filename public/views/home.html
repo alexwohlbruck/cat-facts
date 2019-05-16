@@ -3,10 +3,24 @@
     <span id="app-slogan" class="md-headline">{{fact}}</span>
     <div id="call-to-action" layout="row">
         <md-button
-            ng-click="openApp()"
+            ng-click="signIn()"
             class="md-button md-raised md-primary">
             
-            Get Started
+            Sign in
+        </md-button>
+        
+        <md-button
+            ng-click="openApp()"
+            class="md-button md-raised md-accent">
+            
+            Open App
+        </md-button>
+        
+        <md-button
+            ng-click="openUnsubscribe()"
+            class="md-button md-raised md-accent">
+            
+            Unsubscribe
         </md-button>
     </div>
 </div>

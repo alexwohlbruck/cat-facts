@@ -1,7 +1,7 @@
 <md-dialog>
     <md-dialog-content class="md-dialog-content">
         <h2 class="md-title">
-            Remove {{recipients.length}} {{recipients.length == 1 ? 'recipient' : 'recipients'}}?
+            Archive {{recipients.length == 1 ? recipients[0].name : recipients.length + ' recipients'}}?
         </h2>
         
         <p>{{recipients.length == 1 ? 'This person' : 'These people'}} will no longer recieve facts</p>

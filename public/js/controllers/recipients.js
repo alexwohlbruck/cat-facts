@@ -27,36 +27,37 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
         const name = $scope.form.name,
               number = $scope.form.number;
         
-        if (name && number && $scope.validatePhone(number)) {
+        if (!name || !number || !$scope.validatePhone(number)) {
+            return $rootScope.toast({message: "Invalid name or number"});
+        }
+        
+        ApiService.addRecipient({
+            recipient: {
+                name,
+                number: $scope.validatePhone(number, true)
+            },
+            animalTypes: [$state.params.animal]
+        })
+        
+        .then(response => {
             
-            ApiService.addRecipient({
-                recipient: {
-                    name,
-                    number: $scope.validatePhone(number, true)
-                },
-                animalTypes: [$state.params.animal]
-            })
+            // Remove this number from the list (if archived)
+            $scope.recipients = $scope.recipients.filter(r => r.number != number);
             
-            .then(response => {
-                
-                $scope.recipients = [
-                    ...$scope.recipients,
-                    ...response.data.newRecipients,
-                    ...response.data.updatedRecipients
-                ].sort((a, b) => {
-                    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-                });
-                
-                $rootScope.toast({message: response.data.message});
-                $scope.form = null;
-            }, err => {
-                console.error(err);
-                $rootScope.toast({message: err.data.errors[Object.keys(err.data.errors)[0]].message || err.data.message});
+            $scope.recipients = [
+                ...$scope.recipients,
+                ...response.data.newRecipients,
+                ...response.data.updatedRecipients
+            ].sort((a, b) => {
+                // Alphabetic sort
+                return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
             });
             
-        } else {
-            $rootScope.toast({message: "Invalid name or number"});
-        }
+            $rootScope.toast({message: response.data.message});
+            $scope.form = null;
+        }, err => {
+            $rootScope.toast({message: err.data.errors[Object.keys(err.data.errors)[0]].message || err.data.message});
+        });
     };
     
     $scope.openImportContacts = contacts => {
@@ -99,8 +100,6 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
             
             ApiService.addRecipients({recipients, animalTypes: [$state.params.animal]}).then(response => {
                 
-                console.log(response.data);
-                
                 $scope.recipients = [
                     ...$scope.recipients,
                     ...response.data.newRecipients,
@@ -108,8 +107,6 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
                 ].sort((a, b) => {
                     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
                 });
-                
-                console.log($scope.recipients);
                 
                 $rootScope.toast({message: response.data.message});
             }, err => {
@@ -119,7 +116,19 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
     };
     
     function getMyRecipients() {
-        $scope.promise = ApiService.getMyRecipients({animalType: $state.params.animal}).then(response => {
+        if (!$rootScope.authenticatedUser) {
+            $rootScope.toast({
+                message: "Sign in to access this page",
+                actionText: "Sign in",
+                action: function() {
+                    window.location.replace('/auth');
+                }
+            });
+        }
+        
+        $scope.promise = ApiService.getMyRecipients({
+            animalType: $state.params.animal
+        }).then(response => {
             $scope.recipients = response.data;
         }, err => {
             $rootScope.toast({message: err.data.message});

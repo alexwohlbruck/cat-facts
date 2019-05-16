@@ -13,11 +13,13 @@ app.directive('recipients', function() {
             selected: '='
         },
         templateUrl: '/views/directives/recipients-list.html',
-        controller: ['$scope', '$rootScope', '$mdDialog', '$mdMedia', 'ApiService',
-            function($scope, $rootScope, $mdDialog, $mdMedia, ApiService) {
+        controller: ['$scope', '$rootScope', '$mdDialog', '$mdMedia', 'ApiService', 'animal',
+            function($scope, $rootScope, $mdDialog, $mdMedia, ApiService, animalProvider) {
             
             $scope.$mdMedia = $mdMedia;
             $scope.selected = [];
+            
+            $scope.animals = animalProvider;
             
             $scope.openConversation = function(event, recipient) {
                 $mdDialog.show({
@@ -31,9 +33,10 @@ app.directive('recipients', function() {
                 });
             };
             
-            $scope.editRecipient = function({recipient}, ev) {
+            $scope.editRecipient = function(event, recipient) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
+                        
                         $scope.recipient = recipient;
                         $scope.cancel = $mdDialog.hide;
                         
@@ -47,20 +50,58 @@ app.directive('recipients', function() {
                     }],
                     templateUrl: 'views/partials/edit-recipient.html',
                     parent: angular.element(document.body),
-                    targetEvent: ev,
+                    targetEvent: event,
                     clickOutsideToClose: true,
                     fullscreen: $mdMedia('xs')
-                }).then(function(editedRecipient) {
+                    
+                }).then(editedRecipient => {
+                    
                     if (editedRecipient) {
                         $rootScope.toast({message: 'Recipient updated'});
                         $scope.selected = [];
                     }
-                }, function(err) {
+                }, err => {
                     $rootScope.toast(err);
                 });
             };
             
-            $scope.deleteRecipients = function({recipients, showPermanentDeleteOption}, ev) {
+            $scope.restoreRecipient = function(event, recipient) {
+                $mdDialog.show({
+                    controller: ['$scope', '$mdDialog', 'animal',
+                        function($scope, $mdDialog, animalProvider) {
+                            
+                        $scope.animals = animalProvider;
+                        $scope.recipient = recipient;
+                        $scope.resubscriptions = [];
+                        $scope.cancel = $mdDialog.hide;
+                        
+                        $scope.restore = function() {
+                            ApiService.restoreRecipient($scope.recipient, $scope.resubscriptions).then(function({data}) {
+                                $mdDialog.hide(data);
+                            }, function(err) {
+                                $mdDialog.cancel(err);
+                            });
+                        };
+                    }],
+                    templateUrl: 'views/partials/restore-recipient.html',
+                    parent: angular.element(document.body),
+                    targetEvent: event,
+                    clickOutsideToClose: true,
+                    fullscreen: $mdMedia('xs')
+                    
+                }).then(recipient => {
+                    
+                    const index = $scope.recipients.findIndex(r => r._id == recipient._id);
+                    
+                    $scope.recipients.splice(index, 1);
+                    $scope.recipients.push(recipient);
+                    
+                }, err => {
+                    $rootScope.toast(err);
+                });
+            };
+            
+            $scope.deleteRecipients = function(event, recipients) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
                         $scope.recipients = recipients;
@@ -69,6 +110,7 @@ app.directive('recipients', function() {
                         
                         $scope.delete = function() {
                             $mdDialog.hide({
+                                permanent: $scope.permanent,
                                 recipients: recipients.map(o => o._id),
                                 soft: !$scope.permanent
                             });
@@ -80,25 +122,29 @@ app.directive('recipients', function() {
                     }],
                     templateUrl: 'views/partials/delete-recipients.html',
                     parent: angular.element(document.body),
-                    targetEvent: ev,
+                    targetEvent: event,
                     clickOutsideToClose: true,
                     fullscreen: $mdMedia('xs')
                 })
+                
                 .then(data => {
                     
                     ApiService.deleteRecipients(data).then(response => {
                         
-                        // FIXME: When trying to re-add a deleted recipient, DB throws dup index error
-                        
-                        // TODO: If permanent delete is selected, remove recipient from list
-                        
-                        $scope.recipients = $scope.recipients.map(recipient => {
+                        if (data.permanent) {
+                            $scope.recipients = $scope.recipients.filter(r => !r.deleted);
+                        }
+                        else {
+                            $scope.recipients = $scope.recipients.map(recipient => {
+                            
                             if (data.recipients.includes(recipient._id)) {
                                 recipient.deleted = true;
                             }
+                            
                             return recipient;
                         });
-                        
+                        }
+                            
                         $scope.selected = [];
                         $rootScope.toast({message: "Recipients deleted"});
                         

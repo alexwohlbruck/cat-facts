@@ -7,6 +7,7 @@ const IFTTTService = require.main.require('./app/services/ifttt.service.js');
 
 const Recipient = require.main.require('./app/models/recipient');
 const Message = require.main.require('./app/models/message');
+const VerificationCode = require.main.require('./app/models/verification-code');
 
 
 // Get all recipients
@@ -57,11 +58,31 @@ router.get('/me', isAuthenticated, async (req, res) => {
 // Add new recipient(s)
 router.post('/', isAuthenticated, async (req, res) => {
 	
+	// TODO: Sanitize phone number input on server side
+	
 	const requestedRecipients = req.body.recipients || [req.body.recipient];
 	const animalTypes = req.body.animalTypes;
 	
+	/* 
+	 * requestedRecipients: [{
+	 *     name: String,
+	 *     number: String
+	 * }],
+	 * animalTypes: [String<Animal>]
+	 */
+	
 	if (!requestedRecipients.length) {
 		return res.status(400).json({message: `No recipients provided`});
+	}
+	
+	// If recipient already exists but is 'deleted', restore recipient to
+	// the new user account
+	const existingRecipients = await Recipient.findDeleted({number: {
+		$in: requestedRecipients.map(r => r.number)
+	}});
+	
+	if (existingRecipients.length) {
+		existingRecipients.forEach(r => r.remove());
 	}
 	
 	try {
@@ -72,6 +93,33 @@ router.post('/', isAuthenticated, async (req, res) => {
 		});
 		
 		return res.status(200).json(results);
+	}
+	catch (err) {
+		return res.status(err.status || 400).json(err);
+	}
+});
+
+// Restore recipient with new subscriptions
+router.patch('/:recipientId/restore', isAuthenticated, async (req, res) => {
+	
+	const recipientId = req.params.recipientId;
+	const resubscriptions = req.body.resubscriptions;
+	
+	console.log(recipientId, resubscriptions);
+	
+	try {
+		await Recipient.restore({_id: recipientId});
+		
+		const recipient = await Recipient.findOneAndUpdate({_id: recipientId}, {
+			$set: {
+				subscriptions: resubscriptions
+			}
+		}, {
+			new: true
+		});
+		console.log(recipient);
+		
+		return res.status(200).json(recipient);
 	}
 	catch (err) {
 		return res.status(err.status || 400).json(err);
@@ -98,6 +146,36 @@ router.patch('/:recipientId', isAuthenticated, async (req, res) => {
 	}
 });
 
+// Unsubscribe
+router.delete('/me', isAuthenticated, async (req, res) => {
+	
+	if (!req.query.verificationCode) {
+        return res.status(403).json({
+            message: strings.noVerificationCode
+        });
+    }
+    
+    const submittedCode = req.query.verificationCode.trim();
+    const verificationCode = await VerificationCode.findOne({code: submittedCode});
+    const number = verificationCode ? verificationCode.data : undefined;
+	
+    if (!verificationCode || !verificationCode.user.equals(req.user._id)) {
+        return res.status(403).json({
+            message: strings.invalidVerificationCode
+        });
+    }
+    
+    await Recipient.delete({ number });
+    await VerificationCode.findByIdAndRemove(verificationCode._id);
+    
+    const formattedPhone = `(${number.substr(0,3)}) ${number.substr(3,3)}-${number.substr(6,4)}`;
+    
+    return res.status(200).json({
+    	message: `Successfully unsubscribed ${formattedPhone}`
+    });	
+});
+
+// Remove one or more recipients
 router.delete('/', isAuthenticated, async (req, res) => {
 	
 	const query = {_id: {$in: req.query.recipients}};

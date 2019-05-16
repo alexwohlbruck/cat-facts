@@ -1,0 +1,23 @@
+<md-dialog>
+    <md-dialog-content class="md-dialog-content">
+        <h2 class="md-title">
+            Restore {{recipient.name}}?
+        </h2>
+        
+        <p>Select animals that this person will be resubscribed to:</p>
+      
+        <md-input-container>
+            <label>Animals</label>
+            <md-select ng-model="resubscriptions" multiple>
+                <md-option ng-repeat="animal in animals" ng-value="animal.name">
+                    {{animal.name | capitalize}} facts
+                </md-option>
+            </md-select>
+        </md-input-container>
+    </md-dialog-content>
+    
+    <md-dialog-actions>
+        <md-button ng-click="cancel()">Cancel</md-button>
+        <md-button ng-click="restore()" class="md-primary">Restore</md-button>
+    </md-dialog-actions>
+</md-dialog>

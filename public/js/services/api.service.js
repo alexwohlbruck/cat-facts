@@ -14,7 +14,11 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     };
     
     this.verifyPhone = function(phone) {
-        return $http.post('/users/me/profile/phone/verification-code', {phone});
+        return $http.post('/users/me/profile/phone/verification-code', { phone });
+    };
+    
+    this.unsubscribe = function(verificationCode) {
+        return $http.delete('/recipients/me', {params: { verificationCode }});
     };
     
     this.updatePhone = function(verificationCode) {
@@ -88,21 +92,24 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
     };
     
     this.editRecipient = function(recipient) {
-        console.log(recipient);
         return $http.patch('/recipients/' + recipient._id, recipient);
+    };
+    
+    this.restoreRecipient = function(recipient, resubscriptions) {
+        console.log(resubscriptions);
+        return $http.patch('/recipients/' + recipient._id + '/restore', {
+            resubscriptions
+        });
     };
     
     this.deleteRecipients = function(options) {
         // options: { recipients[], permanent (bool) }
+        
         return $http({
             url: '/recipients',
             method: 'DELETE',
             params: options
         });
-    };
-    
-    this.restoreRecipient = function(recipient) {
-        return $http.patch('/recipients/' + recipient._id);
     };
     
     this.getGoogleContacts = function({ animalType }) {
