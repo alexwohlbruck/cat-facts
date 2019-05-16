@@ -19,7 +19,7 @@ const RecipientSchema = new Schema({
     addedBy: {type: Schema.Types.ObjectId, ref: 'User'},
     subscriptions: [{
         type: String,
-        enum: ['cat', 'dog', 'snail', 'horse']
+        enum: strings.animalTypes // TODO: Move to constant definition
     }]
 }, {
     timestamps: true
@@ -165,8 +165,8 @@ RecipientSchema.statics.addRecipients = async function ({authenticatedUser, requ
 
 RecipientSchema.path('number').validate(function(number, done) {
     this.model('Recipient').count({number: number}, function(err, count) {
-        if (err) return done(err);
-        done(!count);
+        if (err) return err;
+        return !count;
     });
 }, strings.recipient.exists);
 

@@ -1,7 +1,28 @@
-<div layout="column" layout-align="center {{message.type == 'outgoing' ? 'end' : 'start'}}" class="margin-top-2">
-    <div layout="row" layout-align="start center" ng-class="{'row-reverse': message.type == 'outgoing'}">
+<div
+    layout="column"
+    layout-align="center {{message.type == 'outgoing' ? 'end' : 'start'}}"
+    class="margin-top-2">
+    
+    <span
+        class="message-timestamp"
+        ng-if="stale">
+        —
+        <span am-time-ago="message.createdAt"></span>
+        —
+    </span>
+    
+    <div
+        layout="row"
+        layout-align="start center"
+        ng-class="{'row-reverse': message.type == 'outgoing'}">
+        
         <img src="img/res/avatars/{{message.type == 'outgoing' ? 'catbot' : 'user-number'}}.png" class="avatar">
-        <div class="message-bubble" md-whiteframe="1">
+        
+        <div
+            class="message-bubble"
+            md-whiteframe="1"
+            md-colors="{background: currentAnimal + '-primary'}">
+            
             <span>{{message.text}}</span>
         </div>
     </div>

@@ -11,6 +11,12 @@ module.exports = {
         
         return `Thanks for signing up for ${semanticJoin(animalsList)} Facts! You will now receive fun facts about ${semanticJoin(animalsListCapital)} every day! =^.^=`;
     },
+    animalTypes: [
+        'cat',
+        'dog',
+        'snail',
+        'horse'
+    ],
     unauthenticated: "Sign in first",
     unauthorized: "You aren't allowed to do that!",
     noVerificationCode: "Please provide a verification code",
@@ -23,5 +29,5 @@ module.exports = {
         exists: "That person is already being facted"
     },
     invalidNumber: "That phone number is invalid!",
-    userPhotoUrl: "https://cat-fact.herokuapp.com/img/res/avatars/user-face.png"
+    userPhotoUrl: "https://cat-fact.herokuapp.com/img/res/avatars/user-face.png",
 };
