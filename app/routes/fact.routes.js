@@ -1,56 +1,93 @@
 const express = require('express');
 const router = express.Router();
 
+const strings = require.main.require('./app/config/strings.js');
+const { isAuthenticated } = require('../middleware');
+
 const Fact = require.main.require('./app/models/fact');
 const User = require.main.require('./app/models/user');
 const Upvote = require.main.require('./app/models/upvote');
 
-const strings = require.main.require('./app/config/strings.js');
 
 // Get submitted facts
 router.get('/', async (req, res) => {
 	
+	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
+	
 	// Define states of pipeline
-	var matchAll = {$match: {used: false, source: 'user', sendDate: {$exists: false}}},
-		matchMe = {$match: {user: req.user ? req.user._id : 'Not authenticated - dummy query'}},
-		lookupUsers = {$lookup: {
-			from: 'users',
-			localField: 'user',
-			foreignField: '_id',
-			as: 'user'
+	const matchAll = {
+		$match: {
+			used: false,
+			source: 'user',
+			sendDate: {
+				$exists: false
+			},
+			type: {
+				$in: animalType
+			}
+		}
+	},
+	matchMe = {
+		$match: {
+			user: req.user ? req.user._id : 'Not authenticated - dummy query',
+			type: {
+				$in: animalType
+			}
+		}
+	},
+	lookupUsers = {$lookup: {
+		from: 'users',
+		localField: 'user',
+		foreignField: '_id',
+		as: 'user'
+	}},
+	projectUsers = {$project: {
+		text: 1,
+		type: 1,
+		user: { $arrayElemAt: ['$user', 0], }
+	}},
+	lookupUpvotes = {$lookup: {
+		from: 'upvotes',
+		localField: '_id',
+		foreignField: 'fact',
+		as: 'upvotes'
+	}},
+	projectUpvotes = {$project: {
+		text: 1,
+		user: { _id: 1, name: 1 },
+		upvotes: { user: 1 },
+		used: 1,
+		type: 1
+	}},
+	countUpvotes = [
+		{$addFields: {
+			upvotes: { $size: "$upvotes" },
+			userUpvoted: {
+				$in: [ req.user._id, "$upvotes.user" ]
+			}
 		}},
-		projectUsers = {$project: {
-			text: 1,
-			user: { $arrayElemAt: ['$user', 0], }
-		}},
-		lookupUpvotes = {$lookup: {
-			from: 'upvotes',
-			localField: '_id',
-			foreignField: 'fact',
-			as: 'upvotes'
-		}},
-		projectUpvotes = {$project: {
-			text: 1,
-			user: { _id: 1, name: 1 },
-			upvotes: { user: 1 },
-			used: 1
-		}};
+		{$sort: {
+			upvotes: -1
+		}}
+	];
 	
 	try {
-		const queries = {
+		const data = await Promise.props({
 			all: Fact.aggregate([
-				matchAll, lookupUsers, projectUsers, lookupUpvotes, projectUpvotes
+				matchAll,
+				lookupUsers,
+				projectUsers,
+				lookupUpvotes,
+				projectUpvotes,
+				...countUpvotes
+			]),
+			me: Fact.aggregate([
+				matchMe,
+				lookupUpvotes,
+				projectUpvotes,
+				...countUpvotes
 			])
-		};
-		
-		// If authenticated, add submitted facts
-		if (req.user) {
-			queries['me'] = Fact.aggregate([
-				matchMe, lookupUpvotes, projectUpvotes
-			]);
-		}
-		
-		const data = await Promise.props(queries);
+		});
 		
 		return res.status(200).json(data);
 	}
@@ -61,8 +98,16 @@ router.get('/', async (req, res) => {
 
 // Get a random fact
 router.get('/random', async (req, res) => {
+	
+	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
+	const amount = req.query.amount;
+	
+	if (amount > 500) {
+		return res.status(405).json({message: 'Limited to 500 facts at a time'});
+	}
+	
 	try {
-		const facts = await Fact.getFact({amount: req.query.amount});
+		const facts = await Fact.getFact({amount, animalType});
 		return res.status(200).json(facts);
 	} catch (err) {
 		return res.status(err).json(err);
@@ -85,20 +130,26 @@ router.get('/:factID', async (req, res) => {
 });
 
 // Submit a fact
-router.post('/', async (req, res) => {
-    if (!req.user) {
-    	return res.status(401).json({message: strings.unauthenticated});
-    }
+router.post('/', isAuthenticated, async (req, res) => {
     
-    if (!req.body.text) {
-    	return res.status(400).json({message: "Provide a cat fact"});
+    if (!req.body.factText) {
+    	return res.status(400).json({message: "Missing body paramter: factText"});
+    }
+    if (!req.body.animalType) {
+    	return res.status(400).json({message: "Missing body parameter: animalType"});
     }
     
     const io = req.app.get('socketio');
     
+    let text = req.body.factText;
+    
+    text = text.charAt(0).toUpperCase() + text.slice(1); // Capitalize
+    text += text[text.length - 1] == "." ? "" : "."; // Add period to end
+    
     const fact = new Fact({
         user: req.user._id,
-        text: req.body.text
+        text,
+        type: req.body.animalType
     });
 	    
 	try {
@@ -121,10 +172,7 @@ router.post('/', async (req, res) => {
 });
 
 // Upvote a fact
-router.post('/:factID/upvote', async (req, res) => {
-    if (!req.user) {
-    	return res.status(401).json({message: strings.unauthenticated});
-    }
+router.post('/:factID/upvote', isAuthenticated, async (req, res) => {
     
     if (!req.params.factID) {
     	return res.status(400).json({message: "Provide a fact ID"});
@@ -161,10 +209,7 @@ router.post('/:factID/upvote', async (req, res) => {
 });
 
 // Unvote (un-upvote) a fact
-router.delete('/:factID/upvote', async (req, res) => {
-	if (!req.user) {
-		return res.status(401).json({message: strings.unauthenticated});
-	}
+router.delete('/:factID/upvote', isAuthenticated, async (req, res) => {
 	
     if (!req.params.factID) {
     	return res.status(400).json({message: "Provide a fact ID"});
