@@ -12,8 +12,12 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
     $http.defaults.useXDomain = true;
     
     $scope.openApp = function() {
+        $state.go('facts');
+    };
+    
+    $scope.signIn = function() {
         if ($rootScope.authenticatedUser) {
-            $state.go('facts');
+            $scope.openApp();
         } else {
             $window.location.href = '/auth/google';
         }
@@ -43,7 +47,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
                     
                     ApiService.unsubscribe($scope.code).then(res => {
                         $rootScope.toast({message: res.data.message});
-                        $mdDialog.close();
+                        $mdDialog.hide();
                     }, err => {
                         $rootScope.toast({
                             message: err.data.message || "Error unsubscribing"
@@ -72,7 +76,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$http', '$state', '$window'
         method: 'GET',
         url: 'https://api.imgur.com/3/gallery/r/cats',
         headers: {
-            'Authorization': 'Client-ID 9350ca7bffa3250'
+            'Authorization': 'Client-ID 160806899cb2d43'
         }
     }).then(function(response) {
         var images = response.data.data;

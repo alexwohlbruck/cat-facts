@@ -116,7 +116,19 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
     };
     
     function getMyRecipients() {
-        $scope.promise = ApiService.getMyRecipients({animalType: $state.params.animal}).then(response => {
+        if (!$rootScope.authenticatedUser) {
+            $rootScope.toast({
+                message: "Sign in to access this page",
+                actionText: "Sign in",
+                action: function() {
+                    window.location.replace('/auth');
+                }
+            });
+        }
+        
+        $scope.promise = ApiService.getMyRecipients({
+            animalType: $state.params.animal
+        }).then(response => {
             $scope.recipients = response.data;
         }, err => {
             $rootScope.toast({message: err.data.message});

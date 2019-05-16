@@ -157,7 +157,7 @@ router.delete('/me', isAuthenticated, async (req, res) => {
     
     const submittedCode = req.query.verificationCode.trim();
     const verificationCode = await VerificationCode.findOne({code: submittedCode});
-    const number = verificationCode.data;
+    const number = verificationCode ? verificationCode.data : undefined;
 	
     if (!verificationCode || !verificationCode.user.equals(req.user._id)) {
         return res.status(403).json({

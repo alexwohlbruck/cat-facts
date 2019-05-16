@@ -155,11 +155,26 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService
 	};
 	
 	$rootScope.toast = function(options) {
-		$mdToast.show(
-			$mdToast.simple()
-				.textContent(options.message)
-				.position('bottom right')
-				.hideDelay(5000)
-		);
+		if (options.action && options.actionText) {
+			$mdToast.show(
+				$mdToast.simple()
+					.textContent(options.message)
+					.action(options.actionText)
+					.highlightAction(true)
+					.position('bottom right')
+					.hideDelay(10000)
+			).then(response => {
+				if (response === 'ok') {
+					options.action();
+				}
+			});
+		} else {
+			$mdToast.show(
+				$mdToast.simple()
+					.textContent(options.message)
+					.position('bottom right')
+					.hideDelay(5000)
+			);
+		}
 	};
 }]);
