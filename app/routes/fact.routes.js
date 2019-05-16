@@ -62,9 +62,9 @@ router.get('/', async (req, res) => {
 	countUpvotes = [
 		{$addFields: {
 			upvotes: { $size: "$upvotes" },
-			userUpvoted: {
+			userUpvoted: req.user ? {
 				$in: [ req.user._id, "$upvotes.user" ]
-			}
+			} : undefined
 		}},
 		{$sort: {
 			upvotes: -1
@@ -81,12 +81,12 @@ router.get('/', async (req, res) => {
 				projectUpvotes,
 				...countUpvotes
 			]),
-			me: Fact.aggregate([
+			me: req.user ? Fact.aggregate([
 				matchMe,
 				lookupUpvotes,
 				projectUpvotes,
 				...countUpvotes
-			])
+			]) : undefined
 		});
 		
 		return res.status(200).json(data);
