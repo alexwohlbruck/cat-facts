@@ -16,6 +16,9 @@ Using a combination of Node.js, Angular, and Tasker, this app will combine APIs 
 - Twitter bot
 - Developer API
 
+## Support Cat Facts
+Cat Facts is ad free and available to use without cost. Help me keep it running by [donating here](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NNVDER52DBWTY&currency_code=USD&source=url). :)
+
 ## Getting Started
 
 ### Official website
