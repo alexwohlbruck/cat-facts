@@ -23,7 +23,7 @@
     "express-session": "^1.15.6",
     "googleapis": "^37.2.0",
     "method-override": "^2.3.10",
-    "mongoose": "^5.4.17",
+    "mongoose": "^5.7.5",
     "mongoose-delete": "^0.4.0",
     "mongoose-simple-random": "^0.4.1",
     "morgan": "^1.9.1",
