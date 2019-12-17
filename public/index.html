@@ -67,13 +67,18 @@
 			<span flex></span>
 			
 			<span ng-show="$mdMedia('gt-xs')">
+				<md-button class="md-icon-button" aria-label="donate" ng-href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NNVDER52DBWTY&currency_code=USD&source=url" target="_blank">
+					<md-tooltip md-direction="bottom">Donate</md-tooltip>
+					<md-icon class="material-icons grey">attach_money</md-icon>
+				</md-button>
+
 				<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
 					<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
 					<md-icon class="material-icons grey">bug_report</md-icon>
 				</md-button>
 			
 				<md-button class="md-icon-button" aria-label="developers" ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
-					<md-tooltip md-direction="button">Developers</md-tooltip>
+					<md-tooltip md-direction="bottom">Developers</md-tooltip>
 					<md-icon class="material-icon grey">code</md-icon>
 				</md-button>
 				
@@ -109,7 +114,42 @@
 				</md-menu-content>
 			</md-menu>
 			
-			
+			<md-menu md-position-mode="target-right target" ng-show="$mdMedia('xs')">
+				<md-button ng-click="$mdOpenMenu($event)" aria-label="Menu" class="md-icon-button">
+					<md-tooltip md-direction="button">Menu</md-tooltip>
+					<md-icon class="material-icons grey">more_vert</md-icon>
+				</md-button>
+
+				<md-menu-content>
+					<md-menu-item aria-label="donate">
+						<md-button ng-href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NNVDER52DBWTY&currency_code=USD&source=url" target="_blank">
+							<md-icon class="material-icons">attach_money</md-icon>
+							Donate
+						</md-button>
+					</md-menu-item>
+	
+					<md-menu-item aria-label="report bug">
+						<md-button ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
+							<md-icon class="material-icons">bug_report</md-icon>
+							Report bug or request feature
+						</md-button>
+					</md-menu-item>
+				
+					<md-menu-item aria-label="developers">
+						<md-button ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
+							<md-icon class="material-icons">code</md-icon>
+							Developers
+						</md-button>
+					</md-menu-item>
+					
+					<md-menu-item aria-label="about">
+						<md-button ng-click="openAbout($event)">
+							<md-icon class="material-icons">info</md-icon>
+							About Cat Facts
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
 		</div>
 		
 		<md-nav-bar
