@@ -18,6 +18,7 @@ global.Promise = require('bluebird');
 mongoose.Promise = global.Promise;
 
 mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
     useNewUrlParser: true
 });
