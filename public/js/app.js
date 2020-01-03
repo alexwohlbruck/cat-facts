@@ -103,8 +103,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.enableBrowserColor();
 }]);
 
-app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', 'AuthService', '$mdMedia', 'amMoment',
-	function($rootScope, $state, $window, $location, $mdToast, ApiService, AuthService, $mdMedia, amMoment) {
+app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService', '$mdMedia', 'amMoment',
+	function($rootScope, $state, $window, $location, $mdToast, ApiService, $mdMedia, amMoment) {
 	
 	$rootScope.authenticatedUser = null;
 	$rootScope.$mdMedia = $mdMedia;
@@ -149,9 +149,6 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService
     });
     
     $window.finishOAuth = function(data) {
-		$rootScope.$apply(function() {
-			AuthService.finishOAuth(data);
-		});
 	};
 	
 	$rootScope.toast = function(options) {
