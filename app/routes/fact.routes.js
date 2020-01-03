@@ -128,7 +128,7 @@ router.get('/random', logApiRequest, async (req, res) => {
 // Get fact by ID
 router.get('/:factID', logApiRequest, async (req, res) => {
 	try {
-		const fact = await Fact.findById(req.params.factID);
+		const fact = await Fact.findById(req.params.factID).populate('user', 'name photo');
 
 		if (!fact) {
 			return res.status(404).json({ message: 'Fact not found' });
