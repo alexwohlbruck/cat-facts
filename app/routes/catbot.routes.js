@@ -35,6 +35,9 @@ router.get('/daily', async (req, res) => {
 			
 			recipients: Recipient.find({
 				subscriptions: animalType
+			},
+			{
+				number: 1
 			}),
 			
 			overrideFact: Fact.findOne({
@@ -55,7 +58,7 @@ router.get('/daily', async (req, res) => {
 			    }},
 				{$unwind: '$fact'},
 				{$match: {
-					'fact.used': false,
+					// 'fact.used': false, // TODO: Sort by 'sentCount'
 					'fact.type': animalType,
 					'fact.sendDate': {$exists: false}
 				}}, // Only select used facts of a particular animal type
@@ -63,15 +66,14 @@ router.get('/daily', async (req, res) => {
 				{$limit: 1} // Only return one fact
 			]),
 			
-			fact: Fact.getFact({
-				filter: {used: false},
-				animalType
-			})
+			fact: Fact.getFact({animalType})
 		});
 		
 		if (!fact) {
+			// TODO: New behavior if there are no avaialable facts
+			// ? Send error message?
 			// No unused facts are available, reset all facts to unused
-			await Fact.update({}, {$set: {used: false}}, {multi: true});
+			// await Fact.update({}, {$set: {used: false}}, {multi: true});
 		}
 		
 		if (overrideFact) {
@@ -81,8 +83,8 @@ router.get('/daily', async (req, res) => {
 		highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
 		
 		return {
-			recipients: recipients,
-			fact: overrideFact || highestUpvotedFact || fact
+			recipients: recipients.map(r => r.number),
+			fact: (overrideFact || highestUpvotedFact || fact).text
 		};
 	};
 	
@@ -94,7 +96,14 @@ router.get('/daily', async (req, res) => {
 	const result = await Promise.props(facts),
 		  dbMessages = [];
 	
-	Object.keys(result).forEach(animal => {
+	Object.keys(result).forEach(async animal => {
+
+		// Increment sent count
+		await Fact.findByIdAndUpdate(result[animal].fact._id, {
+			$inc: {
+				sentCount: 1
+			}
+		});
 		
 		result[animal].recipients.forEach(async recipient => {
 			
@@ -102,13 +111,6 @@ router.get('/daily', async (req, res) => {
 			io.emit('message', {
 				message: result[animal].fact.text, 
 				recipient: recipient
-			});
-			
-			// Mark chosen fact as used
-			await Fact.findByIdAndUpdate(result[animal].fact._id, {
-				$set: {
-					used: true
-				}
 			});
 	
 			dbMessages.push(new Message({
@@ -165,7 +167,7 @@ router.post('/message', (req, res) => {
 			
 			promises.recipient = recipient;
 			promises.message = incoming.save();
-			promises.catFact = Fact.getFact({fields: {used: false}});
+			promises.catFact = Fact.getFact();
 			promises.catbotResponse = catbot.textRequest(req.query.query, {
 				sessionId: req.query.number
 			});

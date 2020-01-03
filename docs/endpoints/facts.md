@@ -27,7 +27,7 @@ Retrieve one or more `Facts`.
 		"updatedAt": "2018-01-04T01:10:54.673Z",
 		"deleted": false,
 		"source": "api",
-		"used": false
+		"sentCount": 5
 	},
 	{
 		"_id": "591f9854c5cbe314f7a7ad34",
@@ -36,7 +36,7 @@ Retrieve one or more `Facts`.
 		"updatedAt": "2018-01-04T01:10:54.673Z",
 		"deleted": false,
 		"source": "api",
-		"used": false
+		"sentCount": 3
 	}
 ]
 ```
@@ -60,7 +60,7 @@ Retrieve one or more `Facts`.
     "updatedAt": "2018-01-04T01:10:54.673Z",
     "deleted": false,
     "source": "api",
-    "used": false
+    "sentCount": 4
 }
 ```
 
@@ -124,7 +124,7 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
       "_id": "5b1186a73bc85f0b2eb98c25",
       "text": "Horses cannot get cavities.",
       "type": "cat",
-      "used": true,
+      "sentCount": 0,
       "upvotes": [
         {
           "user": "587288f6e6f85e64ae1c7ef7"
