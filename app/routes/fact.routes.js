@@ -10,235 +10,229 @@ const Upvote = require.main.require('./app/models/upvote');
 
 
 // Get submitted facts
-router.get('/', async (req, res) => {
+router.get('/', async(req, res) => {
 
-	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
+    const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 
-	// Define states of pipeline
-	const matchAll = {
-		$match: {
-			source: 'user',
-			sendDate: {
-				$exists: false
-			},
-			type: {
-				$in: animalType
-			}
-		}
-	},
-		matchMe = {
-			$match: {
-				user: req.user ? req.user._id : 'Not authenticated - dummy query',
-				type: {
-					$in: animalType
-				}
-			}
-		},
-		lookupUsers = {
-			$lookup: {
-				from: 'users',
-				localField: 'user',
-				foreignField: '_id',
-				as: 'user'
-			}
-		},
-		projectUsers = {
-			$project: {
-				text: 1,
-				type: 1,
-				user: { $arrayElemAt: ['$user', 0], }
-			}
-		},
-		lookupUpvotes = {
-			$lookup: {
-				from: 'upvotes',
-				localField: '_id',
-				foreignField: 'fact',
-				as: 'upvotes'
-			}
-		},
-		projectUpvotes = {
-			$project: {
-				text: 1,
-				user: { _id: 1, name: 1 },
-				upvotes: { user: 1 },
-				sentCount: 1,
-				type: 1
-			}
-		},
-		countUpvotes = [
-			{
-				$addFields: {
-					upvotes: { $size: "$upvotes" },
-					userUpvoted: req.user ? {
-						$in: [req.user._id, "$upvotes.user"]
-					} : undefined
-				}
-			},
-			{
-				$sort: {
-					upvotes: -1
-				}
-			}
-		];
+    // Define states of pipeline
+    const matchAll = {
+            $match: {
+                source: 'user',
+                sendDate: {
+                    $exists: false
+                },
+                type: {
+                    $in: animalType
+                }
+            }
+        },
+        matchMe = {
+            $match: {
+                user: req.user ? req.user._id : 'Not authenticated - dummy query',
+                type: {
+                    $in: animalType
+                }
+            }
+        },
+        lookupUsers = {
+            $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'user'
+            }
+        },
+        projectUsers = {
+            $project: {
+                text: 1,
+                type: 1,
+                user: { $arrayElemAt: ['$user', 0], }
+            }
+        },
+        lookupUpvotes = {
+            $lookup: {
+                from: 'upvotes',
+                localField: '_id',
+                foreignField: 'fact',
+                as: 'upvotes'
+            }
+        },
+        projectUpvotes = {
+            $project: {
+                text: 1,
+                user: { _id: 1, name: 1 },
+                upvotes: { user: 1 },
+                status: {
+                    sentCount: 1
+                },
+                type: 1
+            }
+        },
+        countUpvotes = [{
+                $addFields: {
+                    upvotes: { $size: "$upvotes" },
+                    userUpvoted: req.user ? {
+                        $in: [req.user._id, "$upvotes.user"]
+                    } : undefined
+                }
+            },
+            {
+                $sort: {
+                    upvotes: -1
+                }
+            }
+        ];
 
-	try {
-		const data = await Promise.props({
-			all: Fact.aggregate([
-				matchAll,
-				lookupUsers,
-				projectUsers,
-				lookupUpvotes,
-				projectUpvotes,
-				...countUpvotes
-			]),
-			me: req.user ? Fact.aggregate([
-				matchMe,
-				lookupUpvotes,
-				projectUpvotes,
-				...countUpvotes
-			]) : undefined
-		});
+    try {
+        const data = await Promise.props({
+            all: Fact.aggregate([
+                matchAll,
+                lookupUsers,
+                projectUsers,
+                lookupUpvotes,
+                projectUpvotes,
+                ...countUpvotes
+            ]),
+            me: req.user ? Fact.aggregate([
+                matchMe,
+                lookupUpvotes,
+                projectUpvotes,
+                ...countUpvotes
+            ]) : undefined
+        });
 
-		return res.status(200).json(data);
-	}
-	catch (err) {
-		return res.status(400).json(err);
-	}
+        return res.status(200).json(data);
+    } catch (err) {
+        return res.status(400).json(err);
+    }
 });
 
 // Get a random fact
-router.get('/random', logApiRequest, async (req, res) => {
+router.get('/random', logApiRequest, async(req, res) => {
 
-	const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
-	const amount = req.query.amount;
+    const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
+    const amount = req.query.amount;
 
-	if (amount > 500) {
-		return res.status(405).json({ message: 'Limited to 500 facts at a time' });
-	}
+    if (amount > 500) {
+        return res.status(405).json({ message: 'Limited to 500 facts at a time' });
+    }
 
-	try {
-		const facts = await Fact.getFact({ amount, animalType });
-		return res.status(200).json(facts);
-	} catch (err) {
-		return res.status(err).json(err);
-	}
+    try {
+        const facts = await Fact.getFact({ amount, animalType });
+        return res.status(200).json(facts);
+    } catch (err) {
+        return res.status(err).json(err);
+    }
 });
 
 // Get fact by ID
-router.get('/:factID', logApiRequest, async (req, res) => {
-	try {
-		const fact = await Fact.findById(req.params.factID).populate('user', 'name photo');
+router.get('/:factID', logApiRequest, async(req, res) => {
+    try {
+        const fact = await Fact.findById(req.params.factID).populate('user', 'name photo');
 
-		if (!fact) {
-			return res.status(404).json({ message: 'Fact not found' });
-		}
+        if (!fact) {
+            return res.status(404).json({ message: 'Fact not found' });
+        }
 
-		return res.status(200).json(fact);
-	} catch (err) {
-		return res.status(400).json(err);
-	}
+        return res.status(200).json(fact);
+    } catch (err) {
+        return res.status(400).json(err);
+    }
 });
 
 // Submit a fact
-router.post('/', isAuthenticated, async (req, res) => {
+router.post('/', isAuthenticated, async(req, res) => {
 
-	if (!req.body.factText) {
-		return res.status(400).json({ message: "Missing body paramter: factText" });
-	}
-	if (!req.body.animalType) {
-		return res.status(400).json({ message: "Missing body parameter: animalType" });
-	}
+    if (!req.body.factText) {
+        return res.status(400).json({ message: "Missing body paramter: factText" });
+    }
+    if (!req.body.animalType) {
+        return res.status(400).json({ message: "Missing body parameter: animalType" });
+    }
 
-	const io = req.app.get('socketio');
+    const io = req.app.get('socketio');
 
-	let text = req.body.factText;
+    let text = req.body.factText;
 
-	text = text.charAt(0).toUpperCase() + text.slice(1); // Capitalize
-	text += text[text.length - 1] == "." ? "" : "."; // Add period to end
+    text = text.charAt(0).toUpperCase() + text.slice(1); // Capitalize
+    text += text[text.length - 1] == "." ? "" : "."; // Add period to end
 
-	const fact = new Fact({
-		user: req.user._id,
-		text,
-		type: req.body.animalType
-	});
+    const fact = new Fact({
+        user: req.user._id,
+        text,
+        type: req.body.animalType
+    });
 
-	try {
-		const savedFact = await fact.save();
+    try {
+        const savedFact = await fact.save();
 
-		const populatedFact = await User.populate(savedFact, { path: 'user', select: 'name' });
+        const populatedFact = await User.populate(savedFact, { path: 'user', select: 'name' });
 
-		io.emit('fact', populatedFact);
+        io.emit('fact', populatedFact);
 
-		return res.status(200).json(populatedFact);
-	}
-
-	catch (err) {
-		if (err.code === 11000) {
-			err.message = strings.fact.exists;
-			return res.status(409).json(err);
-		}
-		return res.status(400).json(err);
-	}
+        return res.status(200).json(populatedFact);
+    } catch (err) {
+        if (err.code === 11000) {
+            err.message = strings.fact.exists;
+            return res.status(409).json(err);
+        }
+        return res.status(400).json(err);
+    }
 });
 
 // Upvote a fact
-router.post('/:factID/upvote', isAuthenticated, async (req, res) => {
+router.post('/:factID/upvote', isAuthenticated, async(req, res) => {
 
-	if (!req.params.factID) {
-		return res.status(400).json({ message: "Provide a fact ID" });
-	}
+    if (!req.params.factID) {
+        return res.status(400).json({ message: "Provide a fact ID" });
+    }
 
-	try {
-		const fact = await Fact.findById(req.params.factID);
+    try {
+        const fact = await Fact.findById(req.params.factID);
 
-		if (!fact) {
-			return res.status(404).json({ message: "That fact doesn't exist" });
-		}
+        if (!fact) {
+            return res.status(404).json({ message: "That fact doesn't exist" });
+        }
 
-		if (fact.user.equals(req.user._id)) {
-			return res.status(400).json({ message: "You can't upvote your own fact" });
-		}
+        if (fact.user.equals(req.user._id)) {
+            return res.status(400).json({ message: "You can't upvote your own fact" });
+        }
 
-		const io = req.app.get('socketio');
+        const io = req.app.get('socketio');
 
-		const upvote = new Upvote({
-			user: req.user._id,
-			fact: req.params.factID
-		});
+        const upvote = new Upvote({
+            user: req.user._id,
+            fact: req.params.factID
+        });
 
-		await upvote.save();
+        await upvote.save();
 
-		io.emit('fact:upvote', { fact: fact, user: req.user });
+        io.emit('fact:upvote', { fact: fact, user: req.user });
 
-		return res.status(201).send();
-	}
-
-	catch (err) {
-		return res.status(400).json(err);
-	}
+        return res.status(201).send();
+    } catch (err) {
+        return res.status(400).json(err);
+    }
 });
 
 // Unvote (un-upvote) a fact
-router.delete('/:factID/upvote', isAuthenticated, async (req, res) => {
+router.delete('/:factID/upvote', isAuthenticated, async(req, res) => {
 
-	if (!req.params.factID) {
-		return res.status(400).json({ message: "Provide a fact ID" });
-	}
+    if (!req.params.factID) {
+        return res.status(400).json({ message: "Provide a fact ID" });
+    }
 
-	const io = req.app.get('socketio');
+    const io = req.app.get('socketio');
 
-	try {
-		await Upvote.findOneAndRemove({ fact: req.params.factID, user: req.user._id });
+    try {
+        await Upvote.findOneAndRemove({ fact: req.params.factID, user: req.user._id });
 
-		io.emit('fact:unvote', { fact: { _id: req.params.factID }, user: req.user });
+        io.emit('fact:unvote', { fact: { _id: req.params.factID }, user: req.user });
 
-		return res.status(204).send();
-	}
-
-	catch (err) {
-		return res.stauts(400).json(err);
-	}
+        return res.status(204).send();
+    } catch (err) {
+        return res.stauts(400).json(err);
+    }
 });
 
 module.exports = router;

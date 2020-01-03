@@ -15,6 +15,10 @@ h2,
     font-family: 'Raleway', sans-serif !important;
 }
 
+.md-display-2 {
+    line-height: normal !important;
+}
+
 p,
 span,
 button {
@@ -199,6 +203,14 @@ recipients .deleted {
 
 .blue {
     color: #2196f3 !important;
+}
+
+.green {
+    color: #4CAF50 !important;
+}
+
+.red {
+    color: #F44336 !important;
 }
 
 .black {
