@@ -45,7 +45,7 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 app.use(passport.initialize());
-app.use(passport.session()); // Persistent login sessions
+app.use(passport.session()); // 
 	
 // Define routes
 app.use('/', require('./app/routes'));
