@@ -36,7 +36,7 @@
 							<h3 class="white md-headline margin-0 bold center-text">
 								There aren't any new {{$state.params.animal}} facts!
 							</h3>
-							
+
 							<h4 class="white md-body-2 accent-links margin-0 center-text">
 								{{ authenticatedUser ? 'Submit one in the field above' : 'Sign in to submit one' }}
 							</h4>
@@ -53,7 +53,7 @@
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.all | orderBy:'-upvotes'" ng-animater="'animate'" ng-href="/facts">
+                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.all | orderBy:'-upvotes'" ng-animater="'animate'" ng-click="openFact(fact._id)">
 
                                     <td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
                                     <td md-cell class="padding-20">"{{fact.text}}"</td>
@@ -89,7 +89,7 @@
                             <tbody md-body>
                                 <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
                                     <td md-cell>"{{fact.text}}"</td>
-                                    <td md-cell>{{fact.sentCount}}</td>
+                                    <td md-cell>{{fact.status.sentCount}}</td>
                                     <td md-cell>
                                         <span>{{fact.upvotes}}</span>
                                     </td>

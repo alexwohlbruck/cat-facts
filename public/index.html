@@ -116,7 +116,7 @@
             </md-menu>
         </div>
 
-        <md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation" class="transparent-bg">
+        <md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation || $state.current.data.showNavigation" class="transparent-bg">
 
             <md-nav-item ng-repeat="state in $state.get()" md-nav-sref="{{state.name}}" name="{{state.name}}" ng-if="state.data.showInNavigation && (state.data.adminRequired ? authenticatedUser.isAdmin : true)">
 
@@ -129,7 +129,7 @@
         <ui-view layout-padding></ui-view>
     </md-content>
 
-    <md-button class="md-fab md-accent md-fab-bottom-right" ng-click="showCatFact()" aria-label="Get a fact fact" ng-show="$state.current.data.showInNavigation">
+    <md-button class="md-fab md-accent md-fab-bottom-right" ng-click="showCatFact()" aria-label="Get a fact fact" ng-show="$state.current.data.showInNavigation || $state.current.data.showNavigation">
 
         <md-icon class="material-icons">message</md-icon>
 
