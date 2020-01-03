@@ -10,6 +10,18 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
     $scope.orderBy = 'name';
     
     getMyRecipients();
+    setTimer();
+    
+	// TODO: Repurpose this
+	const endTime = {
+		// Define time for next cat fact to be sent
+		hours: 13,
+		minutes: 55
+	};
+	
+	$scope.countdownFinished = function() {
+		setTimer();
+	};
     
     // TODO: Refactor phone validation into it's own directive for reuse
     $scope.validatePhone = (number, returnNumber = false) => {
@@ -135,4 +147,18 @@ app.controller('RecipientsCtrl', ['$scope', '$rootScope', '$state', 'ApiService'
         });
     }
 
+    function setTimer() {
+		const now = new Date(),
+			endTime = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 21, 20, 0, 0));
+			
+		if (endTime.getTime() - now.getTime() < 0) {
+			endTime.setDate(endTime.getDate() + 1);
+		}
+		
+		const seconds = (endTime.getTime() - now.getTime()) / 1000;
+		$scope.seconds = seconds;
+		$scope.$broadcast('timer-set-countdown-seconds', seconds);
+		$scope.$broadcast('timer-start');
+    }
+    
 }]);
