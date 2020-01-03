@@ -1,6 +1,31 @@
 <div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
-	<div layout="column" layout-padding layout-align="start stretch">
-		<span class="md-headline bold center-text">Add a Recipient</span>
+	<div layout="column" layout-padding layout-align="start start">
+		<timer
+			class="md-headline bold center-text padding-0"
+			countdown="seconds"
+			finish-callback="countdownFinished()"
+			max-time-unit="'hour'"
+			interval="1000">
+			
+			<div layout='column' layout-gt-sm='row' layout-align='start start'>
+				<span class="title md-display-2">
+					{{hours}} hour{{hoursS}},&nbsp;
+				</span>
+
+				<span class="title md-display-2">
+					{{minutes}} minute{{minutesS}},&nbsp;
+				</span>
+
+				<span class="title md-display-2">
+					and {{seconds}} second{{secondsS}}
+				</span>
+			</div>
+		</timer>
+		
+		<span class="md-headline padding-0 grey">until the next fact is sent</span>
+		
+		<br/>
+		<!-- <span class="md-headline bold center-text">Add a Recipient</span>
 		<br/>
 		
 		<form ng-submit="addRecipient()" layout="column" layout-gt-sm="row" layout-align-gt-sm="center start" layout-align="start stretch">
@@ -12,7 +37,6 @@
 				
 				<md-input-container class="no-space">
 					<label>Phone Number</label>
-					<!-- Implement client validation -->
 					<input ng-model="form.number" aria-label="Recipient phone number">
 				</md-input-container>
 				
@@ -31,7 +55,7 @@
 					Add contacts
 				</md-button>
 			</div>
-		</form>
+		</form> -->
 	</div>
 	
 	<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">

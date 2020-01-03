@@ -16,7 +16,7 @@ module.exports = {
         
         return res.status(403).json({message: strings.unauthorized});
     },
-    logApiRequest: async (req, res, next) => {
+    logApiRequest: (req, res, next) => {
         const apiLog = new ApiLog({
             host: req.headers.host,
             body: JSON.stringify(req.body),
@@ -24,9 +24,7 @@ module.exports = {
             originalUrl: req.originalUrl
         });
             
-        await apiLog.save();
-
-        console.log(req, res);
+        apiLog.save();
         next();
     }
 };

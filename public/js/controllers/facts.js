@@ -6,14 +6,6 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	function($scope, $rootScope, $state, ApiService, socket) {
 	
 	getFacts();
-	setTimer();
-	
-	// TODO: Repurpose this
-	const endTime = {
-		// Define time for next cat fact to be sent
-		hours: 13,
-		minutes: 55
-	};
 	
 	$scope.submitFact = function() {
 		const factText = $scope.form.newFact;
@@ -24,10 +16,6 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 		} else {
 			$scope.showToast("Type in a fact");
 		}
-	};
-	
-	$scope.countdownFinished = function() {
-		setTimer();
 	};
 	
 	$scope.upvoteFact = function(fact) {
@@ -55,20 +43,6 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', 'ApiService', 'so
 	
 	function getIndexOfFact(factID) {
 		return $scope.facts.all.map(function(o) { return o._id }).indexOf(factID);
-	}
-	
-	function setTimer() {
-		const now = new Date(),
-			endTime = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 21, 20, 0, 0));
-			
-		if (endTime.getTime() - now.getTime() < 0) {
-			endTime.setDate(endTime.getDate() + 1);
-		}
-		
-		const seconds = (endTime.getTime() - now.getTime()) / 1000;
-		$scope.seconds = seconds;
-		$scope.$broadcast('timer-set-countdown-seconds', seconds);
-		$scope.$broadcast('timer-start');
 	}
 	
 	socket.on('fact', function(data) {
