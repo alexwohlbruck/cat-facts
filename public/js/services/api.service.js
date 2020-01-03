@@ -44,15 +44,19 @@ app.service('ApiService', ['$rootScope', '$http', '$location', function($rootSco
         return $http.post('/facts', {factText, animalType});
     };
     
-    this.upvoteFact = function(factID) {
-        return $http.post('/facts/' + factID + '/upvote');
+    this.upvoteFact = function(factId) {
+        return $http.post('/facts/' + factId + '/upvote');
     };
     
-    this.unvoteFact = function(factID) {
-        return $http.delete('/facts/' + factID + '/upvote');
+    this.unvoteFact = function(factId) {
+        return $http.delete('/facts/' + factId + '/upvote');
     };
+
+    this.getFact = function(factId) {
+        return $http.get('/facts/' + factId);
+    }
     
-    this.getFact = function({ animalType, amount }) {
+    this.getRandomFact = function({ animalType, amount }) {
         return $http.get('/facts/random', {
             params: { animal_type: animalType, amount }
         });

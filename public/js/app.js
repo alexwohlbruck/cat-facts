@@ -73,6 +73,12 @@ app.config(['$stateProvider', '$urlRouterProvider', 'animalProvider',
 				showInNavigation: true
 			}
 		})
+
+		.state('fact', {
+			url: '/:animal/facts/:factId',
+			templateUrl: '/views/fact.html',
+			controller: 'FactCtrl'
+		})
 		
 		.state('console', {
 			url: '/:animal/console',
