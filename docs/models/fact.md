@@ -12,5 +12,5 @@ A single animal fact, (nearly) guaranteed to be genuine and factual.
 | sendDate  | Timestamp     | If the `Fact` is meant for one time use, this is the date that it is used |
 | deleted   | Boolean       | Whether or not the `Fact` has been deleted (Soft deletes are used) |
 | source    | String (enum) | Can be `'user'` or `'api'`, indicates who added the fact to the DB |
-| used      | Boolean       | Whether or not the `Fact` has been sent by the CatBot. This value is reset each time every `Fact` is used |
+| sentCount | Boolean       | The number of times the `Fact` has been sent by the CatBot. |
 | type      | String        | Type of animal the `Fact` describes (e.g. 'cat', 'dog', 'horse')

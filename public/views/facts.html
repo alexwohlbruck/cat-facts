@@ -101,17 +101,14 @@
 							<thead md-head>
 								<tr md-row md-row-select="false">
 									<th md-column>Fact</th>
-									<th md-column>Unused</th>
+									<th md-column md-numeric># of times sent</th>
 									<th md-column md-numeric>Votes</th>
 								</tr>
 							</thead>
 							<tbody md-body>
 								<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
 									<td md-cell>"{{fact.text}}"</td>
-									<td md-cell>
-										<div style="width: 8px; height: 8px; border-radius: 50%; transform: translateX(15px)"
-											ng-style="{'background': fact.used ? 'red' : 'green'}"></div>
-									</td>
+									<td md-cell>{{fact.sentCount}}</td>
 									<td md-cell>
 										<span>{{fact.upvotes}}</span>
 									</td>

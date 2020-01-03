@@ -8,7 +8,7 @@ const FactSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref: 'User'},
     text: {type: String, required: true, unique: true},
     sendDate: {type: Date},
-    used: {type: Boolean, default: false},
+    sentCount: {type: Number, default: 0},
     source: {type: String, enum: ['user', 'api'], default: 'user'},
     type: {type: String, enum: animalTypes, default: 'cat'}
 }, {

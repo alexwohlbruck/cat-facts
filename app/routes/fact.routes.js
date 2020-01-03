@@ -17,7 +17,6 @@ router.get('/', async (req, res) => {
 	// Define states of pipeline
 	const matchAll = {
 		$match: {
-			used: false,
 			source: 'user',
 			sendDate: {
 				$exists: false
@@ -56,7 +55,7 @@ router.get('/', async (req, res) => {
 		text: 1,
 		user: { _id: 1, name: 1 },
 		upvotes: { user: 1 },
-		used: 1,
+		sentCount: 1,
 		type: 1
 	}},
 	countUpvotes = [
