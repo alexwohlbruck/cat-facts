@@ -1,0 +1,36 @@
+<md-dialog aria-label="About Cat Facts">
+	<md-dialog-content class="md-dialog-content">
+		<h6 class="md-title margin-bottom-0">Add a Recipient</h6>
+		
+		<br/>
+		
+		<form ng-submit="addRecipient()" layout="column" layout-gt-sm="row" layout-align-gt-sm="center start" layout-align="start stretch">
+			<div layout="column" layout-gt-xs="row" layout-align-gt-xs="center start">
+				<md-input-container class="no-space">
+					<label>Name</label>
+					<input ng-model="form.name" aria-label="Recipient name">
+				</md-input-container>
+				
+				<md-input-container class="no-space">
+					<label>Phone Number</label>
+					<input ng-model="form.number" aria-label="Recipient phone number">
+				</md-input-container>
+				
+				<div layout="column" layout-align="start center">
+					<md-button type="submit" class="md-raised md-accent margin-top-5" aria-label="Add Recipient">
+						Add
+					</md-button>
+				</div>
+			</div>
+			
+			<p class="md-body-2 margin-sides-10 center-text">OR</p>
+			
+			<div layout="column" layout-align="start center">
+				<md-button class="md-raised margin-top-5 md-primary" ng-click="openImportContacts()">
+					<md-icon md-svg-src="img/res/svg/google-icon.svg" ng-style="{padding: '0px 8px'}"></md-icon>
+					Add contacts
+				</md-button>
+			</div>
+		</form> 
+	</md-dialog-content>
+</md-dialog>
