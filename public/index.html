@@ -66,28 +66,6 @@
 			
 			<span flex></span>
 			
-			<span ng-show="$mdMedia('gt-xs')">
-				<md-button class="md-icon-button" aria-label="donate" ng-href="http://bit.ly/2tC599V" target="_blank">
-					<md-tooltip md-direction="bottom">Donate</md-tooltip>
-					<md-icon class="material-icons grey">attach_money</md-icon>
-				</md-button>
-
-				<md-button class="md-icon-button" aria-label="report bug" ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
-					<md-tooltip md-direction="bottom">Report bug or request feature</md-tooltip>
-					<md-icon class="material-icons grey">bug_report</md-icon>
-				</md-button>
-			
-				<md-button class="md-icon-button" aria-label="developers" ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
-					<md-tooltip md-direction="bottom">Developers</md-tooltip>
-					<md-icon class="material-icon grey">code</md-icon>
-				</md-button>
-				
-				<md-button class="md-icon-button" aria-label="about" ng-click="openAbout($event)">
-					<md-tooltip md-direction="bottom">About Cat Facts</md-tooltip>
-					<md-icon class="material-icons grey">info</md-icon>
-				</md-button>
-			</span>
-			
 			<md-menu md-position-mode="target-right target" ng-if="authenticatedUser">
 				<md-button ng-click="$mdOpenMenu($event)" aria-label="Profile" class="md-icon-button sign-out-button">
 					<md-tooltip md-direction="bottom">Profile</md-tooltip>
@@ -114,7 +92,7 @@
 				</md-menu-content>
 			</md-menu>
 			
-			<md-menu md-position-mode="target-right target" ng-show="$mdMedia('xs')">
+			<md-menu md-position-mode="target-right target">
 				<md-button ng-click="$mdOpenMenu($event)" aria-label="Menu" class="md-icon-button">
 					<md-tooltip md-direction="button">Menu</md-tooltip>
 					<md-icon class="material-icons grey">more_vert</md-icon>
@@ -135,11 +113,17 @@
 						</md-button>
 					</md-menu-item>
 				
-					<md-menu-item aria-label="developers">
+					<md-menu-item aria-label="developer api">
 						<md-button ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
 							<md-icon class="material-icons">code</md-icon>
-							Developers
+							Developer API
 						</md-button>
+					</md-menu-item>
+
+					<md-menu-item aria-label="github">
+						<md-button ng-href="https://github.com/alexwohlbruck/cat-facts" target="_blank">
+						<md-icon md-svg-src="/img/res/svg/github-logo.svg"></md-icon>
+						View on Github
 					</md-menu-item>
 					
 					<md-menu-item aria-label="about">
