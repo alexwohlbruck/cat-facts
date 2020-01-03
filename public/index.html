@@ -1,259 +1,235 @@
 <!DOCTYPE html>
 <html ng-app="catfacts">
-<head>
-	<title ng-bind-template="{{$state.params.animal | capitalize}} Facts"></title>
-	
-	<!-- Meta -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<meta name="mobile-web-app-capable" content="yes"/>
-	<meta name="apple-mobile-web-app-capable" content="yes"/>
-	
-	<!-- Manifest -->
-	<link rel="manifest" href="config/manifest.json">
-	<link rel="icon" type="image/png" href="https://cat-fact.herokuapp.com/img/logo/favicon.ico"/>
 
-	<link rel="stylesheet" href="css/style.css">
-	<!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700">-->
-	<link href="https://fonts.googleapis.com/css?family=Raleway:700,800|Roboto:400,500,700" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.9/angular-material.css"/>
-	<link rel="stylesheet" href="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.css"/>
-	<link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css"/>
+<head>
+    <title ng-bind-template="{{$state.params.animal | capitalize}} Facts"></title>
+
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="config/manifest.json">
+    <link rel="icon" type="image/png" href="https://cat-fact.herokuapp.com/img/logo/favicon.ico" />
+
+    <link rel="stylesheet" href="css/style.css">
+    <!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700">-->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:700,800|Roboto:400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.9/angular-material.css" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.css" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.css" type="text/css" />
 </head>
 
-<body
-	ng-controller="MainCtrl"
-	layout="column"
-	ng-cloak
-	md-theme="$state.params.animal">
-	
-	<md-toolbar class="md-whiteframe-2dp">
-		<div class="md-toolbar-tools">
-			<img
-				ng-if="$state.params.animal"
-				ng-src="{{'img/logo/animals/' + $state.params.animal + '.png'}}"
-				ui-sref="home"
-				ng-hide="$state.current.name == 'home' || $state.current.data.showBackButton"
-				class="width-40 margin-10 pointer"/>
-			
-			<md-button
-				class="md-icon-button"
-				ng-click="goBack()"
-				ng-show="$state.current.data.showBackButton">
-				
-				<md-icon class="material-icons">arrow_back</md-icon>
-			</md-button>
-			
-			<md-menu md-position-mode="target-left target">
-				<span
-					class="title pointer"
-					ng-mouseover="$mdMenu.open()"
-					aria-label="Switch site">
+<body ng-controller="MainCtrl" layout="column" ng-cloak md-theme="$state.params.animal">
+
+    <md-toolbar class="md-whiteframe-2dp">
+        <div class="md-toolbar-tools">
+            <img ng-if="$state.params.animal" ng-src="{{'img/logo/animals/' + $state.params.animal + '.png'}}" ui-sref="home" ng-hide="$state.current.name == 'home' || $state.current.data.showBackButton" class="width-40 margin-10 pointer" />
+
+            <md-button class="md-icon-button" ng-click="goBack()" ng-show="$state.current.data.showBackButton">
+
+                <md-icon class="material-icons">arrow_back</md-icon>
+            </md-button>
+
+            <md-menu md-position-mode="target-left target">
+                <span class="title pointer" ng-mouseover="$mdMenu.open()" aria-label="Switch site">
 					
 					{{$state.params.animal | capitalize}} Facts
 				</span>
-				
-				<md-menu-content ng-mouseleave="$mdMenu.close()">
-					<md-menu-item ng-repeat="animal in animals">
-						<md-button
-							ng-click="$state.go($state.current.name, {animal: animal.name})"
-							ng-class="{'md-primary bold': animal.name == $state.params.animal}">
-							{{animal.name | capitalize}} Facts
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-			
-			<span flex></span>
-			
-			<md-menu md-position-mode="target-right target" ng-if="authenticatedUser">
-				<md-button ng-click="$mdOpenMenu($event)" aria-label="Profile" class="md-icon-button sign-out-button">
-					<md-tooltip md-direction="bottom">Profile</md-tooltip>
-					
-					<img
-						ng-src="{{authenticatedUser.photo}}"
-						class="avatar small md-whiteframe-1dp"
-						alt="{{authenticatedUser.email}}"
-					/>
-				</md-button>
-				
-				<md-menu-content>
-					<md-menu-item>
-						<md-button ng-click="openProfile($event)">
-							My profile
-						</md-button>
-					</md-menu-item>
-					
-					<md-menu-item>
-						<md-button ng-click="ApiService.signOut()">
-							Sign out
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-			
-			<md-menu md-position-mode="target-right target">
-				<md-button ng-click="$mdOpenMenu($event)" aria-label="Menu" class="md-icon-button">
-					<md-tooltip md-direction="button">Menu</md-tooltip>
-					<md-icon class="material-icons grey">more_vert</md-icon>
-				</md-button>
 
-				<md-menu-content>
-					<md-menu-item aria-label="donate">
-						<md-button ng-href="http://bit.ly/2tC599V" target="_blank">
-							<md-icon class="material-icons">attach_money</md-icon>
-							Donate
-						</md-button>
-					</md-menu-item>
-	
-					<md-menu-item aria-label="report bug">
-						<md-button ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
-							<md-icon class="material-icons">bug_report</md-icon>
-							Report bug or request feature
-						</md-button>
-					</md-menu-item>
-				
-					<md-menu-item aria-label="developer api">
-						<md-button ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
-							<md-icon class="material-icons">code</md-icon>
-							Developer API
-						</md-button>
-					</md-menu-item>
+                <md-menu-content ng-mouseleave="$mdMenu.close()">
+                    <md-menu-item ng-repeat="animal in animals">
+                        <md-button ng-click="$state.go($state.current.name, {animal: animal.name})" ng-class="{'md-primary bold': animal.name == $state.params.animal}">
+                            {{animal.name | capitalize}} Facts
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
 
-					<md-menu-item aria-label="github">
-						<md-button ng-href="https://github.com/alexwohlbruck/cat-facts" target="_blank">
-						<md-icon md-svg-src="/img/res/svg/github-logo.svg"></md-icon>
-						View on Github
-					</md-menu-item>
-					
-					<md-menu-item aria-label="about">
-						<md-button ng-click="openAbout($event)">
-							<md-icon class="material-icons">info</md-icon>
-							About Cat Facts
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-		</div>
-		
-		<md-nav-bar
-			md-selected-nav-item="startingState"
-			nav-bar-aria-label="Navigation"
-			ng-if="$state.current.data.showInNavigation"
-			class="transparent-bg">
-		
-			<md-nav-item
-				ng-repeat="state in $state.get()"
-				md-nav-sref="{{state.name}}"
-				name="{{state.name}}"
-				ng-if="state.data.showInNavigation && (state.data.adminRequired ? authenticatedUser.isAdmin : true)">
-				
-				{{state.name}}
-			</md-nav-item>
-		</md-nav-bar>
-	</md-toolbar>
+            <span flex></span>
 
-	<md-content flex id="main-content">
-		<ui-view layout-padding></ui-view>
-	</md-content>
+            <md-menu md-position-mode="target-right target" ng-if="authenticatedUser">
+                <md-button ng-click="$mdOpenMenu($event)" aria-label="Profile" class="md-icon-button sign-out-button">
+                    <md-tooltip md-direction="bottom">Profile</md-tooltip>
 
-	<md-button
-        class="md-fab md-accent md-fab-bottom-right"
-        ng-click="showCatFact()"
-        aria-label="Get a fact fact"
-        ng-show="$state.current.data.showInNavigation">
-        
+                    <img ng-src="{{authenticatedUser.photo}}" class="avatar small md-whiteframe-1dp" alt="{{authenticatedUser.email}}" />
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button ng-click="openProfile($event)">
+                            My profile
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button ng-click="ApiService.signOut()">
+                            Sign out
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+            <md-menu md-position-mode="target-right target">
+                <md-button ng-click="$mdOpenMenu($event)" aria-label="Menu" class="md-icon-button">
+                    <md-tooltip md-direction="button">Menu</md-tooltip>
+                    <md-icon class="material-icons grey">more_vert</md-icon>
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item aria-label="donate">
+                        <md-button ng-href="http://bit.ly/2tC599V" target="_blank">
+                            <md-icon class="material-icons">attach_money</md-icon>
+                            Donate
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item aria-label="report bug">
+                        <md-button ng-href="https://github.com/alexwohlbruck/cat-facts/issues" target="_blank">
+                            <md-icon class="material-icons">bug_report</md-icon>
+                            Report bug or request feature
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item aria-label="developer api">
+                        <md-button ng-href="https://alexwohlbruck.github.io/cat-facts/docs/" target="_blank">
+                            <md-icon class="material-icons">code</md-icon>
+                            Developer API
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item aria-label="github">
+                        <md-button ng-href="https://github.com/alexwohlbruck/cat-facts" target="_blank">
+                            <md-icon md-svg-src="/img/res/svg/github-logo.svg"></md-icon>
+                            View on Github
+                    </md-menu-item>
+
+                    <md-menu-item aria-label="about">
+                        <md-button ng-click="openAbout($event)">
+                            <md-icon class="material-icons">info</md-icon>
+                            About Cat Facts
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+
+        <md-nav-bar md-selected-nav-item="startingState" nav-bar-aria-label="Navigation" ng-if="$state.current.data.showInNavigation" class="transparent-bg">
+
+            <md-nav-item ng-repeat="state in $state.get()" md-nav-sref="{{state.name}}" name="{{state.name}}" ng-if="state.data.showInNavigation && (state.data.adminRequired ? authenticatedUser.isAdmin : true)">
+
+                {{state.name}}
+            </md-nav-item>
+        </md-nav-bar>
+    </md-toolbar>
+
+    <md-content flex id="main-content">
+        <ui-view layout-padding></ui-view>
+    </md-content>
+
+    <md-button class="md-fab md-accent md-fab-bottom-right" ng-click="showCatFact()" aria-label="Get a fact fact" ng-show="$state.current.data.showInNavigation">
+
         <md-icon class="material-icons">message</md-icon>
-        
+
         <md-tooltip md-direction="left">Get a {{$state.params.animal}} fact</md-tooltip>
     </md-button>
 
-	<!-- AngularJS -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
-	
-	<!-- Dependencies -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
 
-	<!-- Angular Dependencies -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-aria.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-messages.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.9/angular-material.js"></script>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-socket-io/0.7.0/socket.js"></script>
-	
-	<script src="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-touch.js"></script>
-	<script src="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.js"></script>
-	<script src="https://cdn.rawgit.com/Luegg/angularjs-scroll-glue/master/src/scrollglue.js"></script>
-	<script src="https://cdn.rawgit.com/zenorocha/clipboard.js/master/dist/clipboard.min.js"></script>
-	<script src="/components/ngclipboard/dist/ngclipboard.min.js"></script>
-	<script src="https://rawgit.com/chieffancypants/angular-hotkeys/master/build/hotkeys.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.3.0/angular-moment.min.js"></script>
+    <!-- Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
-	<!-- Main App -->
-	<script src="js/app.js"></script>
+    <!-- Angular Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-aria.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-messages.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.9/angular-material.js"></script>
 
-	<!-- Controllers -->
-	<script src="js/controllers/main.js"></script>
-	<script src="js/controllers/home.js"></script>
-	<script src="js/controllers/recipients.js"></script>
-	<script src="js/controllers/fact.js"></script>
-	<script src="js/controllers/facts.js"></script>
-	<script src="js/controllers/profile.js"></script>
-	<script src="js/controllers/console.js"></script>
-	<script src="js/controllers/conversation.js"></script>
-	
-	<!-- Services -->
-	<script src="js/services/auth.service.js"></script>
-	<script src="js/services/api.service.js"></script>
-	
-	<!-- Factories -->
-	<script src="js/factories/socket.factory.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-socket-io/0.7.0/socket.js"></script>
 
-	<!-- Filters -->
-	<script src="js/filters/tel.js"></script>
-	<script src="js/filters/time-format.js"></script>
-	<script src="js/filters/capitalize.js"></script>
-	
-	<!-- Directives -->
-	<script src="js/directives/message.js"></script>
-	<script src="js/directives/recipients-list.js"></script>
-	
-	<script type="text/javascript" src="https://cdn.rawgit.com/siddii/angular-timer/master/dist/angular-timer.min.js?_sm_au_=iVVqPPFnsnRMbVZ7"></script>
-	<script type="text/javascript" src="components/moment/min/moment.min.js"></script>
-	<script type="text/javascript" src="components/moment/min/locales.min.js"></script>
-	<script type="text/javascript" src="components/humanize-duration/humanize-duration.js"></script>
-	
-	<script>
-		/* global navigator */
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/config/service-worker.js').then(function(registration) {
-				console.log('Service Worker registered');
-			}).catch(function(err) {
-				console.log('Service Worker registration failed: ', err);
-			});
-		}
-	</script>
-	
-	<script>
-		/* Google Analytics */
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	</script>
-	
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<script>
-		/* Google AdSense */
-		(adsbygoogle = window.adsbygoogle || []).push({
-			google_ad_client: "ca-pub-9296849737273393",
-			enable_page_level_ads: true
-		});
-	</script>
+    <script src="https://cdn.rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-touch.js"></script>
+    <script src="https://cdn.rawgit.com/revolunet/angular-carousel/master/dist/angular-carousel.js"></script>
+    <script src="https://cdn.rawgit.com/Luegg/angularjs-scroll-glue/master/src/scrollglue.js"></script>
+    <script src="https://cdn.rawgit.com/zenorocha/clipboard.js/master/dist/clipboard.min.js"></script>
+    <script src="/components/ngclipboard/dist/ngclipboard.min.js"></script>
+    <script src="https://rawgit.com/chieffancypants/angular-hotkeys/master/build/hotkeys.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.3.0/angular-moment.min.js"></script>
+
+    <!-- Main App -->
+    <script src="js/app.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/controllers/main.js"></script>
+    <script src="js/controllers/home.js"></script>
+    <script src="js/controllers/recipients.js"></script>
+    <script src="js/controllers/fact.js"></script>
+    <script src="js/controllers/facts.js"></script>
+    <script src="js/controllers/profile.js"></script>
+    <script src="js/controllers/console.js"></script>
+    <script src="js/controllers/conversation.js"></script>
+
+    <!-- Services -->
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/api.service.js"></script>
+
+    <!-- Factories -->
+    <script src="js/factories/socket.factory.js"></script>
+
+    <!-- Filters -->
+    <script src="js/filters/tel.js"></script>
+    <script src="js/filters/time-format.js"></script>
+    <script src="js/filters/capitalize.js"></script>
+
+    <!-- Directives -->
+    <script src="js/directives/message.js"></script>
+    <script src="js/directives/recipients-list.js"></script>
+
+    <script type="text/javascript" src="https://cdn.rawgit.com/siddii/angular-timer/master/dist/angular-timer.min.js?_sm_au_=iVVqPPFnsnRMbVZ7"></script>
+    <script type="text/javascript" src="components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="components/moment/min/locales.min.js"></script>
+    <script type="text/javascript" src="components/humanize-duration/humanize-duration.js"></script>
+
+    <script>
+        /* global navigator */
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/config/service-worker.js').then(function(registration) {
+                console.log('Service Worker registered');
+            }).catch(function(err) {
+                console.log('Service Worker registration failed: ', err);
+            });
+        }
+    </script>
+
+    <script>
+        /* Google Analytics */
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        /* Google AdSense */
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9296849737273393",
+            enable_page_level_ads: true
+        });
+    </script>
 
 </body>
+
 </html>
