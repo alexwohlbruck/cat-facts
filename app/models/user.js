@@ -19,16 +19,16 @@ const UserSchema = new Schema({
         first:  {type: String, required: true},
         last:   {type: String, required: true}
     },
-    email:      {type: String},
+    email:      {type: String, select: false},
     phone:      {type: String},
     photo:      {type: String, default: strings.userPhotoUrl},
     google: {
-        id:           {type: String},
-        accessToken:  {type: String},
-        refreshToken: {type: String}
+        id:           {type: String, select: false},
+        accessToken:  {type: String, select: false},
+        refreshToken: {type: String, select: false}
     },
-    isAdmin: {type: Boolean, default: false},
-    ip: String
+    isAdmin: {type: Boolean, default: false, select: false},
+    ip: {type: String, select: false}
 }, {
     timestamps: true
 });
