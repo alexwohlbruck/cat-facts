@@ -19,7 +19,8 @@ router.get('/', async(req, res) => {
                     type: { $in: animalType },
                     'status.verified': true
                 })
-                .limit(10)
+                .sort({ 'updatedAt': -1 })
+                .limit(10) //! DELETE ME
                 .select('text type')
                 .populate('user', 'name.first name.last'),
             me: !req.user ? undefined : Fact
@@ -27,6 +28,7 @@ router.get('/', async(req, res) => {
                     user: req.user._id,
                     type: { $in: animalType }
                 })
+                .limit(10) //! DELETE ME
         });
 
         return res.status(200).json(data);

@@ -32,11 +32,13 @@
 				{{fact.status.sentCount == 0 ? 'Never sent' : (fact.status.sentCount == 1 ? 'Sent once' : (fact.status.sentCount == 2 ? 'Sent twice' : 'Sent ' + fact.status.sentCount + ' times'))}}
 			</span>
         </p>
-
-        <p class="md-caption" ng-if="fact.source">
-            Source: <a ng-href="{{fact.source}}">{{fact.source}}</a>
-        </p>
     </div>
+
+    <p ng-if="fact.source" class="bold">
+        Source: <a ng-href="{{fact.source}}" class="italic" target="_blank">
+            {{fact.source}}
+        </a>
+    </p>
 </div>
 
 <style>

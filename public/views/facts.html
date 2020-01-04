@@ -1,21 +1,89 @@
 <div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
-    <div layout="column" layout-align="start center">
-        <!-- <timer
-			class="md-headline bold center-text"
-			countdown="seconds"
-			finish-callback="countdownFinished()"
-			max-time-unit="'hour'"
-			interval="1000">
-			
-			<span class="title">
-				{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
-			</span>
-		</timer>
-		
-		<span class="md-subhead">until next fact is sent</span>
-		
-		<br/> -->
 
+    <h1>My facts</h1>
+
+    <div class="grid">
+        <div class="grid-col grid-col--1"></div>
+        <div class="grid-col grid-col--2"></div>
+        <div class="grid-col grid-col--3"></div>
+        <div class="grid-col grid-col--4"></div>
+
+        <md-card ng-repeat="fact in facts.me" ng-init="$last && buildGrid()" class="grid-item">
+            <md-card-content>
+                {{fact.text}}
+            </md-card-content>
+        </md-card>
+    </div>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        .grid:after {
+            display: block;
+            content: '';
+            clear: both;
+        }
+        
+        .grid-col {
+            float: left;
+            width: 49%;
+            margin-right: 2%;
+        }
+        
+        .grid-col--4 {
+            margin-right: 0;
+        }
+        /* hide two middle */
+        
+        .grid-col--2,
+        .grid-col--3 {
+            display: none;
+        }
+        
+        @media ( min-width: 768px) {
+            .grid-col {
+                width: 32%;
+            }
+            .grid-col--2 {
+                display: block;
+            }
+        }
+        
+        @media ( min-width: 1200px) {
+            .grid-col {
+                width: 23.5%;
+            }
+            .grid-col--2,
+            .grid-col--3 {
+                display: block;
+            }
+        }
+        
+        .grid-item {
+            background: #09D;
+            margin-bottom: 20px;
+        }
+        
+        .grid-item--a {
+            height: 80px;
+        }
+        
+        .grid-item--b {
+            height: 140px;
+        }
+        
+        .grid-item--c {
+            height: 300px;
+        }
+    </style>
+
+    <!-- <md-card ng-repeat="fact in facts.me" class="grid-item">
+        {{fact.text}}
+    </md-card> -->
+
+    <!-- <div layout="column" layout-align="start center">
         <form ng-submit="submitFact()" ng-show="authenticatedUser">
             <md-input-container>
                 <label>Submit a {{$state.params.animal}} fact</label>
@@ -24,9 +92,9 @@
 
             <md-button type="submit" class="md-raised md-accent input-button-inline">Submit</md-button>
         </form>
-    </div>
+    </div> -->
 
-    <md-tabs md-dynamic-height md-center-tabs>
+    <!-- <md-tabs md-dynamic-height md-center-tabs>
         <md-tab label="All Facts">
             <md-content>
                 <md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
@@ -91,7 +159,7 @@
                 </div>
             </md-content>
         </md-tab>
-    </md-tabs>
+    </md-tabs> -->
 </div>
 
 <style>
