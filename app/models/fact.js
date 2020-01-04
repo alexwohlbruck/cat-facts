@@ -8,7 +8,6 @@ const FactSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     text: { type: String, required: true, unique: true },
     sendDate: { type: Date },
-    source: { type: String, enum: ['user', 'api'], default: 'user' },
     type: { type: String, enum: animalTypes, default: 'cat' },
     status: {
         verified: { type: Boolean, default: null },

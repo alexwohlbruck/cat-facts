@@ -1,4 +1,6 @@
-<div class="layout-center">
+<md-progress-circular md-mode="indeterminate" class="center" ng-if="!fact"></md-progress-circular>
+
+<div class="layout-center" ng-if="fact">
 
     <span id="right-quote" class="quote">&#8221;</span>
 
@@ -7,7 +9,7 @@
 
         <div layout="column" class="margin-top-5 margin-sides-10">
             <p class=" margin-0 ">Submitted by </p class="margin-0 ">
-            <p class="margin-0 bold">
+            <p class="margin-0 extra-bold">
                 {{fact.user.name.first}} {{fact.user.name.last}}
             </p>
         </div>

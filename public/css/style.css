@@ -229,8 +229,23 @@ md-nav-bar.transparent-bg .md-nav-bar {
     font-weight: 500 !important;
 }
 
+.extra-bold {
+    font-weight: 700 !important;
+}
+
 .center-text {
     text-align: center;
+}
+
+.center-parent {
+    position: relative;
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .pointer {
