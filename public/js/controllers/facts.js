@@ -1,11 +1,17 @@
 /* global angular */
 var app = angular.module('catfacts');
 
-
 app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', '$location', 'ApiService', 'socket',
     function($scope, $rootScope, $state, $location, ApiService, socket) {
 
         getFacts();
+
+        $scope.buildGrid = function() {
+            var colc = new Colcade('.grid', {
+                columns: '.grid-col',
+                items: '.grid-item'
+            });
+        }
 
         $scope.submitFact = function() {
             const factText = $scope.form.newFact;

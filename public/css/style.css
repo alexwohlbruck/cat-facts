@@ -233,6 +233,10 @@ md-nav-bar.transparent-bg .md-nav-bar {
     font-weight: 700 !important;
 }
 
+.italic {
+    font-style: italic;
+}
+
 .center-text {
     text-align: center;
 }
@@ -252,7 +256,7 @@ md-nav-bar.transparent-bg .md-nav-bar {
     cursor: pointer;
 }
 
-.accent-links a {
+a {
     text-decoration: none;
     color: rgb(33, 150, 243);
 }
