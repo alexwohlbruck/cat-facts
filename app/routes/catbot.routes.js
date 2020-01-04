@@ -11,7 +11,6 @@ const twitter = require('../services/twitter.service');
 const Fact = require('../models/fact');
 const Message = require('../models/message');
 const Recipient = require('../models/recipient');
-const Upvote = require('../models/upvote');
 
 
 const todayStart = new Date();
@@ -35,7 +34,7 @@ router.get('/daily', async(req, res) => {
     todayEnd.setHours(23, 59, 59, 999);
 
     let getFactAndRecipients = async animalType => {
-        let { recipients, overrideFact, highestUpvotedFact, fact } = await Promise.props({
+        let { recipients, overrideFact, fact } = await Promise.props({
 
             recipients: Recipient.find({
                 subscriptions: animalType
@@ -51,28 +50,6 @@ router.get('/daily', async(req, res) => {
                 type: animalType
             }),
 
-            highestUpvotedFact: Upvote.aggregate([
-                { $group: { _id: '$fact', upvotes: { $sum: 1 } } }, // Get all upvote sums
-                {
-                    $lookup: { // Retrieve associated facts
-                        from: 'facts',
-                        localField: '_id',
-                        foreignField: '_id',
-                        as: 'fact'
-                    }
-                },
-                { $unwind: '$fact' },
-                {
-                    $match: {
-                        // 'fact.used': false, // TODO: Sort by 'sentCount'
-                        'fact.type': animalType,
-                        'fact.sendDate': { $exists: false }
-                    }
-                }, // Only select used facts of a particular animal type
-                { $sort: { 'upvotes': -1, 'fact.createdAt': 1 } }, // Sort by upvote count, then by date submitted
-                { $limit: 1 } // Only return one fact
-            ]),
-
             fact: Fact.getFact({ animalType })
         });
 
@@ -87,11 +64,9 @@ router.get('/daily', async(req, res) => {
             await overrideFact.delete();
         }
 
-        highestUpvotedFact = highestUpvotedFact[0] ? highestUpvotedFact[0].fact : null;
-
         return {
             recipients: recipients.map(r => r.number),
-            fact: (overrideFact || highestUpvotedFact || fact).text
+            fact: (overrideFact || fact).text
         };
     };
 

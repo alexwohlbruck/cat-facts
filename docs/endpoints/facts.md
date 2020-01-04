@@ -100,9 +100,7 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
           "first": "Alex",
           "last": "Wohlbruck"
         }
-      },
-      "upvotes": 2,
-      "userUpvoted": true
+      }
     },
     {
       "_id": "5894af975cdc7400113ef7f9",
@@ -114,9 +112,7 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
           "first": "Alex",
           "last": "Wohlbruck"
         }
-      },
-      "upvotes": 1,
-      "userUpvoted": false
+      }
     }
   ],
   "me": [
@@ -124,12 +120,7 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
       "_id": "5b1186a73bc85f0b2eb98c25",
       "text": "Horses cannot get cavities.",
       "type": "cat",
-      "sentCount": 0,
-      "upvotes": [
-        {
-          "user": "587288f6e6f85e64ae1c7ef7"
-        }
-      ]
+      "sentCount": 0
     }
   ]
 ```

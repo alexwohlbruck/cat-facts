@@ -21,7 +21,6 @@
 
     <span id="left-quote" class="quote">&#8220;</span>
 
-
     <div layout="row" layout-align="start center">
         <md-icon class="material-icons margin-10" ng-class="{'blue': fact.status.verified === null, 'green': fact.status.verified, 'red': !fact.status.verified && fact.status.verified !== null}">
             {{fact.status.verified === null ? 'access_time' : (fact.status.verified ? 'check_circle' : 'cancel')}}
@@ -32,6 +31,10 @@
 			<span>
 				{{fact.status.sentCount == 0 ? 'Never sent' : (fact.status.sentCount == 1 ? 'Sent once' : (fact.status.sentCount == 2 ? 'Sent twice' : 'Sent ' + fact.status.sentCount + ' times'))}}
 			</span>
+        </p>
+
+        <p class="md-caption" ng-if="fact.source">
+            Source: <a ng-href="{{fact.source}}">{{fact.source}}</a>
         </p>
     </div>
 </div>
