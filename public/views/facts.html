@@ -2,18 +2,31 @@
 
     <h1>My facts</h1>
 
+    <div layout="column" layout-align="start center">
+        <form ng-submit="submitFact()" ng-show="authenticatedUser">
+            <md-input-container>
+                <label>Submit a {{$state.params.animal}} fact</label>
+                <input ng-model="form.newFact">
+            </md-input-container>
+
+            <md-button type="submit" class="md-raised md-accent input-button-inline">Submit</md-button>
+        </form>
+    </div>
+
     <div class="grid">
         <div class="grid-col grid-col--1"></div>
         <div class="grid-col grid-col--2"></div>
         <div class="grid-col grid-col--3"></div>
         <div class="grid-col grid-col--4"></div>
 
-        <md-card ng-repeat="fact in facts.me" ng-init="$last && buildGrid()" class="grid-item">
+        <md-card ng-repeat="fact in facts" ng-init="$last && buildGrid()" class="grid-item" ng-click="openFact(fact._id)">
             <md-card-content>
                 {{fact.text}}
             </md-card-content>
         </md-card>
     </div>
+
+    <code>{{facts}}</code>
 
     <style>
         * {
@@ -28,7 +41,6 @@
         
         .grid-col {
             float: left;
-            width: 49%;
             margin-right: 2%;
         }
         
@@ -62,8 +74,7 @@
         }
         
         .grid-item {
-            background: #09D;
-            margin-bottom: 20px;
+            margin: 20px 0px;
         }
         
         .grid-item--a {
@@ -78,21 +89,6 @@
             height: 300px;
         }
     </style>
-
-    <!-- <md-card ng-repeat="fact in facts.me" class="grid-item">
-        {{fact.text}}
-    </md-card> -->
-
-    <!-- <div layout="column" layout-align="start center">
-        <form ng-submit="submitFact()" ng-show="authenticatedUser">
-            <md-input-container>
-                <label>Submit a {{$state.params.animal}} fact</label>
-                <input ng-model="form.newFact">
-            </md-input-container>
-
-            <md-button type="submit" class="md-raised md-accent input-button-inline">Submit</md-button>
-        </form>
-    </div> -->
 
     <!-- <md-tabs md-dynamic-height md-center-tabs>
         <md-tab label="All Facts">

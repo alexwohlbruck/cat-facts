@@ -68,10 +68,10 @@ Retrieve one or more `Facts`.
 
 ### Get queued facts
 
-These are user-submitted `Facts` that are waiting to be sent
+These are `Facts` belonging to the authenticated user.
 
 ##### Endpoint
-`GET /facts`
+`GET /facts/me`
 
 ##### Query parameters
 
@@ -80,7 +80,7 @@ These are user-submitted `Facts` that are waiting to be sent
 | animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe |
 
 ##### Returns
-An object containing an array of the pending `Facts`, as well as an array of `Facts` that the authenticated user submitted.
+An array of `Facts` that the authenticated user has submitted.
 
 ##### Example request
 `GET /facts?animal_type=cat,horse`
@@ -88,39 +88,30 @@ An object containing an array of the pending `Facts`, as well as an array of `Fa
 ##### Example response
 
 ```
-{
-  "all": [
-    {
-      "_id": "5887e1d85c873e0011036889",
-      "text": "Cats make about 100 different sounds. Dogs make only about 10.",
-      type": "cat",
-      "user": {
-        "_id": "5c7da4bd70008708fb17c88f",
-        "name": {
-          "first": "Alex",
-          "last": "Wohlbruck"
-        }
-      }
+[
+  {
+    "type": "cat",
+    "_id": "590b9d90229d260020af0b06",
+    "user": {
+      "name": {
+        "first": "Alex",
+        "last": "Wohlbruck"
+      },
+      "_id": "5a9ac18c7478810ea6c06381"
     },
-    {
-      "_id": "5894af975cdc7400113ef7f9",
-      "text": "The technical term for a cat’s hairball is a bezoar.",
-      "type": "cat",
-      "user": {
-        "_id": "587288f6e6f85e64ae1c7ef7",
-        "name": {
-          "first": "Alex",
-          "last": "Wohlbruck"
-        }
-      }
+    "text": "Evidence suggests domesticated cats have been around since 3600 B.C., 2,000 years before Egypt's pharaohs."
+  },
+  {
+    "type": "cat",
+    "_id": "591f7aab0cf1d60ee8afcd62",
+    "text": "The cat's clavicle, or collarbone, does not connect with other bones but is buried in the muscles of the shoulder region. This lack of a functioning collarbone allows them to fit through any opening the size of their head.",
+    "user": {
+      "name": {
+        "first": "Alex",
+        "last": "Wohlbruck"
+      },
+      "_id": "5a9ac18c7478810ea6c06381"
     }
-  ],
-  "me": [
-	{
-      "_id": "5b1186a73bc85f0b2eb98c25",
-      "text": "Horses cannot get cavities.",
-      "type": "cat",
-      "sentCount": 0
-    }
-  ]
+  }
+]
 ```
