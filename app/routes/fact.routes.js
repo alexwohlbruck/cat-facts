@@ -8,28 +8,18 @@ const Fact = require.main.require('./app/models/fact');
 const User = require.main.require('./app/models/user');
 
 // Get submitted facts
-router.get('/', async(req, res) => {
+router.get('/me', async(req, res) => {
 
     const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 
     try {
-        const data = await Promise.props({
-            all: Fact
-                .find({
-                    type: { $in: animalType },
-                    'status.verified': true
-                })
-                .sort({ 'updatedAt': -1 })
-                .limit(10) //! DELETE ME
-                .select('text type')
-                .populate('user', 'name.first name.last'),
-            me: !req.user ? undefined : Fact
-                .find({
-                    user: req.user._id,
-                    type: { $in: animalType }
-                })
-                .limit(10) //! DELETE ME
-        });
+        const data = await Fact.find({
+                user: req.user._id,
+                type: { $in: animalType }
+            })
+            .select('text type')
+            .populate('user', 'name')
+            .limit(10)
 
         return res.status(200).json(data);
     } catch (err) {
