@@ -18,18 +18,6 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', '$location', 'Api
             }
         };
 
-        $scope.upvoteFact = function(fact) {
-            if (fact.userUpvoted) {
-                ApiService.unvoteFact(fact._id).catch(function(err) {
-                    $rootScope.toast({ message: err.data.message });
-                });
-            } else {
-                ApiService.upvoteFact(fact._id).catch(function(err) {
-                    $rootScope.toast({ message: err.data.message });
-                });
-            }
-        };
-
         $scope.openFact = function(factId) {
             $location.path('/' + $state.params.animal + '/facts/' + factId);
         };
@@ -50,27 +38,7 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', '$location', 'Api
         }
 
         socket.on('fact', function(data) {
-            data.upvotes = 0;
             $scope.facts.all.push(data);
         });
-
-        socket.on('fact:upvote', function(data) {
-            const factIndex = getIndexOfFact(data.fact._id);
-            $scope.facts.all[factIndex].upvotes++;
-
-            if (data.user._id == $rootScope.authenticatedUser._id) {
-                $scope.facts.all[factIndex].userUpvoted = true;
-            }
-        });
-
-        socket.on('fact:unvote', function(data) {
-            const factIndex = getIndexOfFact(data.fact._id);
-            $scope.facts.all[factIndex].upvotes--;
-
-            if (data.user._id == $rootScope.authenticatedUser._id) {
-                $scope.facts.all[factIndex].userUpvoted = false;
-            }
-        });
-
     }
 ]);

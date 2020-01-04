@@ -49,23 +49,13 @@
                                 <tr md-row md-row-select="false">
                                     <th md-column><span>Added by</span></th>
                                     <th md-column><span>Fact</span></th>
-                                    <th md-column md-numeric style="padding-right: 90px !important">Votes</th>
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.all | orderBy:'-upvotes'" ng-animater="'animate'" ng-click="openFact(fact._id)">
+                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.all" ng-animater="'animate'" ng-click="openFact(fact._id)">
 
                                     <td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
                                     <td md-cell class="padding-20">"{{fact.text}}"</td>
-                                    <td md-cell>
-                                        <span>{{fact.upvotes}}</span>
-                                        <md-button ng-click="upvoteFact(fact)" ng-if="authenticatedUser" ng-disabled="fact.user._id == authenticatedUser._id" title="Vote up" aria-label="Vote up" class="md-icon-button md-icon-button-small">
-
-                                            <md-icon class="material-icons" ng-class="{'blue': fact.userUpvoted}" aria-label="Vote up">
-                                                thumb_up
-                                                <md-icon>
-                                        </md-button>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -83,16 +73,12 @@
                                 <tr md-row md-row-select="false">
                                     <th md-column>Fact</th>
                                     <th md-column md-numeric># of times sent</th>
-                                    <th md-column md-numeric>Votes</th>
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
+                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me">
                                     <td md-cell>"{{fact.text}}"</td>
                                     <td md-cell>{{fact.status.sentCount}}</td>
-                                    <td md-cell>
-                                        <span>{{fact.upvotes}}</span>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

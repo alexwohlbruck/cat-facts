@@ -6,99 +6,27 @@ const { isAuthenticated, logApiRequest } = require('../middleware');
 
 const Fact = require.main.require('./app/models/fact');
 const User = require.main.require('./app/models/user');
-const Upvote = require.main.require('./app/models/upvote');
-
 
 // Get submitted facts
 router.get('/', async(req, res) => {
 
     const animalType = req.query.animal_type ? req.query.animal_type.split(',') : ['cat'];
 
-    // Define states of pipeline
-    const matchAll = {
-            $match: {
-                source: 'user',
-                sendDate: {
-                    $exists: false
-                },
-                type: {
-                    $in: animalType
-                }
-            }
-        },
-        matchMe = {
-            $match: {
-                user: req.user ? req.user._id : 'Not authenticated - dummy query',
-                type: {
-                    $in: animalType
-                }
-            }
-        },
-        lookupUsers = {
-            $lookup: {
-                from: 'users',
-                localField: 'user',
-                foreignField: '_id',
-                as: 'user'
-            }
-        },
-        projectUsers = {
-            $project: {
-                text: 1,
-                type: 1,
-                user: { $arrayElemAt: ['$user', 0], }
-            }
-        },
-        lookupUpvotes = {
-            $lookup: {
-                from: 'upvotes',
-                localField: '_id',
-                foreignField: 'fact',
-                as: 'upvotes'
-            }
-        },
-        projectUpvotes = {
-            $project: {
-                text: 1,
-                user: { _id: 1, name: 1 },
-                upvotes: { user: 1 },
-                status: {
-                    sentCount: 1
-                },
-                type: 1
-            }
-        },
-        countUpvotes = [{
-                $addFields: {
-                    upvotes: { $size: "$upvotes" },
-                    userUpvoted: req.user ? {
-                        $in: [req.user._id, "$upvotes.user"]
-                    } : undefined
-                }
-            },
-            {
-                $sort: {
-                    upvotes: -1
-                }
-            }
-        ];
-
     try {
         const data = await Promise.props({
-            all: Fact.aggregate([
-                matchAll,
-                lookupUsers,
-                projectUsers,
-                lookupUpvotes,
-                projectUpvotes,
-                ...countUpvotes
-            ]),
-            me: req.user ? Fact.aggregate([
-                matchMe,
-                lookupUpvotes,
-                projectUpvotes,
-                ...countUpvotes
-            ]) : undefined
+            all: Fact
+                .find({
+                    type: { $in: animalType },
+                    'status.verified': true
+                })
+                .limit(10)
+                .select('text type')
+                .populate('user', 'name.first name.last'),
+            me: !req.user ? undefined : Fact
+                .find({
+                    user: req.user._id,
+                    type: { $in: animalType }
+                })
         });
 
         return res.status(200).json(data);
@@ -177,61 +105,6 @@ router.post('/', isAuthenticated, async(req, res) => {
             return res.status(409).json(err);
         }
         return res.status(400).json(err);
-    }
-});
-
-// Upvote a fact
-router.post('/:factID/upvote', isAuthenticated, async(req, res) => {
-
-    if (!req.params.factID) {
-        return res.status(400).json({ message: "Provide a fact ID" });
-    }
-
-    try {
-        const fact = await Fact.findById(req.params.factID);
-
-        if (!fact) {
-            return res.status(404).json({ message: "That fact doesn't exist" });
-        }
-
-        if (fact.user.equals(req.user._id)) {
-            return res.status(400).json({ message: "You can't upvote your own fact" });
-        }
-
-        const io = req.app.get('socketio');
-
-        const upvote = new Upvote({
-            user: req.user._id,
-            fact: req.params.factID
-        });
-
-        await upvote.save();
-
-        io.emit('fact:upvote', { fact: fact, user: req.user });
-
-        return res.status(201).send();
-    } catch (err) {
-        return res.status(400).json(err);
-    }
-});
-
-// Unvote (un-upvote) a fact
-router.delete('/:factID/upvote', isAuthenticated, async(req, res) => {
-
-    if (!req.params.factID) {
-        return res.status(400).json({ message: "Provide a fact ID" });
-    }
-
-    const io = req.app.get('socketio');
-
-    try {
-        await Upvote.findOneAndRemove({ fact: req.params.factID, user: req.user._id });
-
-        io.emit('fact:unvote', { fact: { _id: req.params.factID }, user: req.user });
-
-        return res.status(204).send();
-    } catch (err) {
-        return res.stauts(400).json(err);
     }
 });
 
