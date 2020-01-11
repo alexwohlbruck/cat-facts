@@ -19,7 +19,8 @@ mongoose.Promise = global.Promise;
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
+mongoose.set('useFindAndModify', false);
+mongoose.connect('mongodb://' + keys.database.username + ':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
     useNewUrlParser: true
 });
 
@@ -28,14 +29,14 @@ app.set('view engine', 'ejs');
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.static(__dirname + '/public'));
 app.use(requestIp.mw());
 
-const mongoStore = new MongoStore({url: keys.database.url()});
+const mongoStore = new MongoStore({ url: keys.database.url() });
 const sessionMiddleware = session({
     secret: keys.session.secret,
     resave: true,
@@ -46,7 +47,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session()); // 
-	
+
 // Define routes
 app.use('/', require('./app/routes'));
 
@@ -68,6 +69,6 @@ if (env === 'production') {
 require('./app/config/passport')(passport);
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
-	const addr = server.address();
-	console.log("Server listening at", addr.address + ":" + addr.port);
+    const addr = server.address();
+    console.log("Server listening at", addr.address + ":" + addr.port);
 });
