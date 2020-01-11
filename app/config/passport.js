@@ -36,7 +36,7 @@ module.exports = passport => {
 
                 google = {
                     id: profile.id,
-                    accessToken: User.encryptAccessToken(accessToken),
+                    accessToken,
                     refreshToken
                 },
                 ip = req.clientIp;
@@ -54,14 +54,14 @@ module.exports = passport => {
 
                 } else {
                     User.findByIdAndUpdate(user._id, {
-                        'google.accessToken': User.encryptAccessToken(accessToken),
+                        'google.accessToken': accessToken,
                         'google.refreshToken': refreshToken,
                         ip,
                         photo
                     })
 
                     .then(user => {
-                        user.google.accessToken = User.decryptAccessToken(user.google.accessToken);
+                        user.google.accessToken = user.google.accessToken;
 
                         return done(err, user);
                     });
