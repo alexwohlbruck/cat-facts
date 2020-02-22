@@ -7,6 +7,15 @@ const { isAuthenticated, logApiRequest } = require('../middleware');
 const Fact = require.main.require('./app/models/fact');
 const User = require.main.require('./app/models/user');
 
+router.get('/', async(req, res) => {
+    try {
+        const facts = await Fact.find().limit(5);
+        return res.status(200).json(facts);
+    } catch (err) {
+        return res.status(err.status || 400).json(err);
+    }
+})
+
 // Get submitted facts
 router.get('/me', async(req, res) => {
 
@@ -41,7 +50,7 @@ router.get('/random', logApiRequest, async(req, res) => {
         const facts = await Fact.getFact({ amount, animalType });
         return res.status(200).json(facts);
     } catch (err) {
-        return res.status(err).json(err);
+        return res.status(err.status).json(err);
     }
 });
 

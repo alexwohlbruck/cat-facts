@@ -26,67 +26,41 @@
         </md-card>
     </div>
 
-    <code>{{facts}}</code>
-
     <style>
-        * {
-            box-sizing: border-box;
-        }
-        
-        .grid:after {
-            display: block;
-            content: '';
-            clear: both;
+        .grid {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
         }
         
         .grid-col {
-            float: left;
-            margin-right: 2%;
+            -webkit-box-flex: 1;
+            -webkit-flex-grow: 1;
+            -ms-flex-positive: 1;
+            flex-grow: 1;
         }
-        
-        .grid-col--4 {
-            margin-right: 0;
-        }
-        /* hide two middle */
+        /* 2 columns by default, hide columns 2 & 3 */
         
         .grid-col--2,
         .grid-col--3 {
-            display: none;
+            display: none
         }
+        /* 3 columns at medium size */
         
-        @media ( min-width: 768px) {
-            .grid-col {
-                width: 32%;
-            }
+        @media (min-width: 768px) {
             .grid-col--2 {
                 display: block;
             }
+            /* show column 2 */
         }
+        /* 4 columns at large size */
         
-        @media ( min-width: 1200px) {
-            .grid-col {
-                width: 23.5%;
-            }
-            .grid-col--2,
+        @media (min-width: 1080px) {
             .grid-col--3 {
                 display: block;
             }
-        }
-        
-        .grid-item {
-            margin: 20px 0px;
-        }
-        
-        .grid-item--a {
-            height: 80px;
-        }
-        
-        .grid-item--b {
-            height: 140px;
-        }
-        
-        .grid-item--c {
-            height: 300px;
+            /* show column 3 */
         }
     </style>
 
