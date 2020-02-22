@@ -7,6 +7,8 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', '$location', 'Api
         getFacts();
 
         $scope.buildGrid = function() {
+            console.log('init grid');
+
             var colc = new Colcade('.grid', {
                 columns: '.grid-col',
                 items: '.grid-item'
@@ -36,6 +38,9 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', '$location', 'Api
                     console.log(response.data);
 
                     $scope.facts = response.data;
+                    /* setTimeout(() => {
+                        $scope.buildGrid();
+                    }, 0); */
                 });
         }
 
