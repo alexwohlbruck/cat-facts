@@ -35,7 +35,7 @@ const UserSchema = new Schema({
 
 UserSchema.statics.encryptAccessToken = function(plainText) {
     return crypto
-        .createCipher(keys.encryption.algorithm, keys.encryption.key)
+        .createCipherv(keys.encryption.algorithm, keys.encryption.key)
         .update(plainText, 'utf-8', 'hex');
 };
 
