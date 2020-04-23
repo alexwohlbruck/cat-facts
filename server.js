@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const requestIp = require('request-ip');
@@ -19,8 +20,7 @@ mongoose.Promise = global.Promise;
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.set('useFindAndModify', false);
-mongoose.connect('mongodb://' + keys.database.username + ':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
+mongoose.connect(keys.database.url(), {
     useNewUrlParser: true
 });
 
@@ -29,7 +29,8 @@ app.set('view engine', 'ejs');
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(cors());
+app.use(bodyParser.json()); 
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('X-HTTP-Method-Override'));
