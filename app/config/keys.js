@@ -18,11 +18,13 @@ module.exports = {
         accessToken: process.env.APIAI_ACCESS_TOKEN
     },
     database: {
+        host: 'ds157298.mlab.com',
+        port: '57298',
         name: 'cat-facts',
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         url() {
-            return `mongodb://${this.username}:${this.password}@ds157298.mlab.com:57298/${this.name}`;
+            return `mongodb://${this.username}:${this.password}@${this.host}:${this.port}/${this.name}`;
         }
     },
     generalAccessToken: process.env.GENERAL_ACCESS_TOKEN
