@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const slowDown = require("express-slow-down");
 const requestIp = require('request-ip');
 const MongoStore = require('connect-mongo')(session);
 const server = require('http').Server(app);
@@ -19,23 +20,16 @@ mongoose.Promise = global.Promise;
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb://'+keys.database.username+':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
+mongoose.connect('mongodb://' + keys.database.username + ':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
     useNewUrlParser: true
 });
+
+app.enable('trust proxy');
 
 app.set('socketio', io);
 app.set('view engine', 'ejs');
 
-app.use(morgan('dev'));
-app.use(cookieParser());
-app.use(bodyParser.json()); 
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride('X-HTTP-Method-Override'));
-app.use(express.static(__dirname + '/public'));
-app.use(requestIp.mw());
-
-const mongoStore = new MongoStore({url: keys.database.url()});
+const mongoStore = new MongoStore({ url: keys.database.url() });
 const sessionMiddleware = session({
     secret: keys.session.secret,
     resave: true,
@@ -43,16 +37,31 @@ const sessionMiddleware = session({
     store: mongoStore
 });
 
+const speedLimiter = slowDown({
+    windowMs: 10 * 60 * 1000,
+    delayAfter: 150,
+    delayMs: 500
+});
+
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(speedLimiter);
+app.use(bodyParser.json());
+app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(express.static(__dirname + '/public'));
+app.use(requestIp.mw());
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session()); // Persistent login sessions
-	
+
 // Define routes
 app.use('/', require('./app/routes'));
 
 // Redirect to HTTPS
 if (env === 'production') {
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         if (process.env.NODE_ENV === 'production') {
             if (req.headers['x-forwarded-proto'] != 'https') {
                 return res.redirect('https://' + req.headers.host + req.url);
@@ -67,7 +76,7 @@ if (env === 'production') {
 
 require('./app/config/passport')(passport);
 
-server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
-	const addr = server.address();
-	console.log("Server listening at", addr.address + ":" + addr.port);
+server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function () {
+    const addr = server.address();
+    console.log("Server listening at", addr.address + ":" + addr.port);
 });
