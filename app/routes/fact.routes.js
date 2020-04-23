@@ -110,7 +110,7 @@ router.get('/random', async (req, res) => {
 		const facts = await Fact.getFact({amount, animalType});
 		return res.status(200).json(facts);
 	} catch (err) {
-		return res.status(err).json(err);
+		return res.status(400).json(err);
 	}
 });
 
