@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const slowDown = require("express-slow-down");
@@ -20,7 +21,7 @@ mongoose.Promise = global.Promise;
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb://' + keys.database.username + ':' + keys.database.password + '@ds157298.mlab.com:57298/cat-facts', {
+mongoose.connect(keys.database.url(), {
     useNewUrlParser: true
 });
 
@@ -29,7 +30,8 @@ app.enable('trust proxy');
 app.set('socketio', io);
 app.set('view engine', 'ejs');
 
-const mongoStore = new MongoStore({ url: keys.database.url() });
+const mongoStore = new MongoStore({url: keys.database.url()});
+
 const sessionMiddleware = session({
     secret: keys.session.secret,
     resave: true,
@@ -45,6 +47,7 @@ const speedLimiter = slowDown({
 
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use(cors());
 app.use(speedLimiter);
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
