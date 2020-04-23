@@ -39,13 +39,13 @@ const UserSchema = new Schema({
 
 UserSchema.statics.encryptAccessToken = function(plainText) {
     return crypto
-        .createCipheriv(keys.encryption.algorithm, keys.encryption.key)
+        .createCipher(keys.encryption.algorithm, keys.encryption.key)
         .update(plainText, 'utf-8', 'hex');
 };
 
 UserSchema.statics.decryptAccessToken = function(cipher) {
     return crypto
-        .createDecipheriv(keys.encryption.algorithm, keys.encryption.key)
+        .createDecipher(keys.encryption.algorithm, keys.encryption.key)
         .update(cipher, 'hex', 'utf-8');
 };
 
