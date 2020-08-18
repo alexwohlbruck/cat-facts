@@ -61,10 +61,15 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSid
 	};
 				
 	$scope.showCatFact = function() {
-		
 		ApiService.getFact({animalType: $state.params.animal}).then(function(response) {
-			
 			var fact = response.data.text;
+			var speech = new SpeechSynthesisUtterance(fact);
+			
+			if (defaultVoice) {
+				speech.voice = defaultVoice;
+			}
+				
+			speech.pitch = 1.8;
 			
 			$mdBottomSheet.show({
 				templateUrl: '/views/partials/bottom-sheet-fact.html',
@@ -74,18 +79,12 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$state', '$window', '$mdSid
 					$scope.alertCopied = function() {
 						$rootScope.showToast("Text copied to clipboard");
 					};
+
+					synth.speak(speech);
 				}]
+			}).catch(function () {
+				synth.cancel();
 			});
-			
-			var speech = new SpeechSynthesisUtterance(fact);
-			
-			if (defaultVoice) {
-				speech.voice = defaultVoice;
-			}
-			
-			speech.pitch = 1.8;
-			
-			synth.speak(speech);
 		});
 	};
 	
