@@ -1,37 +1,30 @@
 <div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
-	<div layout="column" layout-padding layout-align="start stretch">
-		<span class="md-headline bold center-text">Add a Recipient</span>
-		<br/>
+	<div layout="column" layout-padding layout-align="start start">
+		<timer
+			class="md-headline bold center-text padding-0"
+			countdown="seconds"
+			finish-callback="countdownFinished()"
+			max-time-unit="'hour'"
+			interval="1000">
+			
+			<div layout='column' layout-gt-sm='row' layout-align='start start'>
+				<span class="title md-display-2">
+					{{hours}} hour{{hoursS}},&nbsp;
+				</span>
+
+				<span class="title md-display-2">
+					{{minutes}} minute{{minutesS}},&nbsp;
+				</span>
+
+				<span class="title md-display-2">
+					and {{seconds}} second{{secondsS}}
+				</span>
+			</div>
+		</timer>
 		
-		<form ng-submit="addRecipient()" layout="column" layout-gt-sm="row" layout-align-gt-sm="center start" layout-align="start stretch">
-			<div layout="column" layout-gt-xs="row" layout-align-gt-xs="center start">
-				<md-input-container class="no-space">
-					<label>Name</label>
-					<input ng-model="form.name" aria-label="Recipient name">
-				</md-input-container>
-				
-				<md-input-container class="no-space">
-					<label>Phone Number</label>
-					<!-- Implement client validation -->
-					<input ng-model="form.number" aria-label="Recipient phone number">
-				</md-input-container>
-				
-				<div layout="column" layout-align="start center">
-					<md-button type="submit" class="md-raised md-accent margin-top-5" aria-label="Add Recipient">
-						Add
-					</md-button>
-				</div>
-			</div>
-			
-			<p class="md-body-2 margin-sides-10 center-text">OR</p>
-			
-			<div layout="column" layout-align="start center">
-				<md-button class="md-raised margin-top-5 md-primary" ng-click="openImportContacts()">
-					<md-icon md-svg-src="img/res/svg/google-icon.svg" ng-style="{padding: '0px 8px'}"></md-icon>
-					Add contacts
-				</md-button>
-			</div>
-		</form>
+		<span class="md-headline padding-0 grey">until the next fact is sent</span>
+		
+		<br/>
 	</div>
 	
 	<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
@@ -46,7 +39,7 @@
 				
 				<span flex></span>
 			
-				<span class="padding-top-15">
+				<span class="margin-sides-10">
 					<md-checkbox
 						ng-model="orderBy"
 						aria-label="Sort table by last added"
@@ -54,6 +47,11 @@
 						ng-false-value="'name'">
 					<span class="md-body-2 title">Sort by last added</span>
 				</span>
+
+				<md-button class="md-raised md-primary" ng-click="openAddRecipient($event)">
+					<md-icon class="material-icons">add</md-icon>
+					<span class="white">Add recipient</span>
+				</md-button>
 			</div>
 		</md-toolbar>
 		

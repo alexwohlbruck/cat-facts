@@ -6,7 +6,6 @@ const { isAuthenticated } = require('../middleware');
 
 const User = require.main.require('./app/models/user');
 
-
 const baseScopes = [
 	'email',
 	'profile'

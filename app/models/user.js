@@ -16,22 +16,26 @@ const uniquePartialIndex = {
 
 const UserSchema = new Schema({
     name: {
-        first:  {type: String, required: true},
-        last:   {type: String, required: true}
+        first: { type: String, required: true },
+        last: { type: String, required: true }
     },
-    email:      {type: String},
-    phone:      {type: String},
-    photo:      {type: String, default: strings.userPhotoUrl},
+    email: { type: String, select: false },
+    phone: { type: String },
+    photo: { type: String, default: strings.userPhotoUrl },
     google: {
-        id:           {type: String},
-        accessToken:  {type: String},
-        refreshToken: {type: String}
+        id: { type: String, select: false },
+        accessToken: { type: String, select: false },
+        refreshToken: { type: String, select: false }
     },
-    isAdmin: {type: Boolean, default: false},
-    ip: String
+    isAdmin: { type: Boolean, default: false, select: false },
+    ip: { type: String, select: false }
 }, {
     timestamps: true
 });
+
+// TODO: Generate key with library
+// TODO: Encrypt refresh token
+// https://github.com/nodejs/node/blob/933d8eb689bb4bc412e71c0069bf9b7b24de4f9d/doc/api/deprecations.md#dep0106-cryptocreatecipher-and-cryptocreatedecipher
 
 UserSchema.statics.encryptAccessToken = function(plainText) {
     return crypto
@@ -45,9 +49,9 @@ UserSchema.statics.decryptAccessToken = function(cipher) {
         .update(cipher, 'hex', 'utf-8');
 };
 
-UserSchema.plugin(mongooseDelete, {overrideMethods: true});
+UserSchema.plugin(mongooseDelete, { overrideMethods: true });
 
-UserSchema.index({email: 1, phone: 1}, uniquePartialIndex);
+UserSchema.index({ email: 1, phone: 1 }, uniquePartialIndex);
 
 var User = mongoose.model('User', UserSchema);
 
