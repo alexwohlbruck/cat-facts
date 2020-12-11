@@ -19,12 +19,11 @@ module.exports = {
     },
     database: {
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
         name: process.env.DB_NAME,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         url() {
-            return `mongodb://${this.username}:${this.password}@${this.host}:${this.port}/${this.name}`;
+            return `mongodb+srv://${this.username}:${this.password}@${this.host}/${this.name}`;
         }
     },
     generalAccessToken: process.env.GENERAL_ACCESS_TOKEN
