@@ -1,0 +1,61 @@
+<md-progress-circular md-mode="indeterminate" class="center" ng-if="!fact"></md-progress-circular>
+
+<div class="layout-center" ng-if="fact">
+
+    <span id="right-quote" class="quote">&#8221;</span>
+
+    <div layout="row">
+        <img ng-src="{{fact.user.photo}}" class="avatar avatar-large" />
+
+        <div layout="column" class="margin-top-5 margin-sides-10">
+            <p class=" margin-0 ">Submitted by </p class="margin-0 ">
+            <p class="margin-0 extra-bold">
+                {{fact.user.name.first}} {{fact.user.name.last}}
+            </p>
+        </div>
+    </div>
+
+    <h1 ng-class="{'md-display-1': $mdMedia('xs'), 'md-display-2': $mdMedia('sm'), 'md-display-3': $mdMedia('gt-sm')}">
+        {{fact.text}}
+    </h1>
+
+    <span id="left-quote" class="quote">&#8220;</span>
+
+    <div layout="row" layout-align="start center">
+        <md-icon class="material-icons margin-10" ng-class="{'blue': fact.status.verified === null, 'green': fact.status.verified, 'red': !fact.status.verified && fact.status.verified !== null}">
+            {{fact.status.verified === null ? 'access_time' : (fact.status.verified ? 'check_circle' : 'cancel')}}
+        </md-icon>
+
+        <p class="md-title">
+            <span>{{fact.status.verified === null ? 'Pending verification' : fact.status.verified ? 'Verified' : 'Rejected'}}, </span class="margin-top-5">
+			<span>
+				{{fact.status.sentCount == 0 ? 'Never sent' : (fact.status.sentCount == 1 ? 'Sent once' : (fact.status.sentCount == 2 ? 'Sent twice' : 'Sent ' + fact.status.sentCount + ' times'))}}
+			</span>
+        </p>
+    </div>
+
+    <p ng-if="fact.source" class="bold">
+        Source: <a ng-href="{{fact.source}}" class="italic" target="_blank">
+            {{fact.source}}
+        </a>
+    </p>
+</div>
+
+<style>
+    .quote {
+        position: absolute;
+        font-size: 300pt;
+        font-family: "Times New Roman", times, serif;
+        opacity: .08;
+    }
+    
+    #left-quote {
+        left: 0;
+        transform: translate(5vw, -15vh);
+    }
+    
+    #right-quote {
+        right: 0;
+        transform: translate(-5vw, -10vh);
+    }
+</style>

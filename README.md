@@ -8,7 +8,7 @@ Using a combination of Node.js, Angular, and Tasker, this app will combine APIs 
 - Countdown clock until next fact is sent
 - Catbot that auto-replies when recipients text back
 - View the catversation between Catbot and your recipients
-- Add your own cat facts, and upvote others. The highest upvoted fact gets send out that day!
+- Submit your own interesting facts
 - Quick copy-and-paste-able cat facts with the "Get Fact" button
 - Add recipients by talking to the Catbot!
 - Import all of your Google contacts at once

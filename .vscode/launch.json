@@ -1,0 +1,35 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}\\server.js",
+      "env": {
+        "APIAI_ACCESS_TOKEN": "4a8d5dd8c447457988c4833d462236f4",
+        "BASE_URL": "https://cat-fact.herokuapp.com",
+        "DB_PASSWORD": "6CjD7qsbb3&l3_OY1ssjUm0E-JjQzbIJf",
+        "DB_USERNAME": "alex",
+        "ENCRYPTION_ALGORITHM": "aes-256-ctr",
+        "ENCRYPTION_KEY": "K7F.MHeS2yjA9p(leoQeFvvWbeeyt0)Da",
+        "GENERAL_ACCESS_TOKEN": "kqYjOAK4o,5VyUQ^yIxao1Dbh2cHm3&AR",
+        "GOOGLE_CLIENT_ID": "11528929989-1c5m1aslf27i9093o2m8hvrk9gukjo8n.apps.googleusercontent.com",
+        "GOOGLE_CLIENT_SECRET": "W_FPnd1iv86nlgkZRle5Fh9M",
+        "IFTTT_API_KEY": "nUqHZO09Tu4HJviLOAsXS8z5Hc2E6fErBRjHtK6tNOQ",
+        "NODE_ENV": "production",
+        "SESSION_SECRET": "YX8tDu6vUxANomn;lGn3Z)eD^rwdRFfiW",
+        "TWITTER_ACCESS_TOKEN": "936384362563678213-ThRqQq3667eMmffELta0auQjiQvCHYz",
+        "TWITTER_ACCESS_TOKEN_SECRET": "9BJkuXkchk7B2IMCoQICBvvItTl5BHbBdHg9RXL0kERQT",
+        "TWITTER_CONSUMER_KEY": "07zCOUn3nXaH7ziKdmf9QGcCH",
+        "TWITTER_CONSUMER_SECRET": "teM6uG3Cq1PZJvACFh9k7Aym9n6CngYEwA5LWuE3WIiKQr8Phh"
+      }
+    }
+  ]
+}
