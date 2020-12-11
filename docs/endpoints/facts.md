@@ -9,9 +9,9 @@ Retrieve one or more `Facts`.
 
 ##### Query parameters
 
-| Parameter   | Type                   | Default | Limit | Description |
-| ----------- | ---------------------- | ------- | ----- | ----------- |
-| animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe |
+| Parameter   | Type                   | Default | Limit | Description                                                                                                                                           |
+| ----------- | ---------------------- | ------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe                                                                                       |
 | amount      | Number                 | 1       | 500   | Number of `Facts` to retrieve. If set to one, response will be a fact object. If many, response will be an array of `Fact`s |
 
 ##### Example request
@@ -52,7 +52,7 @@ Retrieve one or more `Facts`.
 `GET /facts/591f98803b90f7150a19c229`
 
 ##### Example response
-```
+```json
 {
     "_id": "591f98803b90f7150a19c229",
     "__v": 0,
@@ -60,7 +60,6 @@ Retrieve one or more `Facts`.
     "updatedAt": "2018-01-04T01:10:54.673Z",
     "deleted": false,
     "source": "api",
-    "sentCount": 4
 }
 ```
 
