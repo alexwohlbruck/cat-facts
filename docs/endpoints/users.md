@@ -10,26 +10,26 @@ Returns the data of the currently logged in `User`.
 `GET /users/me`
 
 ##### Example response
-```
+```json
 {
-  "_id": "59057485ed3e3800204fc406",
-  "updatedAt": "2018-01-04T02:41:45.729Z",
-  "createdAt": "2017-04-30T05:22:13.595Z",
-  "email": "johndoe@gmail.com",
-  "phone": "2025550111",
-  "__v": 0,
-  "settings": {
-    "theme": "light"
+  "name": {
+    "first": "Alex",
+    "last": "Wohlbruck"
   },
-  "isAdmin": false,
   "google": {
     "id": "{google_id}",
     "accessToken": "{google_oauth_access_token}",
     "refreshToken": "{google_oauth_refresh_token}"
   },
-  "name": {
-    "first": "John",
-    "last": "Doe"
-  }
+  "photo": "https://lh3.googleusercontent.com/a-/AOh14GhYgUCf9yFuj-Xt6_X_cDz-5gSusrGde-lerdKqXxA=s50",
+  "isAdmin": false,
+  "deleted": false,
+  "_id": "5a9ac18c7478810ea6c06381",
+  "updatedAt": "2020-04-24T07:23:08.045Z",
+  "createdAt": "2017-01-10T12:00:35.952Z",
+  "email": "alexwohlbruck@gmail.com",
+  "ip": "{your last IP address}",
+  "__v": 0,
+  "phone": "{your phone number, if set}"
 }
 ```

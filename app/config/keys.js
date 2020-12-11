@@ -18,9 +18,9 @@ module.exports = {
         accessToken: process.env.APIAI_ACCESS_TOKEN
     },
     database: {
-        host: 'ds157298.mlab.com',
-        port: '57298',
-        name: 'cat-facts',
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        name: process.env.DB_NAME,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         url() {
