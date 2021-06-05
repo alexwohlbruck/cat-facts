@@ -282,3 +282,14 @@ md-input-container.no-space .md-errors-spacer {
 ._md-nav-button.md-active {
     color: white !important;
 }
+
+@media all and (max-height: 670px) {
+    img.left {
+        height: 0;
+        width: 0;
+    }
+    img.right {
+        height: 0;
+        width: 0;
+    }
+}
