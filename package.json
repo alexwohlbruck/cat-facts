@@ -1,6 +1,6 @@
 {
   "name": "cat-facts",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Daily cat facts!",
   "main": "server.js",
   "repository": "",

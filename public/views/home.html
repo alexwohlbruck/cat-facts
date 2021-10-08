@@ -4,6 +4,7 @@
     <div id="call-to-action" layout="row">
         <md-button
             ng-click="signIn()"
+            ng-if="!authenticatedUser"
             class="md-button md-raised md-primary">
             
             Sign in
@@ -11,7 +12,8 @@
         
         <md-button
             ng-click="openApp()"
-            class="md-button md-raised md-accent">
+            ng-class="{'md-primary': authenticatedUser, 'md-accent': !authenticatedUser}"
+            class="md-button md-raised">
             
             Open App
         </md-button>
@@ -20,7 +22,7 @@
             ng-click="openUnsubscribe()"
             class="md-button md-raised md-accent">
             
-            Unsubscribe
+            Unsubscribe me
         </md-button>
     </div>
 </div>

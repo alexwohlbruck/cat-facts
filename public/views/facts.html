@@ -1,150 +1,154 @@
 <div class="layout-center" ng-class="{'padding-0': $mdMedia('xs')}">
-	<div layout="column" layout-align="start center">
-		<timer
-			class="md-headline bold center-text"
-			countdown="seconds"
-			finish-callback="countdownFinished()"
-			max-time-unit="'hour'"
-			interval="1000">
-			
-			<span class="title">
-				{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, and {{seconds}} second{{secondsS}}
-			</span>
-		</timer>
-		
-		<span class="md-subhead">until next fact is sent</span>
-		
-		<br/>
-		
-		<form ng-submit="submitFact()" ng-show="authenticatedUser">
-			<md-input-container>
-				<label>Submit a {{$state.params.animal}} fact</label>
-				<input ng-model="form.newFact">
-			</md-input-container>
-			
-			<md-button type="submit" class="md-raised md-accent input-button-inline">Submit</md-button>
-		</form>
-	</div>
-	
-	<md-tabs md-dynamic-height md-center-tabs>
-		<md-tab label="All Facts">
-			<md-content>
-				<md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
-					<div
-						flex class="facts-empty padding-30"
-						ng-if="facts.all.length == 0"
-						layout="column"
-						layout-align="center center"
-						md-whiteframe="4dp">
-						
-						<span class="text">
+
+    <h1>My facts</h1>
+
+    <div layout="column" layout-align="start center">
+        <form ng-submit="submitFact()" ng-show="authenticatedUser">
+            <md-input-container>
+                <label>Submit a {{$state.params.animal}} fact</label>
+                <input ng-model="form.newFact">
+            </md-input-container>
+
+            <md-button type="submit" class="md-raised md-accent input-button-inline">Submit</md-button>
+        </form>
+    </div>
+
+    <div class="grid">
+        <div class="grid-col grid-col--1"></div>
+        <div class="grid-col grid-col--2"></div>
+        <div class="grid-col grid-col--3"></div>
+        <div class="grid-col grid-col--4"></div>
+
+        <md-card ng-repeat="fact in facts" ng-init="$last && buildGrid()" class="grid-item" ng-click="openFact(fact._id)">
+            <md-card-content>
+                {{fact.text}}
+            </md-card-content>
+        </md-card>
+    </div>
+
+    <style>
+        .grid {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+        }
+        
+        .grid-col {
+            -webkit-box-flex: 1;
+            -webkit-flex-grow: 1;
+            -ms-flex-positive: 1;
+            flex-grow: 1;
+        }
+        /* 2 columns by default, hide columns 2 & 3 */
+        
+        .grid-col--2,
+        .grid-col--3 {
+            display: none
+        }
+        /* 3 columns at medium size */
+        
+        @media (min-width: 768px) {
+            .grid-col--2 {
+                display: block;
+            }
+            /* show column 2 */
+        }
+        /* 4 columns at large size */
+        
+        @media (min-width: 1080px) {
+            .grid-col--3 {
+                display: block;
+            }
+            /* show column 3 */
+        }
+    </style>
+
+    <!-- <md-tabs md-dynamic-height md-center-tabs>
+        <md-tab label="All Facts">
+            <md-content>
+                <md-card ng-class="{'margin-sides-0': $mdMedia('xs')}">
+                    <div flex class="facts-empty padding-30" ng-if="facts.all.length == 0" layout="column" layout-align="center center" md-whiteframe="4dp">
+
+                        <span class="text">
 							<h3 class="white md-headline margin-0 bold center-text">
 								There aren't any new {{$state.params.animal}} facts!
 							</h3>
-							
+
 							<h4 class="white md-body-2 accent-links margin-0 center-text">
 								{{ authenticatedUser ? 'Submit one in the field above' : 'Sign in to submit one' }}
 							</h4>
 						</span>
-					</div>
-					
-					<md-table-container ng-if="facts.all.length != 0">
-						<table md-table ng-model="selected" md-progress="promise">
-							<thead md-head>
-								<tr md-row md-row-select="false">
-									<th md-column><span>Added by</span></th>
-									<th md-column><span>Fact</span></th>
-									<th md-column md-numeric style="padding-right: 90px !important">Votes</th>
-								</tr>
-							</thead>
-							<tbody md-body>
-								<tr
-									md-row md-select="fact"
-									md-select-id="name"
-									md-auto-select
-									ng-repeat="fact in facts.all | orderBy:'-upvotes'"
-									ng-animater="'animate'">
-									
-									<td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
-									<td md-cell class="padding-20">"{{fact.text}}"</td>
-									<td md-cell>
-										<span>{{fact.upvotes}}</span>
-										<md-button
-											ng-click="upvoteFact(fact)"
-											ng-if="authenticatedUser"
-											ng-disabled="fact.user._id == authenticatedUser._id"
-											title="Vote up"
-											aria-label="Vote up"
-											class="md-icon-button md-icon-button-small">
-											
-											<md-icon
-												class="material-icons"
-												ng-class="{'blue': fact.userUpvoted}"
-												aria-label="Vote up">
-												thumb_up
-											<md-icon>
-										</md-button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</md-table-container>
-				</md-card>
-			</md-content>
-		</md-tab>
-		
-		<md-tab label="My Facts">
-			<md-content>
-				<md-card ng-if="authenticatedUser" ng-class="{'margin-sides-0': $mdMedia('xs')}">
-					<md-table-container>
-						<table md-table ng-model="selected" md-progress="promise">
-							<thead md-head>
-								<tr md-row md-row-select="false">
-									<th md-column>Fact</th>
-									<th md-column>Unused</th>
-									<th md-column md-numeric>Votes</th>
-								</tr>
-							</thead>
-							<tbody md-body>
-								<tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me | orderBy: '-upvotes.length'">
-									<td md-cell>"{{fact.text}}"</td>
-									<td md-cell>
-										<div style="width: 8px; height: 8px; border-radius: 50%; transform: translateX(15px)"
-											ng-style="{'background': fact.used ? 'red' : 'green'}"></div>
-									</td>
-									<td md-cell>
-										<span>{{fact.upvotes}}</span>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</md-table-container>
-				</md-card>
-				
-				<div ng-if="!authenticatedUser" layout="column" layout-align="start center">
-					<p>To view your submitted facts,</p>
-					<md-button class="md-raised md-accent" ng-href="/auth/google">Sign in</md-button>
-				</div>
-			</md-content>
-		</md-tab>
-	</md-tabs>
+                    </div>
+
+                    <md-table-container ng-if="facts.all.length != 0">
+                        <table md-table ng-model="selected" md-progress="promise">
+                            <thead md-head>
+                                <tr md-row md-row-select="false">
+                                    <th md-column><span>Added by</span></th>
+                                    <th md-column><span>Fact</span></th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.all" ng-animater="'animate'" ng-click="openFact(fact._id)">
+
+                                    <td md-cell>{{fact.user.name.first}} {{fact.user.name.last}}</td>
+                                    <td md-cell class="padding-20">"{{fact.text}}"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                </md-card>
+            </md-content>
+        </md-tab>
+
+        <md-tab label="My Facts">
+            <md-content>
+                <md-card ng-if="authenticatedUser" ng-class="{'margin-sides-0': $mdMedia('xs')}">
+                    <md-table-container>
+                        <table md-table ng-model="selected" md-progress="promise">
+                            <thead md-head>
+                                <tr md-row md-row-select="false">
+                                    <th md-column>Fact</th>
+                                    <th md-column md-numeric># of times sent</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row md-select="fact" md-select-id="name" md-auto-select ng-repeat="fact in facts.me">
+                                    <td md-cell>"{{fact.text}}"</td>
+                                    <td md-cell>{{fact.status.sentCount}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                </md-card>
+
+                <div ng-if="!authenticatedUser" layout="column" layout-align="start center">
+                    <p>To view your submitted facts,</p>
+                    <md-button class="md-raised md-accent" ng-href="/auth/google">Sign in</md-button>
+                </div>
+            </md-content>
+        </md-tab>
+    </md-tabs> -->
 </div>
 
 <style>
-	md-tabs {
-		overflow: visible;
-	}
-	.facts-empty {
-		 background-color: #006c90;
-		 background-image: url('img/res/other/cat-pattern.png');
-		 background-size: 150px;
-		 background-repeat: repeat;
-		 overflow: hidden;
-	}
-	.facts-empty .text {
-		background-color: #006c90;
-		border-radius: 30px;
-		box-shadow: 0px 0px 85px 65px rgb(0, 108, 144);
-		padding: 20px 25px;
-	}
+    md-tabs {
+        overflow: visible;
+    }
+    
+    .facts-empty {
+        background-color: #006c90;
+        background-image: url('img/res/other/cat-pattern.png');
+        background-size: 150px;
+        background-repeat: repeat;
+        overflow: hidden;
+    }
+    
+    .facts-empty .text {
+        background-color: #006c90;
+        border-radius: 30px;
+        box-shadow: 0px 0px 85px 65px rgb(0, 108, 144);
+        padding: 20px 25px;
+    }
 </style>

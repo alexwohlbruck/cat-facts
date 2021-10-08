@@ -17,17 +17,16 @@ module.exports = {
                     'value2': data.message
                 }
             });
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
-        
+
         const message = new Message({
             text: data.message,
             number: data.number,
             type: 'outgoing'
         });
-        
+
         await message.save(message);
         console.log(`Message sent to ${data.number}: ${data.message}`);
     },
