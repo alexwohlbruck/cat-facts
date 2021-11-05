@@ -23,7 +23,7 @@ module.exports = {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         url() {
-            return `mongodb+srv://${this.username}:${this.password}@${this.host}/${this.name}`;
+            return `mongodb+srv://${this.username}:${this.password}@${this.host}/${this.name}?retryWrites=true&w=majority`;
         }
     },
     generalAccessToken: process.env.GENERAL_ACCESS_TOKEN
