@@ -45,8 +45,16 @@ Retrieve one or more `Facts`.
 
 ### Get fact by its ID
 
+Retrieve fact by its ID. 
+
 ### Endpoint
 `GET /facts/:factID`
+
+##### Query parameters
+
+| Parameter   | Type                   | Default | Limit | Description |
+| ----------- | ---------------------- | ------- | ----- | ----------- |
+| animal_type | Comma-separated String | 'cat'   |       | Type of animal the fact will describe |
 
 ##### Example request
 `GET /facts/591f98803b90f7150a19c229`
