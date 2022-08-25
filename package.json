@@ -27,7 +27,7 @@
     "find-config": "^1.0.0",
     "googleapis": "^46.0.0",
     "method-override": "^2.3.10",
-    "mongoose": "^6.0.12",
+    "mongoose": "^6.4.6",
     "mongoose-delete": "^0.4.0",
     "mongoose-simple-random": "^0.4.1",
     "morgan": "^1.9.1",
