@@ -26,5 +26,4 @@ module.exports = {
             
         apiLog.save();
         next();
-    }
-};
+    
