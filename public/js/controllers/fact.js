@@ -26,13 +26,4 @@ app.controller('FactCtrl', ['$scope', '$state', 'ApiService',
          */
 
         function getFact() {
-            $scope.promise = ApiService.getFact($state.params.factId)
-                .then(function(response) {
-                    console.log(response.data);
-
-                    $scope.fact = response.data;
-                });
-        }
-
-    }
-]);
+       
