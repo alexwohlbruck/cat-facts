@@ -40,16 +40,4 @@ app.controller('FactsCtrl', ['$scope', '$rootScope', '$state', '$location', 'Api
                     $scope.facts = response.data;
                     /* setTimeout(() => {
                         $scope.buildGrid();
-                    }, 0); */
-                });
-        }
-
-        function getIndexOfFact(factID) {
-            return $scope.facts.all.map(function(o) { return o._id }).indexOf(factID);
-        }
-
-        socket.on('fact', function(data) {
-            $scope.facts.all.push(data);
-        });
-    }
-]);
+                    
