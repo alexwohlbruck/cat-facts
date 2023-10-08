@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -14,16 +16,15 @@ const server = require('http').Server(app);
 const io = require('socket.io').listen(server);
 const passport = require('passport');
 const keys = require.main.require('./app/config/keys');
-const env = process.env.NODE_ENV || 'development';
+
 
 global.Promise = require('bluebird');
 mongoose.Promise = global.Promise;
 
-mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', true);
 mongoose.connect(keys.database.url(), {
-    useNewUrlParser: true
-});
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
 app.enable('trust proxy');
 
@@ -63,14 +64,10 @@ app.use(passport.session()); // Persistent login sessions
 app.use('/', require('./app/routes'));
 
 // Redirect to HTTPS
-if (env === 'production') {
+if (process.env.NODE_ENV === 'production') {
     app.use(function (req, res, next) {
-        if (process.env.NODE_ENV === 'production') {
-            if (req.headers['x-forwarded-proto'] != 'https') {
-                return res.redirect('https://' + req.headers.host + req.url);
-            } else {
-                return next();
-            }
+        if (req.headers['x-forwarded-proto'] != 'https') {
+            return res.redirect('https://' + req.headers.host + req.url);
         } else {
             return next();
         }
@@ -79,7 +76,7 @@ if (env === 'production') {
 
 require('./app/config/passport')(passport);
 
-server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function () {
+server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
     const addr = server.address();
     console.log("Server listening at", addr.address + ":" + addr.port);
 });

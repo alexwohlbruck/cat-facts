@@ -132,17 +132,17 @@ app.directive('recipients', function() {
                     ApiService.deleteRecipients(data).then(response => {
                         
                         if (data.permanent) {
-                            $scope.recipients = $scope.recipients.filter(r => !r.deleted);
+                            $scope.recipients = $scope.recipients.filter(r => {
+                                return !data.recipients.includes(r._id);
+                            });
                         }
                         else {
                             $scope.recipients = $scope.recipients.map(recipient => {
-                            
-                            if (data.recipients.includes(recipient._id)) {
-                                recipient.deleted = true;
-                            }
-                            
-                            return recipient;
-                        });
+                                if (data.recipients.includes(recipient._id)) {
+                                    recipient.deleted = true;
+                                }
+                                return recipient;
+                            });
                         }
                             
                         $scope.selected = [];
