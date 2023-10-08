@@ -49,3 +49,4 @@ FactSchema.statics.getFact = function({ amount = 1, filter = {}, animalType = 'c
 const Fact = mongoose.model('Fact', FactSchema);
 
 module.exports = Fact;
+auto settings default updated 
