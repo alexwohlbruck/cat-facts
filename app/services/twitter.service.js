@@ -7,13 +7,13 @@ const twitterKeysExist =
     process.env.TWITTER_ACCESS_TOKEN_SECRET;
     
 const client = twitterKeysExist
-  ? new Twitter({
-      consumer_key: 'eJf8Xjf7xCOrQAxcFMdcryYP8',
-      consumer_secret: 'qrQBCQgMbiLdsuZa6Z6tzuObXj9rYx9wNUisIrthiPgSaoQaqK',
-      access_token_key: '936384362563678213-ZZ9UeFnFOMUS2tIcVGNhUtmqEiL4UtW',
-      access_token_secret: 'uNitJ2PZLZfonGl5aM5hv5uh5C3IqbfxCB4SYsNtork92',
+    ? new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: process.env.TWITTER_ACCESS_TOKEN,
+        access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     })
-  : null;
+: null;
 
 /** 
  * splits a text into parts that don't exceed the specified max length(280),
