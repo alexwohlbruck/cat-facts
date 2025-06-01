@@ -5,7 +5,7 @@ const twitterKeysExist =
     process.env.TWITTER_CONSUMER_SECRET &&
     process.env.TWITTER_ACCESS_TOKEN &&
     process.env.TWITTER_ACCESS_TOKEN_SECRET;
-    
+
 const client = twitterKeysExist
     ? new Twitter({
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -13,7 +13,7 @@ const client = twitterKeysExist
         access_token_key: process.env.TWITTER_ACCESS_TOKEN,
         access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     })
-: null;
+    : null;
 
 /** 
  * splits a text into parts that don't exceed the specified max length(280),
@@ -42,6 +42,7 @@ function splitMessage(text, maxLength) {
 
     return parts;
 }
+
 /**
  * Posts a twitter thread by splitting the message into multiple tweets, 
  * where each tweet replies to the previous one (form a thread)
