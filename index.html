@@ -1,0 +1,305 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumino AI Assistant</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables MUST be used if available
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, userId;
+
+        window.firebaseInit = async () => {
+            if (!firebaseConfig) {
+                console.error("Firebase configuration is missing.");
+                return;
+            }
+
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('Debug');
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                console.log("Firebase initialized. User ID:", userId);
+            } catch (error) {
+                console.error("Firebase initialization or sign-in failed:", error);
+            }
+        };
+    </script>
+    <style>
+        :root {
+            --lumino-color: #3b82f6; /* Blue-500 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+        }
+        /* Custom Keyframes for the Orb Animation */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4); opacity: 0.8; }
+            50% { box-shadow: 0 0 25px rgba(59, 130, 246, 1), 0 0 50px rgba(59, 130, 246, 0.7); opacity: 1; }
+            100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4); opacity: 0.8; }
+        }
+
+        @keyframes moving-light {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .lumino-orb {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.7), var(--lumino-color) 40%, #0d1117 100%);
+            background-size: 200% 200%;
+            animation:
+                pulse-glow 2s infinite ease-in-out,
+                moving-light 8s infinite linear;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Message Bubble Styling */
+        .user-message {
+            background-color: #1e40af; /* Blue-700 */
+            border-radius: 1rem 1rem 0.25rem 1rem;
+        }
+        .lumino-message {
+            background-color: #1f2937; /* Gray-800 */
+            border-radius: 1rem 1rem 1rem 0.25rem;
+        }
+        /* Smooth transitions for better visual feedback */
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen antialiased">
+
+    <!-- Main Chat Container -->
+    <div class="flex flex-col flex-1 w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Header -->
+        <header class="text-center mb-6">
+            <h1 class="text-4xl font-extrabold text-white">Lumino AI</h1>
+            <p class="text-blue-400 mt-1">Your friendly guide in the digital cosmos.</p>
+        </header>
+
+        <!-- Chat History Area -->
+        <div id="chat-history" class="flex-1 overflow-y-auto space-y-4 p-4 mb-4 bg-gray-900/50 rounded-xl shadow-lg border border-gray-800">
+            <!-- Initial Lumino Message -->
+            <div class="flex justify-start">
+                <div class="lumino-message max-w-3/4 p-3 shadow-lg text-white">
+                    <p class="font-bold text-blue-300">Lumino</p>
+                    Hello! I am Lumino, ready to assist you. Ask me anything!
+                </div>
+            </div>
+            <!-- Messages will be appended here -->
+        </div>
+
+        <!-- Lumino Orb (Loading Animation) -->
+        <div id="loading-container" class="flex justify-center items-center h-16 mb-4 hidden">
+            <div class="lumino-orb"></div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="flex items-center gap-3 p-3 bg-gray-900 rounded-xl shadow-xl">
+            <input type="text" id="user-input" placeholder="Type your message here..."
+                   class="flex-1 p-3 text-white bg-gray-800 border border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all">
+            <button id="send-button"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors shadow-lg shadow-blue-500/50 flex items-center justify-center disabled:opacity-50"
+                    onclick="sendMessage()">
+                Send
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Globals ---
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const loadingContainer = document.getElementById('loading-container');
+
+        const model = 'gemini-2.5-flash-preview-09-2025';
+        const apiKey = ""; // API key is provided by the environment
+
+        // Initialize Firebase on load
+        window.onload = () => {
+            if (typeof window.firebaseInit === 'function') {
+                window.firebaseInit();
+            }
+            userInput.focus();
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        };
+
+        /**
+         * Renders a message bubble to the chat history.
+         * @param {string} text The message content.
+         * @param {string} sender 'user' or 'lumino'.
+         */
+        function renderMessage(text, sender) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `max-w-[80%] p-3 shadow-xl text-white ${sender === 'user' ? 'user-message' : 'lumino-message'}`;
+
+            if (sender === 'lumino') {
+                const senderName = document.createElement('p');
+                senderName.className = 'font-bold text-blue-300 mb-1';
+                senderName.textContent = 'Lumino';
+                messageBubble.appendChild(senderName);
+            }
+
+            // Simple newline to paragraph conversion for markdown-like readability
+            const paragraphs = text.split('\n').map(p => {
+                const span = document.createElement('span');
+                span.textContent = p;
+                return span;
+            });
+
+            paragraphs.forEach(p => messageBubble.appendChild(p));
+
+            messageWrapper.appendChild(messageBubble);
+            chatHistory.appendChild(messageWrapper);
+
+            // Scroll to the bottom of the chat history
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        /**
+         * Calls the Gemini API with exponential backoff.
+         * @param {Object} payload The API request body.
+         * @returns {Promise<Object>} The JSON response from the API.
+         */
+        async function fetchWithBackoff(url, payload, maxRetries = 5, delay = 1000) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 && i < maxRetries - 1) {
+                        // Too many requests, retry
+                        await new Promise(resolve => setTimeout(resolve, delay * (2 ** i)));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    return response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error; // Re-throw if last attempt failed
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay * (2 ** i)));
+                }
+            }
+            throw new Error("API call failed after multiple retries.");
+        }
+
+
+        /**
+         * Main function to send a message to Lumino (Gemini).
+         */
+        async function sendMessage() {
+            const userText = userInput.value.trim();
+            if (userText === '') return;
+
+            // 1. Render user message and clear input
+            renderMessage(userText, 'user');
+            userInput.value = '';
+            sendButton.disabled = true;
+            userInput.disabled = true;
+
+            // 2. Show Lumino animation
+            loadingContainer.classList.remove('hidden');
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            const systemPrompt = "You are Lumino, a friendly, intelligent, and helpful AI assistant. Your purpose is to provide clear, creative, and insightful answers in a warm and encouraging tone. Always maintain a positive and conversational demeanor. Keep your responses concise and well-formatted.";
+
+            const payload = {
+                contents: [{ parts: [{ text: userText }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const result = await fetchWithBackoff(apiUrl, payload);
+
+                // 3. Process and render Lumino's response
+                const candidate = result.candidates?.[0];
+                let responseText = "I encountered an issue processing your request. Please try again.";
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    responseText = candidate.content.parts[0].text;
+                }
+
+                renderMessage(responseText, 'lumino');
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                renderMessage("Oops! I hit a technical glitch. My apologies, the digital currents are unstable. Can you try asking again?", 'lumino');
+            } finally {
+                // 4. Hide animation and re-enable input
+                loadingContainer.classList.add('hidden');
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
+            }
+        }
+    </script>
+</body>
+</html>
