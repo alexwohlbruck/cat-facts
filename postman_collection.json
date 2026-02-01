@@ -1,0 +1,335 @@
+{
+  "info": {
+    "_postman_id": "9b84c5b1-0a76-4e66-b2a6-1fd2308c3a2f",
+    "name": "Cat Facts API (homelab)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Requests for Cat Facts API. Set {{baseUrl}} (default points to catfacts.wohlbruck.dev). Authenticated routes require a valid connect.sid cookie from /auth/google."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://catfacts.wohlbruck.dev" },
+    { "key": "animalType", "value": "cat" },
+    { "key": "amount", "value": "2" },
+    { "key": "factId", "value": "" },
+    { "key": "recipientId", "value": "" },
+    { "key": "recipientNumber", "value": "" },
+    { "key": "verificationCode", "value": "" },
+    { "key": "verificationEmail", "value": "" },
+    { "key": "catbotDailyCode", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Facts (public)",
+      "item": [
+        {
+          "name": "GET /facts",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/facts", "host": ["{{baseUrl}}"], "path": ["facts"] }
+          }
+        },
+        {
+          "name": "GET /facts/random",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/facts/random", "host": ["{{baseUrl}}"], "path": ["facts", "random"] }
+          }
+        },
+        {
+          "name": "GET /facts/random?animal_type={{animalType}}&amount={{amount}}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/facts/random?animal_type={{animalType}}&amount={{amount}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["facts", "random"],
+              "query": [
+                { "key": "animal_type", "value": "{{animalType}}" },
+                { "key": "amount", "value": "{{amount}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /facts/:factId",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/facts/{{factId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["facts", "{{factId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Facts (auth required)",
+      "item": [
+        {
+          "name": "GET /facts/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/facts/me?animal_type={{animalType}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["facts", "me"],
+              "query": [{ "key": "animal_type", "value": "{{animalType}}" }]
+            }
+          }
+        },
+        {
+          "name": "POST /facts (submit)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"factText\": \"Cats have five toes on their front paws.\",\n  \"animalType\": \"cat\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/facts", "host": ["{{baseUrl}}"], "path": ["facts"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (auth required)",
+      "item": [
+        {
+          "name": "GET /users/me",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users", "me"] }
+          }
+        },
+        {
+          "name": "DELETE /users/me?verificationEmail={{verificationEmail}}",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/me?verificationEmail={{verificationEmail}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"],
+              "query": [{ "key": "verificationEmail", "value": "{{verificationEmail}}" }]
+            }
+          }
+        },
+        {
+          "name": "POST /users/me/profile/phone/verification-code",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"15555551212\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/users/me/profile/phone/verification-code",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me", "profile", "phone", "verification-code"]
+            }
+          }
+        },
+        {
+          "name": "PUT /users/me/profile/phone",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"verificationCode\": \"123456\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/users/me/profile/phone",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me", "profile", "phone"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recipients (auth required)",
+      "item": [
+        {
+          "name": "GET /recipients/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/recipients/me?animal_type={{animalType}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients", "me"],
+              "query": [{ "key": "animal_type", "value": "{{animalType}}" }]
+            }
+          }
+        },
+        {
+          "name": "POST /recipients (add)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipients\": [\n    { \"name\": \"Test Person\", \"number\": \"15555551212\" }\n  ],\n  \"animalTypes\": [\"cat\"]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/recipients", "host": ["{{baseUrl}}"], "path": ["recipients"] }
+          }
+        },
+        {
+          "name": "PATCH /recipients/:recipientId",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Name\",\n  \"number\": \"15555551212\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/recipients/{{recipientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients", "{{recipientId}}"]
+            }
+          }
+        },
+        {
+          "name": "PATCH /recipients/:recipientId/restore",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"resubscriptions\": [\"cat\"]\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/recipients/{{recipientId}}/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients", "{{recipientId}}", "restore"]
+            }
+          }
+        },
+        {
+          "name": "GET /recipients/:number/conversation",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/recipients/{{recipientNumber}}/conversation",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients", "{{recipientNumber}}", "conversation"]
+            }
+          }
+        },
+        {
+          "name": "DELETE /recipients/me?verificationCode={{verificationCode}} (unsubscribe)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/recipients/me?verificationCode={{verificationCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients", "me"],
+              "query": [{ "key": "verificationCode", "value": "{{verificationCode}}" }]
+            }
+          }
+        },
+        {
+          "name": "DELETE /recipients?recipients={{recipientId}} (soft delete by default)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/recipients?recipients={{recipientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients"],
+              "query": [{ "key": "recipients", "value": "{{recipientId}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin-only",
+      "item": [
+        {
+          "name": "GET /recipients (admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/recipients?animal_type={{animalType}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recipients"],
+              "query": [{ "key": "animal_type", "value": "{{animalType}}" }]
+            }
+          }
+        },
+        {
+          "name": "GET /console/data (admin)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/console/data", "host": ["{{baseUrl}}"], "path": ["console", "data"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Google OAuth (browser)",
+      "item": [
+        {
+          "name": "GET /auth/google (start login)",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/auth/google", "host": ["{{baseUrl}}"], "path": ["auth", "google"] } }
+        },
+        {
+          "name": "GET /auth/google/contacts (request contacts scope)",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/auth/google/contacts", "host": ["{{baseUrl}}"], "path": ["auth", "google", "contacts"] } }
+        },
+        {
+          "name": "GET /auth/signout",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/auth/signout", "host": ["{{baseUrl}}"], "path": ["auth", "signout"] } }
+        }
+      ]
+    },
+    {
+      "name": "Contacts (auth required)",
+      "item": [
+        {
+          "name": "GET /contacts?animal_type={{animalType}}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/contacts?animal_type={{animalType}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["contacts"],
+              "query": [{ "key": "animal_type", "value": "{{animalType}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catbot / Dialogflow (optional)",
+      "item": [
+        {
+          "name": "GET /catbot/daily?code={{catbotDailyCode}}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/catbot/daily?code={{catbotDailyCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["catbot", "daily"],
+              "query": [{ "key": "code", "value": "{{catbotDailyCode}}" }]
+            }
+          }
+        },
+        {
+          "name": "POST /catbot/message?query=...&number=...",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/catbot/message?query=hello&number=15555551212",
+              "host": ["{{baseUrl}}"],
+              "path": ["catbot", "message"],
+              "query": [
+                { "key": "query", "value": "hello" },
+                { "key": "number", "value": "15555551212" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /webhook/ (Dialogflow)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/webhook/", "host": ["{{baseUrl}}"], "path": ["webhook", ""] }
+          }
+        }
+      ]
+    }
+  ]
+}
+

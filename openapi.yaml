@@ -1,0 +1,545 @@
+openapi: 3.1.0
+info:
+  title: Cat Facts API
+  version: "1.0"
+  description: |
+    API for the Cat Facts app (Node.js + AngularJS).
+
+    Notes:
+    - Authenticated routes use a session cookie (`connect.sid`) created via Google OAuth.
+    - Some endpoints are admin-only (requires `req.user.isAdmin`).
+servers:
+  - url: https://catfacts.wohlbruck.dev
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+    catbotDailyCode:
+      type: apiKey
+      in: query
+      name: code
+  schemas:
+    Error:
+      type: object
+      additionalProperties: true
+    Fact:
+      type: object
+      additionalProperties: true
+    Recipient:
+      type: object
+      additionalProperties: true
+    Message:
+      type: object
+      additionalProperties: true
+
+paths:
+  /facts:
+    get:
+      summary: List facts (limited)
+      description: Returns up to 5 facts.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Fact"
+    post:
+      summary: Submit a fact
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [factText, animalType]
+              properties:
+                factText:
+                  type: string
+                animalType:
+                  type: string
+                  description: Animal key, e.g. cat/dog/snail/horse
+      responses:
+        "200":
+          description: Created/OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fact"
+        "401":
+          description: Not authenticated
+        "409":
+          description: Duplicate fact
+
+  /facts/random:
+    get:
+      summary: Get random fact(s)
+      parameters:
+        - name: animal_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated animal types (defaults to cat)
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Fact"
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Fact"
+        "405":
+          description: Too many requested (amount > 500)
+
+  /facts/{factID}:
+    get:
+      summary: Get fact by ID
+      parameters:
+        - name: factID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fact"
+        "404":
+          description: Not found
+
+  /facts/me:
+    get:
+      summary: List facts submitted by current user
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: animal_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated animal types (defaults to cat)
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+
+  /users/me:
+    get:
+      summary: Get current user
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+    delete:
+      summary: Delete current user
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: verificationEmail
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "403":
+          description: Email mismatch
+
+  /users/me/profile/phone/verification-code:
+    post:
+      summary: Send phone verification code
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone:
+                  type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+
+  /users/me/profile/phone:
+    put:
+      summary: Verify phone using verification code
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [verificationCode]
+              properties:
+                verificationCode:
+                  type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "403":
+          description: Invalid code
+
+  /recipients:
+    get:
+      summary: List all recipients (admin)
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: animal_type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated animal types
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "403":
+          description: Not authorized
+    post:
+      summary: Add recipient(s)
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: object
+                    required: [name, number]
+                    properties:
+                      name: { type: string }
+                      number: { type: string }
+                recipient:
+                  type: object
+                  description: Alternative to `recipients` (single recipient)
+                  properties:
+                    name: { type: string }
+                    number: { type: string }
+                animalTypes:
+                  type: array
+                  items: { type: string }
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "400":
+          description: Bad request
+    delete:
+      summary: Remove one or more recipients
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: recipients
+          in: query
+          required: true
+          schema:
+            type: array
+            items: { type: string }
+          style: form
+          explode: true
+          description: Repeated query param (e.g. recipients=id1&recipients=id2)
+        - name: soft
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["true", "false"]
+          description: Set to "false" for hard remove (admin only)
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "403":
+          description: Not authorized
+
+  /recipients/me:
+    get:
+      summary: List current user's recipients
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: animal_type
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+    delete:
+      summary: Unsubscribe current user (requires verification code)
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: verificationCode
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "403":
+          description: Invalid code
+
+  /recipients/{recipientId}:
+    patch:
+      summary: Update recipient fields
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: recipientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                number: { type: string }
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+
+  /recipients/{recipientId}/restore:
+    patch:
+      summary: Restore a deleted recipient with new subscriptions
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: recipientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resubscriptions]
+              properties:
+                resubscriptions:
+                  type: array
+                  items: { type: string }
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+
+  /recipients/{number}/conversation:
+    get:
+      summary: Get a recipient's conversation
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: number
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+        "401":
+          description: Not authenticated
+        "403":
+          description: Not allowed
+
+  /contacts:
+    get:
+      summary: List Google contacts (requires contacts OAuth)
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: animal_type
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No contacts
+        "401":
+          description: Not authenticated
+
+  /console/data:
+    get:
+      summary: Admin console data
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not authenticated
+        "403":
+          description: Not authorized
+
+  /catbot/daily:
+    get:
+      summary: Daily job (facts + recipients)
+      security:
+        - catbotDailyCode: []
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Missing/invalid code
+
+  /catbot/message:
+    post:
+      summary: Catbot message webhook (SMS style)
+      description: Uses query params (legacy).
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema: { type: string }
+        - name: number
+          in: query
+          required: true
+          schema: { type: string }
+        - name: name
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Missing params
+        "503":
+          description: Catbot disabled (no APIAI_ACCESS_TOKEN)
+
+  /webhook/:
+    post:
+      summary: Dialogflow webhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: OK
+        "503":
+          description: Webhook disabled (no APIAI_ACCESS_TOKEN)
+
+  /auth/google:
+    get:
+      summary: Start Google OAuth login
+      responses:
+        "302":
+          description: Redirect to Google
+
+  /auth/google/callback:
+    get:
+      summary: Google OAuth callback
+      responses:
+        "302":
+          description: Redirect to app
+
+  /auth/google/contacts:
+    get:
+      summary: Start Google OAuth for contacts scope
+      security:
+        - sessionCookie: []
+      responses:
+        "302":
+          description: Redirect to Google consent
+
+  /auth/google/contacts/callback:
+    get:
+      summary: Contacts OAuth callback
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+        - name: state
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Renders after-auth page
+
+  /auth/signout:
+    get:
+      summary: Sign out (logout)
+      responses:
+        "200":
+          description: OK
