@@ -2,15 +2,29 @@ const express = require('express');
 const router = express.Router();
 const Promise = require('bluebird');
 
-const apiai = require('apiai-promise');
 const keys = require('../config/keys');
-const catbot = apiai(keys.apiai.accessToken);
 const strings = require('../config/strings.js');
 const twitter = require('../services/twitter.service');
 
 const Fact = require('../models/fact');
 const Message = require('../models/message');
 const Recipient = require('../models/recipient');
+
+const hasApiai = Boolean(keys.apiai && keys.apiai.accessToken);
+let catbot;
+if (hasApiai) {
+    const apiai = require('apiai-promise');
+    catbot = apiai(keys.apiai.accessToken);
+} else {
+    // Catbot routes require Dialogflow; keep the server running without it.
+    router.use((req, res, next) => {
+        // Allow "daily" job endpoint to work without Dialogflow.
+        if (req.method === 'GET' && req.path === '/daily') return next();
+        return res.status(503).json({
+            message: 'Catbot is disabled (APIAI_ACCESS_TOKEN not configured).'
+        });
+    });
+}
 
 
 const todayStart = new Date();
@@ -150,9 +164,11 @@ router.post('/message', (req, res) => {
             promises.recipient = recipient;
             promises.message = incoming.save();
             promises.catFact = Fact.getFact();
-            promises.catbotResponse = catbot.textRequest(req.query.query, {
-                sessionId: req.query.number
-            });
+            if (catbot) {
+                promises.catbotResponse = catbot.textRequest(req.query.query, {
+                    sessionId: req.query.number
+                });
+            }
         } else {
 
             var newRecipient = new Recipient({
@@ -172,7 +188,7 @@ router.post('/message', (req, res) => {
         var response;
 
         if (result.message) {
-            if (result.catbotResponse.result && result.catbotResponse.result.fulfillment.speech) {
+            if (result.catbotResponse && result.catbotResponse.result && result.catbotResponse.result.fulfillment.speech) {
                 response = result.catbotResponse.result.fulfillment.speech;
             } else {
                 response = result.catFact.text;
