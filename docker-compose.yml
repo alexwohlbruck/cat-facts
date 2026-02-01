@@ -1,0 +1,15 @@
+services:
+  cat-facts:
+    build: .
+    container_name: cat-facts
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # App defaults; override in .env if needed
+      PORT: 3000
+      NODE_ENV: production
+      # In homelabs without TLS termination, keep this false.
+      FORCE_HTTPS_REDIRECT: "false"
+    ports:
+      - "${HOST_PORT:-3000}:3000"

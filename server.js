@@ -63,14 +63,19 @@ app.use(passport.session()); // Persistent login sessions
 // Define routes
 app.use('/', require('./app/routes'));
 
-// Redirect to HTTPS
-if (process.env.NODE_ENV === 'production') {
+// Redirect to HTTPS (only when behind a proxy that sets x-forwarded-proto)
+// Set FORCE_HTTPS_REDIRECT=false to disable in production (useful for homelabs without TLS termination).
+const shouldRedirectToHttps =
+    process.env.NODE_ENV === 'production' &&
+    process.env.FORCE_HTTPS_REDIRECT !== 'false';
+
+if (shouldRedirectToHttps) {
     app.use(function (req, res, next) {
-        if (req.headers['x-forwarded-proto'] != 'https') {
+        const forwardedProto = req.headers['x-forwarded-proto'];
+        if (forwardedProto && forwardedProto !== 'https') {
             return res.redirect('https://' + req.headers.host + req.url);
-        } else {
-            return next();
         }
+        return next();
     });
 }
 
