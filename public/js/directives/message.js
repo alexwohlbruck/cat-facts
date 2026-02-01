@@ -3,7 +3,7 @@ var app = angular.module('catfacts');
 
 app.directive('message', messageDirective);
 
-messageDirective.$inject(['$state']);
+messageDirective.$inject = ['$state'];
 
 function messageDirective($state) {
     return {
