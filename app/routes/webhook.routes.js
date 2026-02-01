@@ -9,9 +9,14 @@ const strings = require('../config/strings');
 
 
 const keys = require('../config/keys');
-const apiai = require('apiai-promise');
-const catbot = apiai(keys.apiai.accessToken);
 const crypto = require('crypto');
+
+const hasApiai = Boolean(keys.apiai && keys.apiai.accessToken);
+let catbot;
+if (hasApiai) {
+    const apiai = require('apiai-promise');
+    catbot = apiai(keys.apiai.accessToken);
+}
 
 const processWebhook = req => {
     return new Promise(async (resolve, reject) => {
@@ -63,6 +68,9 @@ const processWebhook = req => {
                         reject(err);
                     }
                 } else {
+                    if (!catbot) {
+                        return reject(new Error('Catbot is disabled (APIAI_ACCESS_TOKEN not configured).'));
+                    }
                     // Get unsubscribe message from CatBot
                     const randomSessionId = crypto.createHash('md5').update((new Date()).getTime().toString()).digest('hex');
                     
@@ -82,6 +90,13 @@ const processWebhook = req => {
 
 // Route for api.ai webhook
 router.post('/', async (req, res) => {
+    if (!hasApiai) {
+        return res.status(503).json({
+            displayText: 'Webhook is disabled (APIAI_ACCESS_TOKEN not configured).',
+            speech: 'Webhook is disabled (APIAI_ACCESS_TOKEN not configured).',
+            data: {}
+        });
+    }
     
     try {
         const response = await processWebhook(req);
