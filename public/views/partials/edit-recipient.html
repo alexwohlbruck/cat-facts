@@ -13,6 +13,15 @@
             <label>Phone number</label>
             <input ng-model="recipient.number">
         </md-input-container>
+
+        <md-input-container class="no-space">
+            <label>Daily send time</label>
+            <md-select ng-model="recipient.sendHour">
+                <md-option ng-repeat="h in hours" ng-value="h">
+                    {{h === 0 ? '12:00 AM' : h < 12 ? h + ':00 AM' : h === 12 ? '12:00 PM' : (h - 12) + ':00 PM'}}
+                </md-option>
+            </md-select>
+        </md-input-container>
     </md-dialog-content>
     
     <md-dialog-actions>

@@ -33,12 +33,15 @@ router.get('/daily', async(req, res) => {
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
 
+    const hour = req.query.hour !== undefined ? parseInt(req.query.hour) : null;
+
     let getFactAndRecipients = async animalType => {
+        const recipientFilter = { subscriptions: animalType };
+        if (hour !== null) recipientFilter.sendHour = hour;
+
         let { recipients, overrideFact, fact } = await Promise.props({
 
-            recipients: Recipient.find({
-                subscriptions: animalType
-            }, {
+            recipients: Recipient.find(recipientFilter, {
                 number: 1
             }),
 
