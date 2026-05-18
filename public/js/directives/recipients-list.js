@@ -18,8 +18,16 @@ app.directive('recipients', function() {
             
             $scope.$mdMedia = $mdMedia;
             $scope.selected = [];
-            
+
             $scope.animals = animalProvider;
+
+            $scope.formatHour = function(h) {
+                h = (h === undefined || h === null) ? 8 : h;
+                if (h === 0) return '12 AM';
+                if (h < 12) return h + ' AM';
+                if (h === 12) return '12 PM';
+                return (h - 12) + ' PM';
+            };
             
             $scope.openConversation = function(event, recipient) {
                 $mdDialog.show({
@@ -36,10 +44,11 @@ app.directive('recipients', function() {
             $scope.editRecipient = function(event, recipient) {
                 $mdDialog.show({
                     controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
-                        
-                        $scope.recipient = recipient;
+
+                        $scope.recipient = angular.copy(recipient);
+                        $scope.hours = Array.from({length: 24}, (_, i) => i);
                         $scope.cancel = $mdDialog.hide;
-                        
+
                         $scope.save = function() {
                             ApiService.editRecipient($scope.recipient).then(function(recipient) {
                                 $mdDialog.hide(recipient);

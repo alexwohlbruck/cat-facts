@@ -129,11 +129,11 @@ router.patch('/:recipientId', isAuthenticated, async(req, res) => {
     // TODO: only allow to edit recipient if user isAdmin or is addedBy them
 
     try {
+        const update = { name: req.body.name, number: req.body.number };
+        if (req.body.sendHour !== undefined) update.sendHour = req.body.sendHour;
+
         const recipient = await Recipient.update({ _id: req.params.recipientId }, {
-            $set: {
-                name: req.body.name,
-                number: req.body.number
-            }
+            $set: update
         });
 
         return res.status(200).json(recipient);

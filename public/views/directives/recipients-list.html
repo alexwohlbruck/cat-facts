@@ -28,6 +28,7 @@
 				<th md-column><span>Name</span></th>
 				<th md-column ng-if="options.addedBy"><span>Added By</span></th>
 				<th md-column ng-show="options.dateAdded && $mdMedia('gt-xs')">Date Added</th>
+				<th md-column ng-show="$mdMedia('gt-xs')">Send Time</th>
 				<th md-column>Subscriptions</th>
 				<th md-column md-numeric><span>Phone Number</span></th>
 			</tr>
@@ -46,6 +47,7 @@
 				<td md-cell>{{recipient.name || 'No name'}}</td>
 				<td md-cell ng-if="options.addedBy">{{recipient.addedBy.name.first}} {{recipient.addedBy.name.last}}</td>
 				<td md-cell ng-show="options.dateAdded && $mdMedia('gt-xs')">{{recipient.updatedAt | date:'MMMM d, yyyy'}}</td>
+				<td md-cell ng-show="$mdMedia('gt-xs')">{{formatHour(recipient.sendHour)}}</td>
 				<td md-cell>
 					<md-button
 						class="md-icon-button subscription-icon"

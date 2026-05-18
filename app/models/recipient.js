@@ -20,7 +20,8 @@ const RecipientSchema = new Schema({
     subscriptions: [{
         type: String,
         enum: strings.animalTypes // TODO: Move to constant definition
-    }]
+    }],
+    sendHour: { type: Number, default: 8, min: 0, max: 23 }
 }, {
     timestamps: true
 });
