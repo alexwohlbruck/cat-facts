@@ -17,18 +17,19 @@ module.exports = {
                     'value2': data.message
                 }
             });
+
+            const message = new Message({
+                text: data.message,
+                number: data.number,
+                type: 'outgoing'
+            });
+
+            await message.save();
+            console.log(`Message sent to ${data.number}: ${data.message}`);
         } catch (err) {
-            console.error(err);
+            console.error(`Failed to send message to ${data.number}:`, err);
+            throw err;
         }
-
-        const message = new Message({
-            text: data.message,
-            number: data.number,
-            type: 'outgoing'
-        });
-
-        await message.save(message);
-        console.log(`Message sent to ${data.number}: ${data.message}`);
     },
     async sendBatchMessages(data) {
         const promises = data.map(message => {
