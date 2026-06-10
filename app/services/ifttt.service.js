@@ -32,7 +32,7 @@ module.exports = {
     },
     async sendBatchMessages(data) {
         const promises = data.map(message => {
-            this.sendSingleMessage(message);
+            return this.sendSingleMessage(message);
         });
         return await Promise.all(promises);
     }

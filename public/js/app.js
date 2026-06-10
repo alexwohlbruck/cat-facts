@@ -137,13 +137,31 @@ app.run(['$rootScope', '$state', '$window', '$location', '$mdToast', 'ApiService
                         $rootScope.authenticatedUser = false;
 
                         if (toState.data.restricted) {
-                            window.location.href = '/auth/google';
+                            $mdToast.show(
+                                $mdToast.simple()
+                                    .textContent('Please sign in first 🔒')
+                                    .position('bottom right')
+                                    .hideDelay(3000)
+                            ).then(function() {
+                                window.location.href = '/auth/google';
+                            });
+                            setTimeout(function() {
+                                window.location.href = '/auth/google';
+                            }, 3200);
                         }
                     });
             } else if (!$rootScope.authenticatedUser && toState.data.restricted) {
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Please sign in first 🔒')
+                        .position('bottom right')
+                        .hideDelay(3000)
+                ).then(function() {
+                    window.location.href = '/auth/google';
+                });
                 setTimeout(function() {
                     window.location.href = '/auth/google';
-                }, 100);
+                }, 3200);
             }
         });
 
