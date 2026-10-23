@@ -139,12 +139,9 @@
     9. Click the back button and exit the app to save changes
     10. To test if Tasker is working, open the "CatBot Many" task and click the green arrow to run it. Cat Facts should be sent to all the recipients that are saved in your database
 
-7. Modify Android sms sending limit
-    1. Android will block tasker from sending too many messages at once. You will need to use the Android Debug Bridge (ADB) tool from the Android Platform SDK to fix this
-    2. Go to the [Android Developers website](https://developer.android.com/studio/releases/platform-tools.html) and download the SDK tools
-    3. Once the tools have been installed, head to the `platform-tools` directory on your machine where the adb application is located
-    4. Open the command line in this directory and run this command `adb shell settings put global sms_outgoing_check_max_count 1000000000`
-    5. The SMS outgoing limit is now increased to 1000000000 messages at once, that ought to cover it
+7. Keep Android's SMS safeguards enabled
+    - Do not raise the device-wide outgoing SMS limit to bypass Android's safeguard. The previous example set it to 1,000,000,000, removing a useful cap for automated bulk sending.
+    - If Android blocks a send, stop and use a small recipient list whose members have agreed to receive these messages. Test only with a consenting test recipient; do not change the device-wide SMS limit.
 
 ##### That's it!
     
